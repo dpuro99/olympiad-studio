@@ -1,0 +1,87 @@
+:root {
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  
+  /* Primary Slate Dark Scheme */
+  --color-background-primary: #0a0a0a;
+  --color-background-secondary: #161616;
+  --color-background-tertiary: #222222;
+  
+  /* Grid & Structural Lines */
+  --color-border-primary: #444444;
+  --color-border-secondary: #2d2d2d;
+  --color-border-tertiary: #1f1f1f;
+  
+  /* Typography Hierarchy */
+  --color-text-primary: #ededed;
+  --color-text-secondary: #a0a0a0;
+  
+  /* UI Accents & Status Indication */
+  --color-background-info: #111a2e;
+  --color-text-info: #4f8ef7;
+  --color-border-info: #234275;
+  
+  --color-background-success: #102a19;
+  --color-text-success: #22aa55;
+  --color-border-success: #174d28;
+
+  --color-text-warning: #f59e0b;
+  --color-text-danger: #cc4444;
+  
+  --border-radius-lg: 12px;
+  --border-radius-md: 6px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  background-color: var(--color-background-primary) !important;
+  color: var(--color-text-primary);
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  height: 100%;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: var(--color-background-primary) !important;
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+input[type=number] {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--color-background-tertiary);
+  border: 0.5px solid var(--color-border-secondary);
+  color: var(--color-text-primary);
+  padding: 6px;
+  border-radius: var(--border-radius-md);
+  outline: none;
+}
+
+input[type=number]:focus {
+  border-color: var(--color-border-primary);
+}
+
+input[type=checkbox] {
+  accent-color: var(--color-text-info);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
