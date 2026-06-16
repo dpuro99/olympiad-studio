@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
+import LandingHome from './components/LandingHome';
 import Home from './components/Home';
 import ArcVisualizer from './components/ArcVisualizer';
 import ScoreCalc from './components/ScoreCalc';
 import ComingSoon from './components/ComingSoon';
-import Login from './components/Login';
 
 const WEEK = { hw: 2, lookup: 3, pid: 4, codegen: 5, log: 6, comp: 7 };
 const CATS = ["Event", "Design", "Programming", "Testing", "Competition"];
@@ -22,25 +22,45 @@ const MODS = [
 export default function App() {
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(false);
   const [loading, setLoading] = useState(true);
+  
+  // Master View Controller: "landing" or "dashboard"
+  const [currentView, setCurrentView] = useState("landing");
 
   useEffect(() => {
-    // 1. Check for an active session immediately on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       setCurrentUser(session?.user || null);
+      if (session?.user) setCurrentView("dashboard");
       setLoading(false);
     });
 
-    // 2. Setup a listener for real-time authentication state updates
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setCurrentUser(session?.user || null);
+      if (session?.user) setCurrentView("dashboard");
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
+  const handleGoogleLogin = async () => {
+    try {
+      setAuthLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin }
+      });
+      if (error) throw error;
+    } catch (err) {
+      alert(err.message || 'An error occurred during Google sign in.');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    setCurrentView("landing");
     setPage("home");
   };
 
@@ -60,79 +80,87 @@ export default function App() {
     </button>
   );
 
-  // Prevent app render while checking for active secure cookie keys
+  // App initialization boot strap check
   if (loading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "var(--color-background-primary)", color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", fontSize: 13 }}>
-        Loading cloud profile assets...
+        Loading platform assets...
       </div>
     );
   }
 
+  // Intercept routing logic
+  if (currentView === "landing" || !currentUser) {
+    return (
+      <LandingHome 
+        onLogin={handleGoogleLogin} 
+        authLoading={authLoading} 
+        currentUser={currentUser}
+        onGoToDashboard={() => setCurrentView("dashboard")} 
+      />
+    );
+  }
+
+  // AUTHENTICATED: Display the comprehensive Engineering Studio Dashboard Layout
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "var(--font-sans)" }}>
-      {/* Sidebar Navigation */}
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "var(--font-sans)", backgroundColor: "var(--color-background-primary)" }}>
+      
+      {/* Sidebar Navigation Dashboard Panel */}
       <div style={{ width: 186, flexShrink: 0, background: "var(--color-background-secondary)", borderRight: "0.5px solid var(--color-border-tertiary)", display: "flex", flexDirection: "column" }}>
-        <div style={{ padding: "14px 12px 10px", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>
-          <div style={{ fontSize: 13, fontWeight: 500 }}>EV Platform</div>
-          <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", marginTop: 2 }}>Olympiad Studio</div>
+        
+        {/* Clickable Header to Return to Landing Page */}
+        <div 
+          onClick={() => setCurrentView("landing")} 
+          style={{ padding: "14px 12px 10px", borderBottom: "0.5px solid var(--color-border-tertiary)", cursor: "pointer", transition: "opacity 0.2s" }}
+          onMouseOver={(e) => e.currentTarget.style.opacity = 0.7}
+          onMouseOut={(e) => e.currentTarget.style.opacity = 1}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <img src="/logo.png" alt="Logo" style={{ width: "auto", height: 16, objectFit: "contain" }} />
+            <div style={{ fontSize: 13, fontWeight: 500 }}>Olympiad Studio</div>
+          </div>
+          <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", paddingLeft: 24 }}>&larr; Back to Home</div>
         </div>
         
-        {/* Render navigation controls only when authenticated */}
-        {currentUser && (
-          <nav style={{ padding: "6px", flex: 1, overflowY: "auto" }}>
-            {navBtn("home", "ti-home", "Home", true, true)}
-            {CATS.map(cat => {
-              const mods = MODS.filter(m => m.cat === cat);
-              return (
-                <div key={cat} style={{ marginTop: 10 }}>
-                  <div style={{ fontSize: 10, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", padding: "0 8px", marginBottom: 3, fontFamily: "var(--font-mono)" }}>{cat}</div>
-                  {mods.map(m => navBtn(m.id, m.ti, m.label, m.live, false))}
-                </div>
-              );
-            })}
-          </nav>
-        )}
-
-        {/* User Status Bottom Panel Tray */}
-        <div style={{ padding: 10, borderTop: "0.5px solid var(--color-border-tertiary)", marginTop: "auto" }}>
-          {currentUser ? (
-            <div>
-              <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>Account:</div>
-              <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-info)", marginBottom: 6, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }} title={currentUser.email}>
-                {currentUser.email}
+        <nav style={{ padding: "6px", flex: 1, overflowY: "auto" }}>
+          {navBtn("home", "ti-home", "Dashboard", true, true)}
+          {CATS.map(cat => {
+            const mods = MODS.filter(m => m.cat === cat);
+            return (
+              <div key={cat} style={{ marginTop: 10 }}>
+                <div style={{ fontSize: 10, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", padding: "0 8px", marginBottom: 3, fontFamily: "var(--font-mono)" }}>{cat}</div>
+                {mods.map(m => navBtn(m.id, m.ti, m.label, m.live, false))}
               </div>
-              <button onClick={handleLogout} style={{ background: "none", border: "0.5px solid var(--color-text-danger)", color: "var(--color-text-danger)", width: "100%", padding: "4px 0", borderRadius: "var(--border-radius-md)", fontSize: 11, cursor: "pointer" }}>Log Out</button>
-            </div>
-          ) : (
-            <div style={{ fontSize: 11, color: "var(--color-text-secondary)", textAlign: "center" }}>Authentication Locked</div>
-          )}
+            );
+          })}
+        </nav>
+
+        {/* User Account Details */}
+        <div style={{ padding: 10, borderTop: "0.5px solid var(--color-border-tertiary)", marginTop: "auto" }}>
+          <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>Account:</div>
+          <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-info)", marginBottom: 6, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }} title={currentUser.email}>
+            {currentUser.email}
+          </div>
+          <button onClick={handleLogout} style={{ background: "none", border: "0.5px solid var(--color-text-danger)", color: "var(--color-text-danger)", width: "100%", padding: "4px 0", borderRadius: "var(--border-radius-md)", fontSize: 11, cursor: "pointer" }}>Log Out</button>
         </div>
       </div>
 
-      {/* Main Feature Dashboard Panel */}
+      {/* Main Content Pane */}
       <div style={{ flex: 1, overflowY: "auto" }}>
         <div style={{ padding: "24px 28px", maxWidth: 860 }}>
-          {/* Intercept UI rendering if no user token session exists */}
-          {!currentUser ? (
-            <Login />
-          ) : (
-            <>
-              {page !== "home" && (
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--color-text-secondary)" }}>
-                  <button onClick={() => setPage("home")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--color-text-secondary)" }}>Home</button>
-                  <span>&rsaquo;</span><span>{mod?.cat}</span><span>&rsaquo;</span>
-                  <span style={{ color: "var(--color-text-primary)" }}>{mod?.label}</span>
-                </div>
-              )}
-              {page !== "home" && <h1 style={{ fontSize: 20, fontWeight: 500, marginBottom: 20 }}>{mod?.label}</h1>}
-              
-              {page === "home" && <Home MODS={MODS} CATS={CATS} onNav={setPage} />}
-              {page === "arc" && <ArcVisualizer />}
-              {page === "score" && <ScoreCalc />}
-              {mod && !mod.live && <ComingSoon mod={mod} WEEK={WEEK} />}
-            </>
+          {page !== "home" && (
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--color-text-secondary)" }}>
+              <button onClick={() => setPage("home")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--color-text-secondary)" }}>Dashboard</button>
+              <span>&rsaquo;</span><span>{mod?.cat}</span><span>&rsaquo;</span>
+              <span style={{ color: "var(--color-text-primary)" }}>{mod?.label}</span>
+            </div>
           )}
+          {page !== "home" && <h1 style={{ fontSize: 20, fontWeight: 500, marginBottom: 20 }}>{mod?.label}</h1>}
+          
+          {page === "home" && <Home MODS={MODS} CATS={CATS} onNav={setPage} />}
+          {page === "arc" && <ArcVisualizer />}
+          {page === "score" && <ScoreCalc />}
+          {mod && !mod.live && <ComingSoon mod={mod} WEEK={WEEK} />}
         </div>
       </div>
     </div>
