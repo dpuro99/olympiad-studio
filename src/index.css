@@ -1,4 +1,5 @@
-:root {
+/* 1. Global Default Theme variables (Defaults to Dark Mode) */
+:root, [data-theme="dark"] {
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
@@ -32,10 +33,43 @@
   --border-radius-md: 6px;
 }
 
+/* 2. Light Mode Override Block */
+[data-theme="light"] {
+  /* Soft light primary canvas background */
+  --color-background-primary: #f8fafc;
+  --color-background-secondary: #ffffff;
+  --color-background-tertiary: #f1f5f9;
+  
+  /* Soft gray structural lines */
+  --color-border-primary: #94a3b8;
+  --color-border-secondary: #cbd5e1;
+  --color-border-tertiary: #e2e8f0;
+  
+  /* Highly readable high-contrast typography */
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  
+  /* Info alerts & selection indicators */
+  --color-background-info: #eff6ff;
+  --color-text-info: #2563eb;
+  --color-border-info: #bfdbfe;
+  
+  /* Run successes & passed metrics */
+  --color-background-success: #f0fdf4;
+  --color-text-success: #16a34a;
+  --color-border-success: #bbf7d0;
+
+  --color-text-warning: #d97706;
+  --color-text-danger: #dc2626;
+}
+
+/* 3. Global CSS Layout & Resets */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  /* Smoothly animates the transitions between light and dark modes */
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, stroke 0.25s ease, fill 0.25s ease;
 }
 
 body, html {
