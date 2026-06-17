@@ -1,37 +1,63 @@
 import React, { useState, useMemo } from 'react';
 
-// Pure Math Helpers
-function calcArc(sag, fwd, wSep) {
+// Math Helpers for 2026 EV Rules
+// Outer can is fixed at 1.0m to the left of the straight line.
+function calcArc(fwd, canGap, wSep, hasCans) {
+  if (!hasCans) return { straight: true, centerArc: fwd, leftArc: fwd, rightArc: fwd };
   if (fwd <= 0) return null;
-  if (Math.abs(sag) < 0.0001) return { straight: true, centerArc: fwd, leftArc: fwd, rightArc: fwd };
-  const s = Math.abs(sag), D = fwd, half = wSep / 2;
+
+  // The center of the vehicle passes exactly halfway between the outer can (1.0m) 
+  // and the inner can (1.0m - gap).
+  const sag = 1.0 - (canGap / 2); 
+  const s = Math.abs(sag);
+  const D = fwd;
+  const half = wSep / 2;
+
   const R = s / 2 + (D * D) / (8 * s);
   const theta = 2 * Math.asin(Math.min(1, D / (2 * R)));
-  const inner = (R - half) * theta, outer = (R + half) * theta;
-  const dir = Math.sign(sag);
+
+  // Since it's a leftward bulging curve, the Right wheel is the inside track, Left wheel is outside
+  const innerR = R - half;
+  const outerR = R + half;
+
   return {
-    straight: false, R, thetaDeg: (theta * 180) / Math.PI, startAngleDeg: ((theta / 2) * 180) / Math.PI,
-    centerArc: R * theta, leftArc: dir > 0 ? inner : outer, rightArc: dir > 0 ? outer : inner,
-    innerSide: dir > 0 ? "Left" : "Right"
+    straight: false, R, sag,
+    thetaDeg: (theta * 180) / Math.PI, 
+    startAngleDeg: ((theta / 2) * 180) / Math.PI,
+    centerArc: R * theta, 
+    leftArc: innerR * theta, 
+    rightArc: outerR * theta
   };
 }
 
-function arcPts(sag, fwd, rOff = 0, n = 100) {
+function arcPts(fwd, canGap, rOff, hasCans, n = 100) {
   if (fwd <= 0) return [];
-  if (Math.abs(sag) < 0.001) return Array.from({ length: n }, (_, i) => ({ x: 0, y: (i / (n - 1)) * fwd }));
-  const s = Math.abs(sag), dir = Math.sign(sag), D = fwd;
-  const R = s / 2 + (D * D) / (8 * s), theta = 2 * Math.asin(Math.min(1, D / (2 * R)));
-  const cx = -dir * (R - s), cy = D / 2, Rd = R + rOff, a0 = Math.atan2(-cy, -cx);
+  if (!hasCans) return Array.from({ length: n }, (_, i) => ({ x: rOff, y: (i / (n - 1)) * fwd }));
+  
+  const sag = 1.0 - (canGap / 2);
+  const s = Math.abs(sag);
+  const D = fwd;
+  const R = s / 2 + (D * D) / (8 * s);
+  const theta = 2 * Math.asin(Math.min(1, D / (2 * R)));
+  
+  // Left curve means center of the circle is to the right (positive X)
+  const cx = R - s; 
+  const cy = D / 2;
+  const Rd = R + rOff; 
+  const a0 = Math.atan2(-cy, -cx);
+  
   return Array.from({ length: n }, (_, i) => {
-    const a = a0 + (dir * theta * i) / (n - 1);
+    // Negative theta increment because we are drawing a leftward bulge from bottom to top
+    const a = a0 - (theta * i) / (n - 1);
     return { x: cx + Rd * Math.cos(a), y: cy + Rd * Math.sin(a) };
   });
 }
 
-function makeTx(pts, W, H, pad = 28) {
+function makeTx(pts, W, H, pad = 36) {
   if (!pts.length) return (x, y) => ({ x: W / 2, y: H / 2 });
-  const xs = pts.map(p => p.x), ys = pts.map(p => p.y), m = 0.3;
-  const x0 = Math.min(...xs) - m, x1 = Math.max(...xs) + m, y0 = -m, y1 = Math.max(...ys) + m;
+  const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
+  // Ensure the 1.0m left boundary is always in view
+  const x0 = Math.min(...xs, -1.2), x1 = Math.max(...xs, 0.2), y0 = -0.2, y1 = Math.max(...ys) + 0.2;
   const sc = Math.min((W - pad * 2) / Math.max(0.01, x1 - x0), (H - pad * 2) / Math.max(0.01, y1 - y0));
   const ox = W / 2 - ((x0 + x1) / 2) * sc, oy = H / 2 + ((y0 + y1) / 2) * sc;
   return (px, py) => ({ x: ox + px * sc, y: oy - py * sc });
@@ -41,75 +67,42 @@ function pStr(pts, tx) {
   return pts.map(p => { const s = tx(p.x, p.y); return `${s.x.toFixed(1)},${s.y.toFixed(1)}`; }).join(" ");
 }
 
-// Inline Sub-Components
-function Label({ children }) {
-  return <div style={{ fontSize: 11, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4, fontFamily: "var(--font-mono)" }}>{children}</div>;
-}
-
+// UI Components
+function Label({ children }) { return <div style={{ fontSize: 11, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 4, fontFamily: "var(--font-mono)" }}>{children}</div>; }
 function NumRow({ label, val, unit, color, prec = 4 }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", padding: "5px 0", borderBottom: "0.5px solid var(--color-border-tertiary)" }}>
       <span style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>{label}</span>
       <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 500, color: color || "var(--color-text-primary)" }}>
-        {typeof val === "number" ? val.toFixed(prec) : val ?? "—"}
-        {unit && <span style={{ fontSize: 11, color: "var(--color-text-secondary)", marginLeft: 4 }}>{unit}</span>}
+        {typeof val === "number" ? val.toFixed(prec) : val ?? "—"} {unit && <span style={{ fontSize: 11, color: "var(--color-text-secondary)", marginLeft: 4 }}>{unit}</span>}
       </span>
     </div>
   );
 }
 
-function Field({ label, value, onChange, step, min, max, suffix, disabled }) {
-  return (
-    <div style={{ marginBottom: 12 }}>
-      <Label>{label}</Label>
-      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-        <input type="number" value={value} step={step} min={min} max={max} disabled={disabled} style={{ flex: 1 }}
-          onChange={e => { const v = parseFloat(e.target.value); if (!isNaN(v)) onChange(v); }} />
-        {suffix && <span style={{ fontSize: 12, color: "var(--color-text-secondary)", whiteSpace: "nowrap" }}>{suffix}</span>}
-      </div>
-    </div>
-  );
-}
-
-function SegBtn({ options, value, onChange }) {
-  return (
-    <div style={{ display: "flex", gap: 4, marginBottom: 12 }}>
-      {options.map(o => (
-        <button key={o.value} onClick={() => onChange(o.value)} style={{
-          flex: 1, fontSize: 12, fontFamily: "var(--font-mono)", padding: "6px 0",
-          background: value === o.value ? "var(--color-background-info)" : "transparent",
-          color: value === o.value ? "var(--color-text-info)" : "var(--color-text-secondary)",
-          border: `0.5px solid ${value === o.value ? "var(--color-border-info)" : "var(--color-border-secondary)"}`,
-          borderRadius: "var(--border-radius-md)"
-        }}>{o.label}</button>
-      ))}
-    </div>
-  );
-}
-
 export default function ArcVisualizer() {
-  const [fwd, setFwd] = useState(8);
-  const [sag, setSag] = useState(0.3);
-  const [arcDir, setArcDir] = useState("right");
-  const [wSep, setWSep] = useState(0.17);
-  const [canGap, setCanGap] = useState(0.2);
-  const [showWheels, setShowWheels] = useState(true);
+  const [fwd, setFwd] = useState(8.0);
+  const [hasCans, setHasCans] = useState(true);
+  const [canGap, setCanGap] = useState(0.50); // 35 cm gap
+  const [wSep, setWSep] = useState(0.17); // 17 cm wheel track
 
-  const signedSag = arcDir === "straight" ? 0 : arcDir === "left" ? -Math.abs(sag) : Math.abs(sag);
-  const arc = useMemo(() => calcArc(signedSag, fwd, wSep), [signedSag, fwd, wSep]);
+  const arc = useMemo(() => calcArc(fwd, canGap, wSep, hasCans), [fwd, canGap, wSep, hasCans]);
   
-  const W = 272, H = 390;
-  const mainPts = useMemo(() => arcPts(signedSag, fwd, 0), [signedSag, fwd]);
-  const iPts = useMemo(() => arcPts(signedSag, fwd, -wSep / 2), [signedSag, fwd, wSep]);
-  const oPts = useMemo(() => arcPts(signedSag, fwd, +wSep / 2), [signedSag, fwd, wSep]);
-  const tx = useMemo(() => makeTx([...mainPts, ...iPts, ...oPts], W, H), [mainPts, iPts, oPts]);
+  const W = 300, H = 390;
+  // Note: For a left curve, negative X is left. So inner wheel (left) is -wSep/2, outer is +wSep/2
+  const mainPts = useMemo(() => arcPts(fwd, canGap, 0, hasCans), [fwd, canGap, hasCans]);
+  const lPts = useMemo(() => arcPts(fwd, canGap, -wSep / 2, hasCans), [fwd, canGap, wSep, hasCans]);
+  const rPts = useMemo(() => arcPts(fwd, canGap, +wSep / 2, hasCans), [fwd, canGap, wSep, hasCans]);
+  
+  const tx = useMemo(() => makeTx([...mainPts, ...lPts, ...rPts], W, H), [mainPts, lPts, rPts]);
   
   const s0 = tx(0, 0), sE = tx(0, fwd);
   const cY = fwd / 2;
-  const cA = tx(signedSag > 0 ? signedSag - canGap / 2 : signedSag + canGap / 2, cY);
-  const cB = tx(signedSag > 0 ? signedSag + canGap / 2 : signedSag - canGap / 2, cY);
-  const aRad = arc ? (arc.startAngleDeg * Math.PI) / 180 * (arcDir === "left" ? -1 : 1) : 0;
-  const arEnd = { x: s0.x + Math.sin(aRad) * 30, y: s0.y - Math.cos(aRad) * 30 };
+  const outerCan = tx(-1.0, cY);
+  const innerCan = tx(-(1.0 - canGap), cY);
+
+  const aRad = arc && !arc.straight ? (arc.startAngleDeg * Math.PI) / 180 : 0;
+  const arEnd = { x: s0.x - Math.sin(aRad) * 35, y: s0.y - Math.cos(aRad) * 35 };
 
   const card = { background: "var(--color-background-secondary)", border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)", padding: 16 };
 
@@ -122,66 +115,96 @@ export default function ArcVisualizer() {
               <polygon points="0,0 6,3 0,6" fill="#22aa55" />
             </marker>
           </defs>
-          {[0.25, 0.5, 0.75].map(t => {
-            const { y } = tx(0, fwd * t);
-            return <line key={t} x1={10} y1={y} x2={W - 10} y2={y} stroke="var(--color-border-tertiary)" strokeWidth="0.5" />;
-          })}
-          <line x1={s0.x} y1={s0.y} x2={sE.x} y2={sE.y} stroke="var(--color-border-tertiary)" strokeWidth="1" />
-          <line x1={s0.x - 50} y1={s0.y} x2={s0.x + 50} y2={s0.y} stroke="#22aa55" strokeWidth="1.5" strokeDasharray="5,3" />
-          <line x1={sE.x - 50} y1={sE.y} x2={sE.x + 50} y2={sE.y} stroke="#cc4444" strokeWidth="1.5" strokeDasharray="5,3" />
           
-          {showWheels && arc && <polyline points={pStr(oPts, tx)} fill="none" stroke="#f59e0b" strokeWidth="1.2" strokeDasharray="6,4" opacity="0.75" />}
-          {showWheels && arc && <polyline points={pStr(iPts, tx)} fill="none" stroke="#4f8ef7" strokeWidth="1.2" strokeDasharray="6,4" opacity="0.75" />}
-          <polyline points={pStr(mainPts, tx)} fill="none" stroke="var(--color-text-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          {/* Straight centerline reference */}
+          <line x1={s0.x} y1={s0.y} x2={sE.x} y2={sE.y} stroke="var(--color-border-tertiary)" strokeWidth="1" strokeDasharray="4,4" />
           
-          {arcDir !== "straight" && <circle cx={cA.x} cy={cA.y} r={7} fill="var(--color-background-info)" stroke="var(--color-border-info)" strokeWidth="1.5" />}
-          {arcDir !== "straight" && <circle cx={cB.x} cy={cB.y} r={7} fill="var(--color-background-info)" stroke="var(--color-border-info)" strokeWidth="1.5" />}
-          {arcDir !== "straight" && <text x={cA.x} y={cA.y + 1} textAnchor="middle" dominantBaseline="middle" fontSize="7" fill="var(--color-text-info)" fontFamily="var(--font-mono)" fontWeight="bold">i</text>}
-          {arcDir !== "straight" && <text x={cB.x} y={cB.y + 1} textAnchor="middle" dominantBaseline="middle" fontSize="7" fill="var(--color-text-info)" fontFamily="var(--font-mono)" fontWeight="bold">o</text>}
+          {/* Start and End Lines */}
+          <line x1={s0.x - 40} y1={s0.y} x2={s0.x + 40} y2={s0.y} stroke="#22aa55" strokeWidth="1.5" />
+          <line x1={sE.x - 40} y1={sE.y} x2={sE.x + 40} y2={sE.y} stroke="#cc4444" strokeWidth="1.5" />
           
-          <circle cx={s0.x} cy={s0.y} r={4} fill="#22aa55" />
-          {arc && arc.startAngleDeg > 0.1 && <line x1={s0.x} y1={s0.y} x2={arEnd.x} y2={arEnd.y} stroke="#22aa55" strokeWidth="1.5" markerEnd="url(#arrMk)" opacity="0.85" />}
-          <circle cx={sE.x} cy={sE.y} r={4} fill="#cc4444" />
-          
-          <text x={s0.x} y={s0.y + 15} textAnchor="middle" fontSize="9" fill="#22aa55" fontFamily="var(--font-mono)">START</text>
-          <text x={sE.x} y={sE.y - 9} textAnchor="middle" fontSize="9" fill="#cc4444" fontFamily="var(--font-mono)">END</text>
-          
-          {showWheels && arc && (
+          {/* Cans */}
+          {hasCans && (
             <g>
-              <line x1="10" y1="14" x2="26" y2="14" stroke="#4f8ef7" strokeWidth="1.5" strokeDasharray="5,3" />
-              <text x="29" y="15" fontSize="9" fontFamily="var(--font-mono)" fill="var(--color-text-secondary)" dominantBaseline="middle">{`${arc.innerSide} (inner)`}</text>
-              <line x1="10" y1="26" x2="26" y2="26" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="5,3" />
-              <text x="29" y="27" fontSize="9" fontFamily="var(--font-mono)" fill="var(--color-text-secondary)" dominantBaseline="middle">{`${arc.innerSide === "Left" ? "Right" : "Left"} (outer)`}</text>
+              <circle cx={outerCan.x} cy={outerCan.y} r={6} fill="#ef4444" />
+              <text x={outerCan.x - 10} y={outerCan.y + 4} textAnchor="end" fontSize="9" fill="var(--color-text-secondary)">Outer (1.0m)</text>
+              <circle cx={innerCan.x} cy={innerCan.y} r={6} fill="#ef4444" />
+              <text x={innerCan.x + 10} y={innerCan.y + 4} textAnchor="start" fontSize="9" fill="var(--color-text-secondary)">Inner</text>
+              {/* Bonus Line */}
+              <line x1={outerCan.x} y1={outerCan.y} x2={innerCan.x} y2={innerCan.y} stroke="#ef4444" strokeWidth="1" strokeDasharray="2,2" />
             </g>
           )}
+
+          {/* Wheel Paths */}
+          <polyline points={pStr(rPts, tx)} fill="none" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="6,4" opacity="0.8" />
+          <polyline points={pStr(lPts, tx)} fill="none" stroke="#4f8ef7" strokeWidth="1.5" strokeDasharray="6,4" opacity="0.8" />
+          
+          {/* Center Path */}
+          <polyline points={pStr(mainPts, tx)} fill="none" stroke="var(--color-text-primary)" strokeWidth="2.5" strokeLinecap="round" />
+          
+          {/* Start Vector Arrow */}
+          {hasCans && <line x1={s0.x} y1={s0.y} x2={arEnd.x} y2={arEnd.y} stroke="#22aa55" strokeWidth="2" markerEnd="url(#arrMk)" />}
+          
+          <circle cx={s0.x} cy={s0.y} r={4} fill="#22aa55" />
+          <circle cx={sE.x} cy={sE.y} r={4} fill="#cc4444" />
+          
+          {/* Legend */}
+          <g>
+            <line x1="10" y1="14" x2="26" y2="14" stroke="#4f8ef7" strokeWidth="1.5" strokeDasharray="5,3" />
+            <text x="29" y="17" fontSize="9" fontFamily="var(--font-mono)" fill="var(--color-text-secondary)">Right Wheel</text>
+            <line x1="10" y1="26" x2="26" y2="26" stroke="#f59e0b" strokeWidth="1.5" strokeDasharray="5,3" />
+            <text x="29" y="29" fontSize="9" fontFamily="var(--font-mono)" fill="var(--color-text-secondary)">Left Wheel</text>
+            <circle cx="18" cy="38" r="4" fill="#ef4444" />
+            <text x="29" y="41" fontSize="9" fontFamily="var(--font-mono)" fill="var(--color-text-secondary)">Cans</text>
+          </g>
         </svg>
       </div>
 
-      <div style={{ flex: 1, minWidth: 200 }}>
+      <div style={{ flex: 1, minWidth: 260 }}>
         <div style={{ ...card, marginBottom: 12 }}>
-          <div style={{ fontWeight: 500, marginBottom: 12, fontSize: 13 }}>Parameters</div>
-          <Field label="Forward distance" value={fwd} onChange={setFwd} step={0.25} min={1} max={15} suffix="m" />
-          <div style={{ marginBottom: 4 }}><Label>Arc direction</Label></div>
-          <SegBtn options={[{ label: "Straight", value: "straight" }, { label: "Left", value: "left" }, { label: "Right", value: "right" }]} value={arcDir} onChange={setArcDir} />
-          {arcDir !== "straight" && <Field label="Lateral bulge (sagitta)" value={sag} onChange={setSag} step={0.05} min={0.01} max={2} suffix="m" />}
-          <Field label="Wheel separation" value={wSep} onChange={setWSep} step={0.01} min={0.05} max={0.5} suffix="m" />
-          {arcDir !== "straight" && <Field label="Can gap width" value={canGap} onChange={setCanGap} step={0.02} min={0.02} max={0.5} suffix="m" />}
-          <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13, color: "var(--color-text-secondary)" }}>
-            <input type="checkbox" checked={showWheels} onChange={e => setShowWheels(e.target.checked)} />
-            Show wheel arcs
-          </label>
+          <div style={{ fontWeight: 500, marginBottom: 12, fontSize: 13 }}>Track Parameters</div>
+          
+          <div style={{ marginBottom: 12 }}>
+            <Label>Track Type</Label>
+            <div style={{ display: "flex", gap: 6 }}>
+              <button onClick={() => setHasCans(false)} style={{ flex: 1, padding: "6px", fontSize: 12, background: !hasCans ? "var(--color-background-info)" : "transparent", color: !hasCans ? "var(--color-text-info)" : "var(--color-text-secondary)", border: `1px solid ${!hasCans ? "var(--color-border-info)" : "var(--color-border-secondary)"}`, borderRadius: 4 }}>No Cans (Straight)</button>
+              <button onClick={() => setHasCans(true)} style={{ flex: 1, padding: "6px", fontSize: 12, background: hasCans ? "var(--color-background-info)" : "transparent", color: hasCans ? "var(--color-text-info)" : "var(--color-text-secondary)", border: `1px solid ${hasCans ? "var(--color-border-info)" : "var(--color-border-secondary)"}`, borderRadius: 4 }}>Can Bonus (Left Curve)</button>
+            </div>
+          </div>
+
+          <div style={{ marginBottom: 12 }}>
+            <Label>Target Distance (Meters From Start to End)</Label>
+            <input type="number" value={fwd} onChange={e => setFwd(parseFloat(e.target.value) || 0)} step={0.5} style={{ width: "100%", padding: 6, background: "var(--color-background-tertiary)", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-primary)", borderRadius: 4 }} />
+          </div>
+
+          {hasCans && (
+            <div style={{ marginBottom: 12 }}>
+              <Label>Inside Can Distance (cm)</Label>
+              <input type="number" value={canGap * 100} onChange={e => setCanGap(parseFloat(e.target.value) / 100 || 0)} step={1} style={{ width: "100%", padding: 6, background: "var(--color-background-tertiary)", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-primary)", borderRadius: 4 }} />
+              <div style={{ fontSize: 10, color: "var(--color-text-secondary)", marginTop: 4 }}>Outer can is fixed at 1.0m from centerline.</div>
+            </div>
+          )}
+
+          <div style={{ marginBottom: 12 }}>
+            <Label>Vehicle Wheel Separation (cm)</Label>
+            <input type="number" value={wSep * 100} onChange={e => setWSep(parseFloat(e.target.value) / 100 || 0)} step={1} style={{ width: "100%", padding: 6, background: "var(--color-background-tertiary)", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-primary)", borderRadius: 4 }} />
+          </div>
         </div>
 
         {arc && (
           <div style={card}>
-            <div style={{ fontWeight: 500, marginBottom: 10, fontSize: 13 }}>Results</div>
-            <NumRow label="Car center arc" val={arc.centerArc} unit="m" />
-            <NumRow label={`Left wheel${arc.innerSide === "Left" ? " (inner)" : ""}`} val={arc.leftArc} unit="m" color={arc.innerSide === "Left" ? "#4f8ef7" : "#f59e0b"} />
-            <NumRow label={`Right wheel${arc.innerSide === "Right" ? " (inner)" : ""}`} val={arc.rightArc} unit="m" color={arc.innerSide === "Right" ? "#4f8ef7" : "#f59e0b"} />
-            {!arc.straight && <NumRow label="Turn radius" val={arc.R} unit="m" prec={3} />}
-            {!arc.straight && <NumRow label="Arc angle" val={arc.thetaDeg} unit="°" prec={2} />}
-            {!arc.straight && <NumRow label="Car start angle" val={arc.startAngleDeg} unit="°" prec={2} />}
-            {arc.straight && <NumRow label="Path type" val="Straight" />}
+            <div style={{ fontWeight: 500, marginBottom: 10, fontSize: 13 }}>Geometry Results</div>
+            {arc.straight ? (
+              <NumRow label="Path type" val="Straight Line" />
+            ) : (
+              <>
+                <NumRow label="Starting Launch Angle" val={arc.startAngleDeg} unit="°" prec={2} />
+              </>
+            )}
+            <div style={{ height: 1, background: "var(--color-border-tertiary)", margin: "8px 0" }} />
+            <NumRow label="Car Center Path" val={arc.centerArc} unit="m" />
+            <NumRow label="Right Wheel (Inner Arc)" val={arc.leftArc} unit="m" color="#4f8ef7" />
+            <NumRow label="Left Wheel (Outer Arc)" val={arc.rightArc} unit="m" color="#f59e0b" />
           </div>
         )}
       </div>
