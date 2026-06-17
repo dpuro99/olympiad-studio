@@ -116,7 +116,7 @@ export default function App() {
           onMouseOut={(e) => e.currentTarget.style.opacity = 1}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <img src="/logo.png" alt="Logo" style={{ width: "auto", height: 16, objectFit: "contain" }} />
+            <img src="/logo2.png" alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
             <div style={{ fontSize: 13, fontWeight: 500 }}>Olympiad Studio</div>
           </div>
           <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", paddingLeft: 24 }}>&larr; Back to Home</div>
