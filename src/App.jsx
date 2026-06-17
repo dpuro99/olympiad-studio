@@ -20,6 +20,9 @@ const MODS = [
 ];
 
 export default function App() {
+  // Global Theme State
+  const [theme, setTheme] = useState('dark');
+  
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(null);
   const [authLoading, setAuthLoading] = useState(false);
@@ -27,6 +30,15 @@ export default function App() {
   
   // Master View Controller: "landing" or "dashboard"
   const [currentView, setCurrentView] = useState("landing");
+
+  // Sync theme with document root to apply CSS variables dynamically
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -102,6 +114,8 @@ export default function App() {
         authLoading={authLoading} 
         currentUser={currentUser}
         onGoToDashboard={() => setCurrentView("dashboard")} 
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
     );
   }
@@ -122,7 +136,7 @@ export default function App() {
         >
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <img src="/logo2.png" alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
-            <div style={{ fontSize: 13, fontWeight: 500 }}>Olympiad Studio</div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>Olympiad Studio</div>
           </div>
           <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", paddingLeft: 24 }}>&larr; Back to Home</div>
         </div>
@@ -140,8 +154,30 @@ export default function App() {
           })}
         </nav>
 
-        {/* User Account Details */}
+        {/* User Account Details & Theme Toggle */}
         <div style={{ padding: 10, borderTop: "0.5px solid var(--color-border-tertiary)", marginTop: "auto" }}>
+          
+          {/* Dashboard Sidebar Theme Toggle */}
+          <button 
+            onClick={toggleTheme} 
+            style={{ 
+              display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "6px 8px", 
+              background: "transparent", border: "0.5px solid var(--color-border-tertiary)", 
+              borderRadius: "var(--border-radius-md)", cursor: "pointer", 
+              color: "var(--color-text-secondary)", fontSize: 11, marginBottom: 12,
+              transition: "background 0.2s"
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = "var(--color-background-tertiary)"}
+            onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
+          >
+            {theme === 'dark' ? (
+               <svg style={{ pointerEvents: "none" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42 1.42"/></svg>
+            ) : (
+               <svg style={{ pointerEvents: "none" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            )}
+            <span style={{ flex: 1, textAlign: "left" }}>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+          </button>
+
           <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>Account:</div>
           <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-info)", marginBottom: 6, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }} title={currentUser.email}>
             {currentUser.email}
@@ -160,7 +196,7 @@ export default function App() {
               <span style={{ color: "var(--color-text-primary)" }}>{mod?.label}</span>
             </div>
           )}
-          {page !== "home" && <h1 style={{ fontSize: 20, fontWeight: 500, marginBottom: 20 }}>{mod?.label}</h1>}
+          {page !== "home" && <h1 style={{ fontSize: 20, fontWeight: 500, marginBottom: 20, color: "var(--color-text-primary)" }}>{mod?.label}</h1>}
           
           {page === "home" && <Home MODS={MODS} CATS={CATS} onNav={setPage} />}
           {page === "arc" && <ArcVisualizer />}
