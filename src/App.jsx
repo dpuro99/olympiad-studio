@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import LandingHome from './components/general/LandingHome';
+import logo from './assets/logo2.png';
 import Home from './components/general/Home';
 import { EVENT_REGISTRY } from './components/events/registry';
 
@@ -168,7 +169,7 @@ export default function App() {
             onMouseOut={(e) => e.currentTarget.style.opacity = 1}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <img src="/logo2.png" alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
+              <img src={logo} alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
               <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>Olympiad Studio</div>
             </div>
             <div style={{ fontSize: 11, color: "var(--color-text-info)", fontFamily: "var(--font-mono)", paddingLeft: 24, fontWeight: 600 }}>&larr; Back to Dashboard</div>
@@ -182,7 +183,7 @@ export default function App() {
             onMouseOut={(e) => e.currentTarget.style.opacity = 1}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <img src="/logo2.png" alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
+              <img src={logo} alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
               <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>Olympiad Studio</div>
             </div>
             <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", paddingLeft: 24 }}>&larr; Back to Home</div>
