@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '/src/assets/logo2.png';
+import logo from '/src/assets/logoRect.png';
 
 export default function LandingHome({ onLogin, authLoading, currentUser, onGoToDashboard, theme, toggleTheme }) {
   const features = [
@@ -19,7 +19,7 @@ export default function LandingHome({ onLogin, authLoading, currentUser, onGoToD
         backgroundColor: "var(--color-background-secondary)", position: "sticky", top: 0, zIndex: 100 
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <img src={logo} alt="Olympiad Studio Logo" style={{ width: "auto", height: 50, objectFit: "contain" }} />
+          <img src={logo} alt="Olympiad Studio Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
           <span style={{ fontWeight: 600, fontSize: 16, letterSpacing: "-0.01em" }}>Olympiad Studio</span>
         </div>
         
