@@ -59,10 +59,11 @@ export default function App() {
   const handleGoogleLogin = async () => {
     try {
       setAuthLoading(true);
+      const redirectBase = window.location.origin + import.meta.env.BASE_URL;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { 
-          redirectTo: window.location.origin,
+          redirectTo: redirectBase,
           queryParams: {
             prompt: 'select_account' // Forces account selection choice every single login
           }
