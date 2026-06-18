@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import LandingHome from './components/general/LandingHome';
-import logo from './assets/logo2.png';
+import logo from './assets/logoRect.png';
 import Home from './components/general/Home';
 import { EVENT_REGISTRY } from './components/events/registry';
 
