@@ -42,18 +42,35 @@ export default function App() {
 
   // Listen to Supabase Session and state changes
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let isMounted = true;
+
+    const finishInit = (session) => {
+      if (!isMounted) return;
+      setCurrentUser(session?.user || null);
+      if (session?.user) setCurrentView("dashboard");
+      setLoading(false);
+    };
+
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        finishInit(session);
+      })
+      .catch((error) => {
+        console.error('Session initialization failed:', error);
+        finishInit(null);
+      });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
       setCurrentUser(session?.user || null);
       if (session?.user) setCurrentView("dashboard");
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUser(session?.user || null);
-      if (session?.user) setCurrentView("dashboard");
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleGoogleLogin = async () => {
