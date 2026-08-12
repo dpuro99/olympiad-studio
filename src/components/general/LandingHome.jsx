@@ -3,10 +3,10 @@ import logo from '/src/assets/logoRect.png';
 
 export default function LandingHome({ onLogin, authLoading, currentUser, onGoToDashboard, theme, toggleTheme }) {
   const features = [
-    { icon: "ti-vector-triangle", title: "Arc Visualizer", desc: "Compute center and wheel paths to maintain strict track alignment." },
-    { icon: "ti-trophy", title: "Score Calculator", desc: "Instantly evaluate time and target distance error combinations." },
-    { icon: "ti-cpu", title: "Hardware Planner", desc: "Select and balance battery capacity, wheel sizes, and motor RPMs." },
-    { icon: "ti-file-analytics", title: "Cloud Run Logger", desc: "Save calibration metrics directly to your secure team profile." }
+    { icon: "ti-vector-triangle", title: "Event Tools", desc: "Support a wide range of preparation needs from modeling and scoring to concept review and test planning." },
+    { icon: "ti-trophy", title: "Performance Review", desc: "Compare strategies, track progress, and identify where your preparation needs improvement." },
+    { icon: "ti-cpu", title: "Competition Prep", desc: "Build a consistent workflow for practice, analysis, and readiness across multiple events." },
+    { icon: "ti-file-analytics", title: "Progress Tracking", desc: "Keep notes, results, and milestones in one place so your team can improve over time." }
   ];
 
   return (
@@ -73,13 +73,13 @@ export default function LandingHome({ onLogin, authLoading, currentUser, onGoToD
       <main style={{ maxWidth: 1100, margin: "0 auto", padding: "80px 40px" }}>
         <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto 80px" }}>
           <div style={{ display: "inline-flex", padding: "6px 12px", background: "var(--color-background-info)", borderRadius: 20, color: "var(--color-text-info)", fontSize: 11, fontWeight: 500, fontFamily: "var(--font-mono)", marginBottom: 24, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Science Olympiad Electric Vehicle Workspace
+            Science Olympiad Prep Platform
           </div>
           <h1 style={{ fontSize: 48, fontWeight: 700, letterSpacing: "-0.03em", lineHeight: 1.1, marginBottom: 18 }}>
-            Engineering precision for competitive edge.
+            A competition toolkit for every kind of Science Olympiad event.
           </h1>
           <p style={{ fontSize: 16, color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: 32 }}>
-            An all-in-one physics simulation, calculation, and data-logging ecosystem engineered to maximize your vehicle's scoring potential and runtime efficiency.
+            Olympiad Studio supports the wide range of preparation styles across Science Olympiad, from analytical study and scoring to design, modeling, and event-specific workflows. The platform is built to grow with many event categories instead of being tied to one specialty.
           </p>
           <button onClick={currentUser ? onGoToDashboard : onLogin} style={{
             padding: "12px 28px", background: "var(--color-text-info)", color: "#ffffff", border: "none",
