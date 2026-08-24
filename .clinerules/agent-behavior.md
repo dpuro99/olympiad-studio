@@ -1,7 +1,7 @@
 # 04 - AI Agent Behavioral Guardrails
 
 ## Memory Bank Protocol
-- **At the start of EVERY new session or task**, you MUST read all markdown documents inside the `memory_bank/` directory (`projectBrief.md`, `systemArchitecture.md`, `progress.md`) to establish state context before writing any code.
+- **At the start of EVERY new session or task**, you MUST read all markdown documents inside the `memory_bank/` directory (`projectBrief.md`, `systemArchitecture.md`, `progress.md`) to catch up on previous progress and establish state context before writing any code.
 - **Self-Documentation Requirement:** If you complete a task that alters the codebase layout or resolves a known bug, you are required to modify and update `memory_bank/progress.md` to reflect the new state of the project before concluding the conversation.
 
 ## Code Modification Protocol
