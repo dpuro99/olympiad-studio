@@ -1,5 +1,6 @@
 import ComingSoon from '../general/ComingSoon';
 import ArcVisualizer from './electricvehicle/ArcVisualizer';
+import RunLogger from './electricvehicle/RunLogger';
 import ScoreCalc from './electricvehicle/ScoreCalc';
 
 // Central registry mapping Science Olympiad events to their modules and categories
@@ -70,8 +71,8 @@ export const EVENT_REGISTRY = {
         ti: "ti-file-analytics", 
         label: "Run Logger", 
         cat: "Testing", 
-        live: false, 
-        component: ComingSoon,
+        live: true, 
+        component: RunLogger,
         desc: "Log and analyze practice runs over time." 
       },
       { 
