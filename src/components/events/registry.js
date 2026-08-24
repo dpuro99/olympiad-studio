@@ -25,7 +25,7 @@ export const EVENT_REGISTRY = {
         id: "score", 
         ti: "ti-trophy", 
         label: "Score Calculator", 
-        cat: "Event", 
+        cat: "Testing", 
         live: true, 
         component: ScoreCalc,
         desc: "Compute official run scores from distance and time errors with Can Bonus multipliers." 
