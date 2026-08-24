@@ -5,8 +5,6 @@ import logo from './assets/logoRect.png';
 import Home from './components/general/Home';
 import { EVENT_REGISTRY } from './components/events/registry';
 
-const WEEK = { hw: 2, lookup: 3, pid: 4, codegen: 5, log: 6, comp: 7 };
-
 export default function App() {
   // Global Theme State: 'dark' or 'light' (default)
   const [theme, setTheme] = useState('light');
@@ -168,7 +166,7 @@ export default function App() {
   } else if (activeModule) {
     // Dynamically render the registered component, passing active config metadata
     const Component = activeModule.component;
-    RenderComponent = <Component mod={activeModule} WEEK={WEEK} />;
+    RenderComponent = <Component mod={activeModule} />;
   }
 
   return (
