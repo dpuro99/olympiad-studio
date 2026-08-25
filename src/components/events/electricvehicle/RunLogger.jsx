@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../../supabaseClient';
 
 export default function RunLogger() {
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Form State
   const [targetD, setTargetD] = useState('');
@@ -18,12 +21,9 @@ export default function RunLogger() {
   const inputStyle = { width: "100%", padding: 8, background: "var(--color-background-tertiary)", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-primary)", borderRadius: 6, fontSize: 13, fontFamily: "var(--font-mono)" };
   const labelStyle = { display: "block", fontSize: 11, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6, fontFamily: "var(--font-mono)" };
 
-  useEffect(() => {
-    fetchRuns();
-  }, []);
-
   const fetchRuns = async () => {
     setLoading(true);
+    setError('');
     try {
       // Get current logged-in user
       const { data: { user } } = await supabase.auth.getUser();
@@ -44,15 +44,17 @@ export default function RunLogger() {
       
     } catch (err) {
       console.warn("Could not fetch runs from DB:", err.message);
-      // Fallback dummy data so you can see the UI working
-      setRuns([
-        { id: 1, created_at: new Date().toISOString(), target_distance: 8.5, actual_distance: 8.55, run_time: 12.1, final_score: 24.3, notes: "Good run, slight drift left." },
-        { id: 2, created_at: new Date(Date.now() - 86400000).toISOString(), target_distance: 10.0, actual_distance: 9.8, run_time: 15.2, final_score: 41.0, notes: "Battery was low." }
-      ]);
+      setRuns([]);
+      setError(`Unable to load run history: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchTimer = setTimeout(fetchRuns, 0);
+    return () => clearTimeout(fetchTimer);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,13 +69,10 @@ export default function RunLogger() {
     };
 
     try {
+      setSaving(true);
+      setError('');
       const { data: { user } } = await supabase.auth.getUser();
-      if (!supabase.from || !user) {
-        // Fallback: push locally if DB isn't ready
-        setRuns([{ ...newRun, id: Date.now(), created_at: new Date().toISOString() }, ...runs]);
-        resetForm();
-        return;
-      }
+      if (!supabase.from || !user) throw new Error('No authenticated user is available.');
 
       const { error } = await supabase
         .from('practice_runs')
@@ -86,7 +85,9 @@ export default function RunLogger() {
 
     } catch (err) {
       console.error("Error saving run:", err);
-      alert("Failed to save run. Check console.");
+      setError(`Unable to save run: ${err.message}`);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -98,16 +99,27 @@ export default function RunLogger() {
     setNotes('');
   };
   const handleDelete = async (id) => {
-    const { error } = await supabase
-            .from('practice_runs')
-            .delete()
-            .eq('id', id);
+    setDeleting(true);
+    setError('');
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No authenticated user is available.');
 
-    if (error) {
-        alert(`Failed to delete: ${error.message}`);
-    } else {
-        // Remove deleted run from screen immediately
-        setRuns((prevRuns) => prevRuns.filter((run) => run.id !== id));
+      const { error: deleteError } = await supabase
+        .from('practice_runs')
+        .delete()
+        .eq('id', id)
+        .eq('event_id', 'ev')
+        .eq('user_id', user.id);
+
+      if (deleteError) throw deleteError;
+      setRuns((prevRuns) => prevRuns.filter((run) => run.id !== id));
+    } catch (err) {
+      console.error("Error deleting run:", err);
+      setError(`Unable to delete run: ${err.message}`);
+    } finally {
+      setDeleting(false);
+      setDeletingId(null);
     }
   };
 
@@ -149,8 +161,8 @@ export default function RunLogger() {
           <button type="submit" style={{ 
             width: "100%", padding: "10px", background: "var(--color-text-info)", color: "#fff", 
             border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500, cursor: "pointer" 
-          }}>
-            Save Run Data
+          }} disabled={saving}>
+            {saving ? "Saving..." : "Save Run Data"}
           </button>
         </form>
       </div>
@@ -159,6 +171,10 @@ export default function RunLogger() {
       <div style={{ ...cardStyle, width: 340, flexShrink: 0 }}>
         <h2 style={{ fontSize: 16, fontWeight: 500, marginBottom: 16 }}>Run History</h2>
         
+        {error && (
+          <div role="alert" style={{ fontSize: 13, color: "var(--color-text-danger)", marginBottom: 12 }}>{error}</div>
+        )}
+
         {loading ? (
           <div style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>Loading history...</div>
         ) : runs.length === 0 ? (
@@ -181,8 +197,8 @@ export default function RunLogger() {
                         <button
                           onClick={() => {
                             handleDelete(run.id);
-                            setDeletingId(null);
                           }}
+                          disabled={deleting}
                           style={{
                             background: "var(--color-text-danger)",
                             color: "#fff",
@@ -194,7 +210,7 @@ export default function RunLogger() {
                             fontWeight: 600
                           }}
                         >
-                          Confirm?
+                          {deleting ? "Deleting..." : "Confirm?"}
                         </button>
                         <button
                           onClick={() => setDeletingId(null)}

@@ -1,4 +1,3 @@
-import React from 'react';
 import logo from '/src/assets/logoRect.png';
 
 export default function LandingHome({ onLogin, authLoading, currentUser, onGoToDashboard, theme, toggleTheme }) {
