@@ -37,12 +37,15 @@ There is no URL router. Navigation state is intentionally local to the SPA for n
 	label,
 	cat,
 	live,
+	requiresAuth,
 	component,
 	desc
 }
 ```
 
 Shared views consume registry data. New tools must be registered rather than hardcoded into `Home.jsx` or `App.jsx`. Unfinished tools use `live: false` and render `ComingSoon` unless a deliberate preview behavior is specified.
+
+`requiresAuth: true` identifies modules that need an authenticated Supabase user or another backend capability. `App.jsx` gates those modules for guests with the shared `AuthRequired` view before the module component mounts. Backend-dependent tools should declare this capability in the registry instead of implementing guest checks themselves.
 
 ## Module Boundaries
 

@@ -18,6 +18,7 @@ export const EVENT_REGISTRY = {
         label: "Arc Visualizer", 
         cat: "Design", 
         live: true, 
+        requiresAuth: false,
         component: ArcVisualizer,
         desc: "Visualize arc geometry and compute wheel arc lengths based on 2026 rules." 
       },
@@ -27,6 +28,7 @@ export const EVENT_REGISTRY = {
         label: "Score Calculator", 
         cat: "Testing", 
         live: true, 
+        requiresAuth: false,
         component: ScoreCalc,
         desc: "Estimate practice run scores from distance and time errors, optional can bonus, and manual penalties." 
       },
@@ -72,6 +74,7 @@ export const EVENT_REGISTRY = {
         label: "Run Logger", 
         cat: "Testing", 
         live: true, 
+        requiresAuth: true,
         component: RunLogger,
         desc: "Log and analyze practice runs over time." 
       },
