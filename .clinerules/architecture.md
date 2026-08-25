@@ -1,37 +1,20 @@
-# 01 - System Architecture & Tech Stack Rules
+# System Architecture Rules
 
-## Project Definition
-You are assisting with **Olympiad Studio**, a registry-driven React application serving as a workspace platform for Science Olympiad teams. Adhere strictly to the architectural constraints, file structure, and quality standards defined below.
+- The project is a React 19 + Vite SPA using local React state and Supabase JS. Do not add a router or state library without a demonstrated need and user approval.
+- `src/App.jsx` owns theme, auth/session state, landing/dashboard gating, selected event, and active module state.
+- `src/supabaseClient.js` owns the singleton browser client and must read configuration from Vite environment variables.
+- `src/components/events/registry.js` is the source of truth for event and module registration.
+- `src/components/events/[event-name]/` owns event-specific UI and domain logic.
+- `src/components/general/` owns shared landing, lobby/workspace views, and coming-soon states.
 
-## Core Tech Stack
-- **Frontend Framework:** React (Vite-powered SPA, no routing library).
-- **Backend-as-a-Service:** Supabase (Client-side JS SDK).
+## Registry Contract
 
-## Directory & Architecture Map
-Follow the current module boundaries exactly when modifying or adding functionality:
-- `src/App.jsx` - App controller managing global state (Theme, Current View/Event/Module).
-- `src/supabaseClient.js` - Global Supabase browser client setup.
-- `src/components/events/registry.js` - The central source of truth for modular features.
-- `src/components/events/[event-name]/` - Event-specific engineering tools, visualizers, and loggers.
-- `src/components/general/` - Shell infrastructure (`Home.jsx`, `LandingHome.jsx`, `ComingSoon.jsx`).
+New tools must be registered in `registry.js`, not hardcoded into `App.jsx` or `Home.jsx`. Modules use the established `id`, `ti`, `label`, `cat`, `live`, `component`, and `desc` fields. Unfinished tools use `live: false` and `ComingSoon`.
 
-## Core Architectural Constraints
+## State and Data Boundaries
 
-### Registry-Driven Architecture
-- **NEVER** hardcode new modules directly into the dashboard layouts (`Home.jsx` or `App.jsx`).
-- All tools must be registered inside `src/components/events/registry.js` using the standard data schema:
-  ```js
-  { 
-    id: 'module-id', 
-    ti: 'ti-icon-name', 
-    label: 'Module Name', 
-    cat: 'CategoryName', 
-    live: true, 
-    component: ComponentReference, 
-    desc: 'Description string.' 
-  }
-  ```
-- Unfinished features must have `live: false` or point directly to the shared `ComingSoon` component.
-
-### State & Navigation
-- The app functions entirely as a single-page layout driven by local React state. Do not install or introduce a routing engine unless explicitly instructed.
+- Preserve the two-level local navigation model: event lobby, then event workspace/module.
+- Practice-run queries and mutations must include the authenticated user and event identity.
+- Client-side filters do not replace Supabase Row Level Security.
+- Database errors must not be represented as an empty successful result or as unmarked fake user data.
+- Keep event formulas out of global controller files.

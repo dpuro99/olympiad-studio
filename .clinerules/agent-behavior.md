@@ -1,23 +1,31 @@
-# 04 - AI Agent Behavioral Guardrails
+# AI Agent Workflow
 
-## Memory Bank Protocol
-- **At the start of EVERY new session or task**, you MUST read all markdown documents inside the `memory_bank/` directory (`projectBrief.md`, `systemArchitecture.md`, `progress.md`) to catch up on previous progress and establish state context before writing any code.
-- **Self-Documentation Requirement:** If you complete a task that alters the codebase layout or resolves a known bug, you are required to modify and update `memory_bank/progress.md` to reflect the new state of the project before concluding the conversation.
+## Context First
 
-## Code Modification Protocol
-- **Incremental Diffing Only:** When modifying large files (like `src/App.jsx` or `RunLogger.jsx`), execute surgical line block replacements. Do not strip out working context or overwrite structural loops.
-- **Code Preservation:** You are strictly forbidden from eliminating inactive code snippets, comment notes, legacy hooks, or structural helper functions unless specifically tasked to perform refactoring.
+- At the start of every task, read all files in `memory_bank/` before writing code.
+- Treat the memory bank as verified project context, while treating its explicit uncertainty notes as unresolved requirements.
+- Inspect the owning component, nearby call sites, and relevant configuration before editing.
 
-## Bug Elimination & Pre-compilation Checks
-- **No Unused React Imports:** Do not include `import React from 'react';` at the top of JSX files unless standard hooks (`useState`, etc.) are being extracted.
-- **No Temporal Hoisting:** Declare data gathering structures, fetching routines, and auxiliary components (like `fetchRuns`) *before* referencing or running them within secondary blocks or execution loops like `useEffect`.
-- **Pure Render Lifecycles:** Never inject impure calls like `Date.now()` or direct side effects inside the component's main rendering loop. Wrap state modifications and timestamps in event handlers or lifecycle hooks.
-- **Async UI Feedback:** Ensure write routines (like saving scores or deleting histories in tables like `practice_runs`) feature explicitly handled UI toggle states (`loading`, `isPending`) to block accidental double-click form submission spikes.
+## Discovery and Decisions
 
-## Workspace Tool Isolation
-- All computation formulas, score metrics, layout constants, and parsing configurations related to a specific event must remain locked inside that tool's specific directory.
-- Do not export tool-specific business calculations into global spaces like `src/App.jsx`.
+- For every non-trivial request, identify the decisions that could affect the user's result: goal, users, behavior, visual direction, constraints, edge cases, and definition of done.
+- Ask a concise, prioritized set of questions before editing when important details are missing. Do not assume the first prompt fully expresses the user's vision.
+- Minor implementation details already determined by project conventions may be resolved autonomously.
+- Ask for confirmation before destructive operations, broad refactors, dependency or schema changes, credential/configuration changes, or changes to existing user data or public behavior unless clearly authorized.
 
-## Automated Quality Gate
-- After editing files, you are required to run `npm run lint` within the integration execution sandbox.
-- You must verify that your modifications are cleanly structured and do not create unused variables or structural breaking issues.
+## Implementation
+
+- Make the smallest root-cause change that satisfies the request.
+- Preserve unrelated user work. Do not remove code merely because it is inactive; remove or refactor it when it is demonstrably dead, harmful, or explicitly in scope.
+- Keep event formulas, scoring, parsing, and layout constants inside the owning event directory.
+- Never invent Science Olympiad rules. Label assumptions and provisional formulas clearly.
+- Keep render functions pure; put side effects in event handlers or effects.
+- Give mutations pending, success, and failure states and prevent duplicate submissions.
+
+## Validation and Handoff
+
+- After editing, run the narrowest relevant validation first.
+- Run `npm run lint` after JavaScript/JSX changes and `npm run build` for integration or configuration changes.
+- Review the resulting diff for scope, accessibility, responsive behavior, and accidental credential exposure.
+- Update `memory_bank/progress.md` when scope, architecture, behavior, known bugs, or uncertainties change meaningfully.
+- Report changed files, validation results, assumptions, and remaining risks.

@@ -1,10 +1,17 @@
-# 03 - Security, Data Integrity & A11y Rules
+# Security, Data, and Accessibility Rules
 
-## Credential Safety & Data Integrity
-- **STRICT ENFORCEMENT:** Never copy-paste or expose physical project API keys or endpoints into the source tree.
-- Always reference database parameters securely via the environment envelope using `import.meta.env.VITE_SUPABASE_URL` and `import.meta.env.VITE_SUPABASE_ANON_KEY`.
+## Credentials and Data
 
-## User Semantics & Accessibility (a11y)
-- **Interactive Elements:** Do not create clickable element bindings or navigation selectors out of flat layout wrappers like standard `div` or `span` components. Always rely on semantic `<button>` or anchor `<a>` primitives to protect natural keyboard tab indexing and assistive screen-reader tracking.
-- **Destructive Confirmations:** Any operation that removes records permanently (such as clearing logs or deleting records from the running history panel) must require an intermediate prompt, alert popover, or double-click check phase from the user before executing.
-- **Hover Styles:** Manage hover states purely via CSS pseudo-classes (`:hover`) in the stylesheet. Do not use JavaScript mouse events (`onMouseEnter`, `onMouseLeave`) for styling purposes.
+- Never hardcode or expose project credentials in source files. Use `import.meta.env.VITE_SUPABASE_URL` and `import.meta.env.VITE_SUPABASE_ANON_KEY`.
+- Treat the Supabase anon key as browser configuration, not as authorization. Rely on Row Level Security for record protection.
+- Scope user-owned reads, inserts, updates, and deletes by the authenticated user and relevant event.
+- Distinguish loading, empty, error, and demo states. Never silently substitute fake records for a failed production query.
+- Do not log tokens, credentials, private user data, or unnecessary database responses.
+
+## Accessibility
+
+- Use semantic `<button>` and `<a>` elements for all interactive controls; do not bind navigation to plain layout elements.
+- Provide accessible names for icon-only controls and meaningful labels for form inputs.
+- Preserve keyboard focus, disabled states, visible focus styling, and usable contrast in both themes.
+- Destructive operations require an explicit confirmation step.
+- Use CSS pseudo-classes for hover and focus styling rather than JavaScript mouse handlers.
