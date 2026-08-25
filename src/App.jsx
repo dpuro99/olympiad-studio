@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import LandingHome from './components/general/LandingHome';
 import logo from './assets/logoRect.png';
@@ -178,32 +178,32 @@ export default function App() {
         {/* Clickable Header Button: Contextually changes depending on Workspace level */}
         {selectedEventId ? (
           /* LEVEL 2: Workspace View is active. Click goes back to Level 1 Multi-Event Hub Dashboard */
-          <div 
+          <button
+            type="button"
+            className="dashboard-brand-button"
             onClick={() => { setSelectedEventId(null); setPage("home"); }} 
             style={{ padding: "14px 12px 10px", borderBottom: "0.5px solid var(--color-border-tertiary)", cursor: "pointer", transition: "opacity 0.2s" }}
-            onMouseOver={(e) => e.currentTarget.style.opacity = 0.7}
-            onMouseOut={(e) => e.currentTarget.style.opacity = 1}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
               <img src={logo} alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
               <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>Olympiad Studio</div>
             </div>
             <div style={{ fontSize: 11, color: "var(--color-text-info)", fontFamily: "var(--font-mono)", paddingLeft: 24, fontWeight: 600 }}>&larr; Back to Dashboard</div>
-          </div>
+          </button>
         ) : (
           /* LEVEL 1: Lobby View is active. Click returns user to public-facing Landing Page */
-          <div 
+          <button
+            type="button"
+            className="dashboard-brand-button"
             onClick={() => setCurrentView("landing")} 
             style={{ padding: "14px 12px 10px", borderBottom: "0.5px solid var(--color-border-tertiary)", cursor: "pointer", transition: "opacity 0.2s" }}
-            onMouseOver={(e) => e.currentTarget.style.opacity = 0.7}
-            onMouseOut={(e) => e.currentTarget.style.opacity = 1}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
               <img src={logo} alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
               <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>Olympiad Studio</div>
             </div>
             <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", paddingLeft: 24 }}>&larr; Back to Home</div>
-          </div>
+          </button>
         )}
         
         {/* Dynamic Navigation Sidebar Menu */}
@@ -237,8 +237,6 @@ export default function App() {
                     color: "var(--color-text-secondary)", fontSize: 12, textAlign: "left", marginBottom: 4,
                     transition: "color 0.2s"
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = "var(--color-text-primary)"}
-                  onMouseOut={(e) => e.currentTarget.style.color = "var(--color-text-secondary)"}
                 >
                   <i className="ti ti-folder" style={{ fontSize: 14 }}></i>
                   <span>{EVENT_REGISTRY[key].name}</span>
@@ -259,8 +257,6 @@ export default function App() {
               color: "var(--color-text-secondary)", fontSize: 11, marginBottom: 12,
               transition: "background 0.2s"
             }}
-            onMouseOver={(e) => e.currentTarget.style.background = "var(--color-background-tertiary)"}
-            onMouseOut={(e) => e.currentTarget.style.background = "transparent"}
           >
             {theme === 'dark' ? (
                <svg style={{ pointerEvents: "none" }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>

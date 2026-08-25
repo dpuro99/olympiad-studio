@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
 // Math Helpers for 2026 EV Rules
 // Outer can is fixed at 1.0m to the left of the straight line.
@@ -54,7 +54,7 @@ function arcPts(fwd, canGap, rOff, hasCans, n = 100) {
 }
 
 function makeTx(pts, W, H, pad = 36) {
-  if (!pts.length) return (x, y) => ({ x: W / 2, y: H / 2 });
+  if (!pts.length) return () => ({ x: W / 2, y: H / 2 });
   const xs = pts.map(p => p.x), ys = pts.map(p => p.y);
   // Ensure the 1.0m left boundary is always in view
   const x0 = Math.min(...xs, -1.2), x1 = Math.max(...xs, 0.2), y0 = -0.2, y1 = Math.max(...ys) + 0.2;

@@ -1,4 +1,3 @@
-import React from 'react';
 
 export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTRY, onSelectEvent }) {
   // --- LEVEL 1: MULTI-EVENT HUB ---
@@ -59,8 +58,10 @@ export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTR
               const liveTools = evt.modules.filter(m => m.live).length;
               
               return (
-                <div
+                <button
                   key={key}
+                  type="button"
+                  className="event-card"
                   onClick={() => onSelectEvent(key)}
                   style={{
                     background: "var(--color-background-secondary)",
@@ -74,16 +75,6 @@ export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTR
                     justifyContent: "space-between",
                     height: "220px",
                     boxShadow: "0 2px 8px rgba(0,0,0,0.02)"
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = "var(--color-text-info)";
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.08)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.borderColor = "var(--color-border-secondary)";
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.02)";
                   }}
                 >
                   <div>
@@ -121,7 +112,7 @@ export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTR
                       <span style={{ fontSize: 11, color: "var(--color-text-info)", fontWeight: 500 }}>Open Workspace &rarr;</span>
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -180,8 +171,10 @@ export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTR
               gap: 16
             }}>
               {modulesInCat.map(mod => (
-                <div
+                <button
                   key={mod.id}
+                  type="button"
+                  className="module-card"
                   onClick={() => onNav(mod.id)} // Fully clickable for both Ready and Under Dev tools!
                   style={{
                     background: "var(--color-background-secondary)",
@@ -195,14 +188,6 @@ export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTR
                     flexDirection: "column",
                     justifyContent: "space-between",
                     height: "100%"
-                  }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.borderColor = "var(--color-text-info)";
-                    e.currentTarget.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.borderColor = mod.live ? "var(--color-border-secondary)" : "var(--color-border-tertiary)";
-                    e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
                   <div>
@@ -243,7 +228,7 @@ export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTR
                       {mod.live ? "Open Tool" : "View Timeline"} &rarr;
                     </span>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           </div>

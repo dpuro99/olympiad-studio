@@ -21,9 +21,17 @@
 
 ## Domain Uncertainties
 
-- The Electric Vehicle arc geometry and score formulas must be checked against the applicable official rules before being described as official.
-- `ScoreCalc.jsx` currently contains configurable assumptions for weights, penalties, and can bonus behavior.
-- Unit labels and comments around the can gap need reconciliation with the intended rule terminology.
+- The 2026 Electric Vehicle score inputs used by the preparation estimator are verified: base score 100, distance score 2.0 pt/cm, time score absolute target/run-time difference, and can bonus `-0.5 x (110 - Inside Can Distance)`.
+- The score tool intentionally remains a single-run preparation estimator. Two-run selection, failed-run scoring, event-time bonus, and automatic violation categories are out of scope; users manually enter optional penalty points.
+- The arc visualizer is a design estimator. The rules define can placement and track geometry, but do not prescribe a single vehicle turning model.
+- Arc terminology and the relationship between the selected inner-can distance and the visualized path still need product clarification.
+
+## Recent Improvements
+
+- Lint is clean across the project.
+- Dashboard cards and navigation controls use semantic buttons with CSS hover/focus states.
+- Run Logger distinguishes database errors from empty history, prevents duplicate saves, shows delete progress, and scopes deletes by user and event.
+- Score calculation is isolated in `scoreUtils.js` and covered by focused Node tests using the official worked example.
 
 ## Working Agreement
 

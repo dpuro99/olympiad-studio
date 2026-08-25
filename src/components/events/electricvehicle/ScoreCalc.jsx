@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { calculatePracticeScore } from './scoreUtils';
 
 export default function ScoreCalc() {
   const [targetDistance, setTargetDistance] = useState(7.5); // m
@@ -10,22 +11,15 @@ export default function ScoreCalc() {
   const [successCan, setSuccessCan] = useState(true);
   const [penalties, setPenalties] = useState(0);
   
-  // Scoring Weights (Adjustable if ES modifies them)
-  const [distWeight, setDistWeight] = useState(2); // 2 pt per cm
-  const [timeWeight, setTimeWeight] = useState(1); // 1 pt per second
-
-  // Standard Formula: 100 + DistanceScore + TimeScore + Penalties - Bonus
-  // Using 100 as base is common in Scrambler/EV so negative bonuses don't drop score below zero
-  const baseScore = 100;
-  const distScore = distanceFromTarget * distWeight;
-  const timeScore = Math.abs(runTime - targetTime) * timeWeight;
-  
-  // Can Bonus calculation: Bonus increases as the gap gets smaller.
-  // Standard format is often: Can Bonus = (Max Gap - Inside Can Distance) or a flat tier.
-  // We provide a live calculation here assuming a standard subtraction format.
-  const canBonus = (hasCans && successCan) ? Math.max(0, (0.5 * (110 - insideCanDist))) : 0;
-  
-  const totalScore = baseScore + distScore + timeScore + penalties - canBonus;
+  const { baseScore, distanceScore: distScore, timeScore, canBonus, totalScore } = calculatePracticeScore({
+    distanceFromTarget,
+    targetTime,
+    runTime,
+    hasCans,
+    successCan,
+    insideCanDist,
+    penalties
+  });
 
   const cardStyle = { background: "var(--color-background-secondary)", border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)", padding: 20 };
   const inputStyle = { width: "100%", padding: 8, background: "var(--color-background-tertiary)", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-primary)", borderRadius: 6, fontSize: 14 };
@@ -110,7 +104,7 @@ export default function ScoreCalc() {
         {hasCans && (
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12, fontSize: 14 }}>
             <span style={{ color: "var(--color-text-secondary)" }}>Can Bonus</span>
-            <span style={{ color: "var(--color-text-success)", fontWeight: 500 }}>-{canBonus.toFixed(1)}</span>
+            <span style={{ color: "var(--color-text-success)", fontWeight: 500 }}>{canBonus.toFixed(1)}</span>
           </div>
         )}
 
@@ -130,21 +124,6 @@ export default function ScoreCalc() {
           </span>
         </div>
         <div style={{ fontSize: 11, color: "var(--color-text-secondary)", textAlign: "right", marginTop: 4 }}>Lower is better</div>
-
-        {/* Small Settings Area for Rule Specifics */}
-        <div style={{ marginTop: 24, paddingTop: 16, borderTop: "1px dashed var(--color-border-tertiary)" }}>
-          <div style={{ fontSize: 10, color: "var(--color-text-secondary)", textTransform: "uppercase", marginBottom: 8 }}>Scoring Multipliers</div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <div style={{ flex: 1 }}>
-              <span style={{ fontSize: 10, display: "block" }}>Pts/cm</span>
-              <input type="number" value={distWeight} onChange={e => setDistWeight(parseFloat(e.target.value)||1)} style={{...inputStyle, padding: "4px", fontSize: 12}} />
-            </div>
-            <div style={{ flex: 1 }}>
-              <span style={{ fontSize: 10, display: "block" }}>Pts/sec</span>
-              <input type="number" value={timeWeight} onChange={e => setTimeWeight(parseFloat(e.target.value)||5)} style={{...inputStyle, padding: "4px", fontSize: 12}} />
-            </div>
-          </div>
-        </div>
 
       </div>
     </div>

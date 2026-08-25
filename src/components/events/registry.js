@@ -28,7 +28,7 @@ export const EVENT_REGISTRY = {
         cat: "Testing", 
         live: true, 
         component: ScoreCalc,
-        desc: "Compute official run scores from distance and time errors with Can Bonus multipliers." 
+        desc: "Estimate practice run scores from distance and time errors, optional can bonus, and manual penalties." 
       },
       { 
         id: "hw", 
