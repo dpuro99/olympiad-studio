@@ -32,6 +32,8 @@
 - Dashboard cards and navigation controls use semantic buttons with CSS hover/focus states.
 - Run Logger distinguishes database errors from empty history, prevents duplicate saves, shows delete progress, and scopes deletes by user and event.
 - Score calculation is isolated in `scoreUtils.js` and covered by focused Node tests using the official worked example.
+- Guest mode is available from the landing page and opens the dashboard with in-memory calculator use; Run Logger requires Google sign-in and does not contact Supabase while in guest mode.
+- Backend access is now modular: registry entries declare `requiresAuth`, and `App.jsx` renders the shared `AuthRequired` gate before protected tools mount.
 
 ## Working Agreement
 

@@ -3,6 +3,7 @@ import { supabase } from './supabaseClient';
 import LandingHome from './components/general/LandingHome';
 import logo from './assets/logoRect.png';
 import Home from './components/general/Home';
+import AuthRequired from './components/general/AuthRequired';
 import { EVENT_REGISTRY } from './components/events/registry';
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
   
   // User Authentication State
   const [currentUser, setCurrentUser] = useState(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   
@@ -45,6 +47,7 @@ export default function App() {
     const finishInit = (session) => {
       if (!isMounted) return;
       setCurrentUser(session?.user || null);
+      setIsGuest(false);
       if (session?.user) setCurrentView("dashboard");
       setLoading(false);
     };
@@ -61,6 +64,7 @@ export default function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!isMounted) return;
       setCurrentUser(session?.user || null);
+      setIsGuest(false);
       if (session?.user) setCurrentView("dashboard");
       setLoading(false);
     });
@@ -95,8 +99,14 @@ export default function App() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setCurrentView("landing");
+    setIsGuest(false);
     setSelectedEventId(null);
     setPage("home");
+  };
+
+  const handleGuestAccess = () => {
+    setIsGuest(true);
+    setCurrentView("dashboard");
   };
 
   const handleEventSwitch = (eventId) => {
@@ -137,13 +147,14 @@ export default function App() {
   }
 
   // Intercept routing logic: If on landing view or not logged in, render the clean public homepage
-  if (currentView === "landing" || !currentUser) {
+  if (currentView === "landing" || (!currentUser && !isGuest)) {
     return (
       <LandingHome 
         onLogin={handleGoogleLogin} 
         authLoading={authLoading} 
         currentUser={currentUser}
         onGoToDashboard={() => setCurrentView("dashboard")} 
+        onGuestAccess={handleGuestAccess}
         theme={theme}
         toggleTheme={toggleTheme}
       />
@@ -164,9 +175,12 @@ export default function App() {
       />
     );
   } else if (activeModule) {
-    // Dynamically render the registered component, passing active config metadata
-    const Component = activeModule.component;
-    RenderComponent = <Component mod={activeModule} />;
+    if (isGuest && activeModule.requiresAuth) {
+      RenderComponent = <AuthRequired mod={activeModule} onLogin={handleGoogleLogin} />;
+    } else {
+      const Component = activeModule.component;
+      RenderComponent = <Component mod={activeModule} />;
+    }
   }
 
   return (
@@ -266,16 +280,38 @@ export default function App() {
             <span style={{ flex: 1, textAlign: "left" }}>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
           </button>
 
-          <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginBottom: 4 }}>Account:</div>
-          <div style={{ fontSize: 11, fontWeight: 500, color: "var(--color-text-info)", marginBottom: 6, textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }} title={currentUser.email}>
-            {currentUser.email}
-          </div>
-          <button onClick={handleLogout} style={{ background: "none", border: "0.5px solid var(--color-text-danger)", color: "var(--color-text-danger)", width: "100%", padding: "4px 0", borderRadius: "var(--border-radius-md)", fontSize: 11, cursor: "pointer" }}>Log Out</button>
         </div>
       </div>
 
       {/* Main Content Pane */}
       <div style={{ flex: 1, overflowY: "auto" }}>
+        <header style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, padding: "14px 28px", borderBottom: "0.5px solid var(--color-border-tertiary)", background: "var(--color-background-secondary)" }}>
+          {isGuest ? (
+            <button onClick={handleGoogleLogin} disabled={authLoading} style={{
+              padding: "8px 16px", background: "#ffffff", color: "#1f1f1f",
+              border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500,
+              display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13,
+              boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
+            }}>
+              <svg width="14" height="14" viewBox="0 0 18 18">
+                <path d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.79 2.7v2.24h2.9c1.69-1.55 2.69-3.84 2.69-6.57z" fill="#4285F4"/>
+                <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.24c-.8.54-1.84.87-3.06.87-2.35 0-4.34-1.58-5.05-3.71H.96v2.32C2.44 15.09 5.47 18 9 18z" fill="#34A853"/>
+                <path d="M3.95 10.74c-.18-.54-.28-1.12-.28-1.74s.1-1.2.28-1.74V4.94H.96A8.977 8.977 0 0 0 0 9c0 1.48.36 2.9 1 4.14l2.95-2.4z" fill="#FBBC05"/>
+                <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.8 11.42 0 9 0 5.47 0 2.44 2.91.96 5.34l2.95 2.32C4.66 5.16 6.65 3.58 9 3.58z" fill="#EA4335"/>
+              </svg>
+              {authLoading ? "Connecting..." : "Sign In with Google"}
+            </button>
+          ) : (
+            <>
+              <span style={{ maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--color-text-info)" }} title={currentUser.email}>
+                {currentUser.email}
+              </span>
+              <button onClick={handleLogout} style={{ background: "none", border: "0.5px solid var(--color-text-danger)", color: "var(--color-text-danger)", padding: "7px 12px", borderRadius: "var(--border-radius-md)", fontSize: 12, }}>
+                Log Out
+              </button>
+            </>
+          )}
+        </header>
         <div style={{ padding: "24px 28px", maxWidth: 860 }}>
           {/* Breadcrumbs Section */}
           {page !== "home" && (
