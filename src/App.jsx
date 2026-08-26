@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import { supabase } from './supabaseClient';
 import LandingHome from './components/general/LandingHome';
-import logo from './assets/logoRect.png';
+import Logo from './components/general/Logo';
 import Home from './components/general/Home';
 import AuthRequired from './components/general/AuthRequired';
+import PageTransition from './PageTransition';
 import { EVENT_REGISTRY } from './components/events/registry';
+
 
 export default function App() {
   // Global Theme State: 'dark' or 'light' (default)
@@ -146,20 +149,19 @@ export default function App() {
     );
   }
 
-  // Intercept routing logic: If on landing view or not logged in, render the clean public homepage
-  if (currentView === "landing" || (!currentUser && !isGuest)) {
-    return (
-      <LandingHome 
-        onLogin={handleGoogleLogin} 
-        authLoading={authLoading} 
-        currentUser={currentUser}
-        onGoToDashboard={() => setCurrentView("dashboard")} 
-        onGuestAccess={handleGuestAccess}
-        theme={theme}
-        toggleTheme={toggleTheme}
-      />
-    );
-  }
+  const showLanding = currentView === "landing" || (!currentUser && !isGuest);
+
+  const landingContent = (
+    <LandingHome 
+      onLogin={handleGoogleLogin} 
+      authLoading={authLoading} 
+      currentUser={currentUser}
+      onGoToDashboard={() => setCurrentView("dashboard")} 
+      onGuestAccess={handleGuestAccess}
+      theme={theme}
+      toggleTheme={toggleTheme}
+    />
+  );
 
   // Resolve dynamic view render based on current drill-down state
   let RenderComponent = null;
@@ -183,7 +185,7 @@ export default function App() {
     }
   }
 
-  return (
+  const dashboardContent = (
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "var(--font-sans)", backgroundColor: "var(--color-background-primary)" }}>
       
       {/* Sidebar Navigation Dashboard Panel */}
@@ -199,8 +201,7 @@ export default function App() {
             style={{ padding: "14px 12px 10px", borderBottom: "0.5px solid var(--color-border-tertiary)", cursor: "pointer", transition: "opacity 0.2s" }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <img src={logo} alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
-              <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>Olympiad Studio</div>
+              <Logo compact />
             </div>
             <div style={{ fontSize: 11, color: "var(--color-text-info)", fontFamily: "var(--font-mono)", paddingLeft: 24, fontWeight: 600 }}>&larr; Back to Dashboard</div>
           </button>
@@ -213,8 +214,7 @@ export default function App() {
             style={{ padding: "14px 12px 10px", borderBottom: "0.5px solid var(--color-border-tertiary)", cursor: "pointer", transition: "opacity 0.2s" }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-              <img src={logo} alt="Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
-              <div style={{ fontSize: 13, fontWeight: 500, color: "var(--color-text-primary)" }}>Olympiad Studio</div>
+              <Logo compact />
             </div>
             <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", paddingLeft: 24 }}>&larr; Back to Home</div>
           </button>
@@ -303,8 +303,8 @@ export default function App() {
             </button>
           ) : (
             <>
-              <span style={{ maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--color-text-info)" }} title={currentUser.email}>
-                {currentUser.email}
+              <span style={{ maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--color-text-info)" }} title={currentUser?.email}>
+                {currentUser?.email}
               </span>
               <button onClick={handleLogout} style={{ background: "none", border: "0.5px solid var(--color-text-danger)", color: "var(--color-text-danger)", padding: "7px 12px", borderRadius: "var(--border-radius-md)", fontSize: 12, }}>
                 Log Out
@@ -334,9 +334,21 @@ export default function App() {
           
           {page !== "home" && activeModule && <h1 style={{ fontSize: 20, fontWeight: 500, marginBottom: 20, color: "var(--color-text-primary)" }}>{activeModule.label}</h1>}
           
-          {RenderComponent}
+          <AnimatePresence mode="wait" initial={false}>
+            <PageTransition key={`${selectedEventId || "lobby"}-${page}`}>
+              {RenderComponent}
+            </PageTransition>
+          </AnimatePresence>
         </div>
       </div>
     </div>
+  );
+
+  return (
+    <AnimatePresence mode="wait">
+      <PageTransition key={showLanding ? "landing" : "dashboard"}>
+        {showLanding ? landingContent : dashboardContent}
+      </PageTransition>
+    </AnimatePresence>
   );
 }

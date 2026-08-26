@@ -1,4 +1,4 @@
-import logo from '/src/assets/logoRect.png';
+import Logo from './Logo';
 
 export default function LandingHome({ currentUser, onGoToDashboard, onGuestAccess, theme, toggleTheme }) {
   const features = [
@@ -10,10 +10,7 @@ export default function LandingHome({ currentUser, onGoToDashboard, onGuestAcces
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--color-background-primary)", color: "var(--color-text-primary)", fontFamily: "var(--font-sans)" }}>
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 40px", borderBottom: "0.5px solid var(--color-border-tertiary)", backgroundColor: "var(--color-background-secondary)", position: "sticky", top: 0, zIndex: 100 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <img src={logo} alt="Olympiad Studio Logo" style={{ width: "auto", height: 35, objectFit: "contain" }} />
-          <span style={{ fontWeight: 600, fontSize: 16 }}>Olympiad Studio</span>
-        </div>
+        <Logo />
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <button onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "50%" }}>
             <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true"></i>
