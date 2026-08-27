@@ -5,6 +5,12 @@ import ScoreCalc from './electricvehicle/ScoreCalc';
 
 // Central registry mapping Science Olympiad events to their modules and categories
 export const EVENT_REGISTRY = {
+  anatomy: { name: "Anatomy and Physiology", code: "ANAT", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  boomilever: { name: "Boomilever", code: "BOOM", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  chemlab: { name: "Chemistry Lab", code: "CHEM", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  circuitlab: { name: "Circuit Lab", code: "CIRC", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  designergenes: { name: "Designer Genes", code: "GENE", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  dynamicplanet: { name: "Dynamic Planet", code: "DYN", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
   ev: {
     name: "Electric Vehicle",
     code: "EV",
@@ -89,4 +95,9 @@ export const EVENT_REGISTRY = {
       }
     ]
   },
+  entomology: { name: "Entomology", code: "ENTO", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  machines: { name: "Machines", code: "MACH", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  metricmastery: { name: "Metric Mastery", code: "METR", division: "B", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  rocksandminerals: { name: "Rocks and Minerals", code: "ROCK", division: "C", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
+  writeitdoit: { name: "Write It, Do It", code: "WIDI", division: "B", description: "...", categories: ["Event"], modules: [{ id: "main", ti: "ti-clipboard", label: "Overview", cat: "Event", live: false, component: ComingSoon, desc: "Coming soon." }] },
 };
