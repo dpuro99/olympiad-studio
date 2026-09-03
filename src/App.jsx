@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { supabase } from './supabaseClient';
+import { trackEvent, trackPageView } from './analytics';
 import LandingHome from './components/general/LandingHome';
 import Logo from './components/general/Logo';
 import Home from './components/general/Home';
@@ -8,39 +9,102 @@ import AuthRequired from './components/general/AuthRequired';
 import PageTransition from './PageTransition';
 import { EVENT_REGISTRY } from './components/events/registry';
 
+const NAVIGATION_STORAGE_KEY = 'olympiad-studio-navigation';
+
+function getStoredNavigation() {
+  try {
+    const storedNavigation = JSON.parse(sessionStorage.getItem(NAVIGATION_STORAGE_KEY));
+    if (!storedNavigation || typeof storedNavigation !== 'object') return {};
+    return storedNavigation;
+  } catch {
+    return {};
+  }
+}
+
 
 export default function App() {
+  const storedNavigation = getStoredNavigation();
+  const storedGuestAccess = storedNavigation.isGuest === true;
   // Global Theme State: 'dark' or 'light' (default)
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(storedNavigation.theme || 'light');
   
   // User Authentication State
   const [currentUser, setCurrentUser] = useState(null);
-  const [isGuest, setIsGuest] = useState(false);
+  const [isGuest, setIsGuest] = useState(storedGuestAccess);
   const [authLoading, setAuthLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   
   // Master View Controller: "landing" or "dashboard"
-  const [currentView, setCurrentView] = useState("landing");
+  const [currentView, setCurrentView] = useState(storedNavigation.currentView || "landing");
   
   // Workspace Navigation drill-down state
   // null means user is in the Multi-Event Lobby (Lobby Home)
-  const [selectedEventId, setSelectedEventId] = useState(null); 
+  const [selectedEventId, setSelectedEventId] = useState(storedNavigation.selectedEventId || null); 
   // "home" means event main dashboard, or custom module ID string (e.g. "arc", "score")
-  const [page, setPage] = useState("home"); 
+  const [page, setPage] = useState(storedNavigation.page || "home"); 
 
   // Resolve active event from registry dynamically
   const currentEvent = selectedEventId ? EVENT_REGISTRY[selectedEventId] : null;
   const CATS = currentEvent ? currentEvent.categories : [];
   const MODS = currentEvent ? currentEvent.modules : [];
   const activeModule = MODS.find(m => m.id === page);
+  const dashboardContentRef = useRef(null);
+  const virtualPage = currentView === "landing" || (!currentUser && !isGuest)
+    ? ""
+    : selectedEventId
+      ? `/events/${encodeURIComponent(selectedEventId)}${page === "home" ? "" : `/${encodeURIComponent(page)}`}`
+      : "/dashboard";
+  const analyticsPage = `${import.meta.env.BASE_URL.replace(/\/$/, '')}${virtualPage || "/"}`;
+  const analyticsPageTitle = activeModule?.label || currentEvent?.name || (analyticsPage === "/" ? "Landing" : "Dashboard");
+
+  useEffect(() => {
+    if (!loading) trackPageView(analyticsPage, analyticsPageTitle);
+  }, [analyticsPage, analyticsPageTitle, loading]);
+
+  useEffect(() => {
+    if (loading || !dashboardContentRef.current || virtualPage === "") return undefined;
+
+    const scrollContainer = dashboardContentRef.current;
+    const milestones = new Set();
+    const handleScroll = () => {
+      const scrollableHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+      if (scrollableHeight <= 0) return;
+
+      const percentScrolled = Math.round((scrollContainer.scrollTop / scrollableHeight) * 100);
+      [25, 50, 75, 100].forEach(milestone => {
+        if (percentScrolled >= milestone && !milestones.has(milestone)) {
+          milestones.add(milestone);
+          trackEvent('scroll_depth', { percent_scrolled: milestone, page_path: analyticsPage });
+        }
+      });
+    };
+
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+  }, [analyticsPage, loading, virtualPage]);
 
   // Sync state changes with document element for CSS variables mapping
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    sessionStorage.setItem(NAVIGATION_STORAGE_KEY, JSON.stringify({
+      currentView,
+      isGuest,
+      selectedEventId,
+      page,
+      theme,
+    }));
+  }, [currentView, isGuest, selectedEventId, page, theme]);
+
   const toggleTheme = () => {
-    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    setTheme(prev => {
+      const nextTheme = prev === 'dark' ? 'light' : 'dark';
+      trackEvent('theme_toggle', { theme: nextTheme });
+      return nextTheme;
+    });
   };
 
   // Listen to Supabase Session and state changes
@@ -50,7 +114,7 @@ export default function App() {
     const finishInit = (session) => {
       if (!isMounted) return;
       setCurrentUser(session?.user || null);
-      setIsGuest(false);
+      setIsGuest(session?.user ? false : storedGuestAccess);
       if (session?.user) setCurrentView("dashboard");
       setLoading(false);
     };
@@ -64,11 +128,13 @@ export default function App() {
         finishInit(null);
       });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!isMounted) return;
       setCurrentUser(session?.user || null);
-      setIsGuest(false);
+      setIsGuest(session?.user || event === 'SIGNED_OUT' ? false : storedGuestAccess);
       if (session?.user) setCurrentView("dashboard");
+      if (event === 'SIGNED_IN') trackEvent('login_success', { method: 'google' });
+      if (event === 'SIGNED_OUT') trackEvent('logout');
       setLoading(false);
     });
 
@@ -76,11 +142,12 @@ export default function App() {
       isMounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [storedGuestAccess]);
 
   const handleGoogleLogin = async () => {
     try {
       setAuthLoading(true);
+      trackEvent('login_attempt', { method: 'google' });
       const redirectBase = window.location.origin + import.meta.env.BASE_URL;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -93,6 +160,7 @@ export default function App() {
       });
       if (error) throw error;
     } catch (err) {
+      trackEvent('login_error', { method: 'google', error_type: err?.name || 'unknown' });
       alert(err.message || 'An error occurred during Google sign in.');
     } finally {
       setAuthLoading(false);
@@ -101,6 +169,7 @@ export default function App() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    sessionStorage.removeItem(NAVIGATION_STORAGE_KEY);
     setCurrentView("landing");
     setIsGuest(false);
     setSelectedEventId(null);
@@ -108,20 +177,34 @@ export default function App() {
   };
 
   const handleGuestAccess = () => {
+    trackEvent('guest_access');
     setIsGuest(true);
     setCurrentView("dashboard");
   };
 
   const handleEventSwitch = (eventId) => {
+    const event = EVENT_REGISTRY[eventId];
+    trackEvent('event_selected', { event_id: eventId, event_name: event?.name });
     setSelectedEventId(eventId);
     setPage("home");
+  };
+
+  const handleModuleNavigation = (moduleId) => {
+    const module = MODS.find(item => item.id === moduleId);
+    trackEvent('module_opened', {
+      event_id: selectedEventId || 'lobby',
+      module_id: moduleId,
+      module_name: module?.label,
+      category: module?.cat,
+    });
+    setPage(moduleId);
   };
 
   // Helper renderer for module navigation buttons in Sidebar
   const navBtn = (id, icon, label, live, sub) => (
     <button 
       key={id} 
-      onClick={() => setPage(id)}
+      onClick={() => handleModuleNavigation(id)}
       style={{
         display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "7px 8px",
         background: page === id ? "var(--color-background-info)" : "transparent", border: "none",
@@ -170,7 +253,7 @@ export default function App() {
       <Home 
         MODS={MODS} 
         CATS={CATS} 
-        onNav={setPage} 
+        onNav={handleModuleNavigation} 
         selectedEventId={selectedEventId}
         EVENT_REGISTRY={EVENT_REGISTRY}
         onSelectEvent={handleEventSwitch}
@@ -264,7 +347,7 @@ export default function App() {
       </div>
 
       {/* Main Content Pane */}
-      <div style={{ flex: 1, overflowY: "auto" }}>
+      <div ref={dashboardContentRef} style={{ flex: 1, overflowY: "auto" }}>
         <header style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, padding: "14px 28px", borderBottom: "0.5px solid var(--color-border-tertiary)", background: "var(--color-background-secondary)" }}>
           <button onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "50%" }}>
             <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true"></i>
