@@ -12,6 +12,7 @@
 **UI components:** Lever diagram display (with fulcrum, effort, load positions marked); equation reference (F_E × d_E = F_L × d_L); input fields for three of four variables; MA calculation (auto-computed or user-entered); solution reveal with diagram annotation.
 **Feedback/scoring logic:** Lever equation setup validated (correct identification of effort/load arms); unknown-solving steps validated independently; MA calculation checked (it should equal load_arm / effort_arm for a lever).
 
+
 ---
 
 ### Tool: Static Equilibrium Force & Torque Analyzer
@@ -25,6 +26,7 @@
 **Content/data needed:** Problem bank with varied equilibrium scenarios: simple levers, compound systems, unusual pivot points, asymmetric loading.
 **UI components:** System diagram with force vectors and dimensions labeled; equation-builder tool (free text or form-based); force/torque balance validation checker; step-by-step solution reveal.
 **Feedback/scoring logic:** Equation setup checked (all forces/torques identified and signed correctly); pivot-point selection validated (user should be able to explain why they chose that pivot); numerical solution validated against algebra.
+
 
 ---
 
@@ -40,6 +42,7 @@
 **UI components:** Problem display; MA formula reference (selectable by machine type); input field for MA; efficiency calculation (auto or user input); solution reveal with working.
 **Feedback/scoring logic:** MA calculation validated per machine-type formula; efficiency calculation checked (should be <1, typically 40-80% for real machines).
 
+
 ---
 
 ### Tool: Compound Machine Analyzer
@@ -54,6 +57,7 @@
 **UI components:** System diagram with annotated stages (Lever: MA=4, Pulley: MA=5, etc.); step-by-step MA multiplier display; efficiency calculation chain; final-force calculation with and without friction.
 **Feedback/scoring logic:** Stage MA values validated per machine-type formulas; overall MA checked (product of stages); efficiency multiplied correctly (accounting for independent friction at each stage).
 
+
 ---
 
 ### Tool: Work, Power & Energy Calculator
@@ -67,73 +71,6 @@
 **UI components:** Problem display; formula reference (W=Fd, PE=mgh, KE=½mv², P=W/t); input fields for unknown; energy diagram (input → useful work → heat loss); solution reveal.
 **Feedback/scoring logic:** Intermediate values (work, individual energies) validated independently; efficiency calculation checked (output/input × 100%); energy conservation verified (input energy ≥ output energy + losses).
 
----
-
-### Tool: Device Testing Mass Ratio Simulator
-**Event:** Machines C
-**Purpose:** Practice the actual device-testing task: measure mass ratios using lever equilibrium, under simulated competition conditions with timing and precision requirements.
-**Core interaction loop:**
-1. Tool simulates a compound lever device (matching the official event specs: Class 1 connected to Class 2 or 3).
-2. User adjusts lever positions (fulcrums, mass attachments) to balance unknown masses A, B, C.
-3. User inputs measured ratios (A/B, B/C) to specified precision.
-4. Tool scores accuracy and time, matching the official competition scoring formula (relative accuracy of measured ratio vs. true ratio).
-**Content/data needed:** Simulated mass sets with known ratios (at Regional, State, National tightness levels); physics model for lever balancing; competition scoring formula (accuracy-based, with time bonus).
-**UI components:** Device visualization (interactive lever diagram); mass attachment position sliders; ratio-input fields; timer (optional); results display (measured ratio, true ratio, accuracy score, time score).
-**Feedback/scoring logic:** Balance validation checks (is the lever actually in equilibrium given the positions and masses?); ratio accuracy scored as given in competition rules (closer to true ratio = more points); timing tracked.
-
----
-
-### Tool: Device Design & Compliance Checker
-**Event:** Machines C
-**Purpose:** Verify that a pre-built device design meets construction specifications (two lever classes connected, beam lengths ≤40cm each, can accommodate test masses) before physical construction.
-**Core interaction loop:**
-1. User describes their device design (lever class 1 and which of class 2 or 3, beam lengths, mass attachment points).
-2. Tool validates compliance: checks that beams don't exceed 40cm, that the two lever classes are distinct, that mass-attachment geometry is feasible.
-3. Tool runs a theoretical equilibrium analysis: "Can this device balance masses up to the 8x (Regional) / 10x (State) / 12x (National) ratio?"
-4. Tool flags any design issues (e.g., "Second lever arm too short — won't have enough sensitivity to distinguish small mass differences").
-**Content/data needed:** Official Machines C device specifications (requirements for two lever classes, beam length limits, mass-ratio range).
-**UI components:** Device-specification input form (lever classes, beam lengths, pivot/attachment positions); compliance checker (pass/fail per requirement); equilibrium simulator showing theoretical range of detectable mass ratios; recommendation panel for design adjustments.
-**Feedback/scoring logic:** Compliance checked against explicit rules (beam length ≤40cm, two different lever classes, etc.); theoretical performance estimated using lever equations and typical mass ranges.
-
----
-
-### Tool: Efficiency Analysis for Friction Losses
-**Event:** Machines C
-**Purpose:** Estimate and account for real-world friction losses in a machine design, improving predictions of actual vs. ideal performance.
-**Core interaction loop:**
-1. Tool shows: "An ideal lever system should lift 200N with 50N effort (MA=4). But the actual effort needed is 60N. Calculate efficiency and determine friction losses."
-2. User calculates: efficiency = ideal MA / real MA = 50/60 = 83%, so 17% of work is lost to friction.
-3. Tool extends: "If friction at the pivot is constant (10N), what would the efficiency be if the load increased to 500N?" (Efficiency improves because friction loss is now smaller relative to total work).
-**Content/data needed:** Problem bank covering friction losses in different machine types; typical efficiency ranges (40-80% for real machines).
-**UI components:** Problem display; ideal vs. real-effort comparison; efficiency calculation display; friction-loss estimation; graph showing efficiency vs. load (demonstrating how constant friction losses have larger percentage impact at small loads).
-**Feedback/scoring logic:** Efficiency calculation validated (real MA / ideal MA); friction loss as percentage of input work correctly computed; reasoning about how friction losses scale with load validated.
-
----
-
-### Tool: Simple Machine Type Identifier & Classifier
-**Event:** Machines C
-**Purpose:** Quickly recognize all six required simple machine types and distinguish them, supporting rapid analysis during the exam (at least 6 types guaranteed to appear).
-**Core interaction loop:**
-1. Tool shows an image of a machine (or a description) and asks: "What type of simple machine is this?"
-2. User selects from six options (lever classes 1/2/3, inclined plane, wedge, wheel-and-axle, pulley, screw).
-3. Tool validates and reveals the type with a diagram and explanation of how it works (e.g., "This is a Class 2 lever — load is between fulcrum and effort").
-4. Tool can ask: "What is the MA equation for this type?" (reasoning).
-**Content/data needed:** Images/descriptions of all six types; MA formulas for each; real-world applications and examples.
-**UI components:** Machine image/description display; type selector (6-choice multiple-choice); type reveal with working diagram; MA formula display; examples from the real world.
-**Feedback/scoring logic:** Type selection validated; explanation of why it's that type checked for correct reasoning (e.g., "lever because it has a fulcrum and rigid bar").
-
----
-
-### Tool: State/National Advanced Topics (Non-Equilibrium Dynamics)
-**Event:** Machines C
-**Purpose:** Support students advancing from Regional (equilibrium-focused) to State/Nationals by introducing dynamics of non-equilibrium machines (acceleration, velocity, momentum).
-**Core interaction loop:**
-1. Tool presents: "A 5kg mass is pushed by a 30N force up a 30° incline. Calculate the net force, acceleration, and time to travel 2m."
-2. User breaks problem into components: gravity component along incline, net force, then kinematics.
-3. Tool validates step-by-step and reveals the solution.
-**Content/data needed:** Problem bank for dynamics (forces, Newton's 2nd law, kinematics) applied to machine scenarios; inclined-plane dynamics at various angles.
-**UI components:** Problem display; free-body diagram tool (user can draw or adjust force vectors); force-component calculator; net-force and acceleration computation; kinematics solver; solution reveal with annotated free-body diagram.
-**Feedback/scoring logic:** Free-body diagram validated (all forces correctly identified); force components calculated correctly (mg sin θ along incline, mg cos θ perpendicular); net force and acceleration derived from F_net = ma; kinematics applied correctly.
 
 ---
 
@@ -149,6 +86,7 @@
 **UI components:** Pulley diagram display (with rope count visible); MA input field; effort and distance calculators; solution reveal with rope-segment highlighting.
 **Feedback/scoring logic:** MA validated against correct rope-segment count (a common mistake is miscounting supporting vs. non-supporting segments); effort/distance calculations checked using MA relationships.
 
+
 ---
 
 ### Tool: Wheel-and-Axle & Gear System Analyzer
@@ -163,6 +101,7 @@
 **UI components:** System diagram with radius/tooth-count labels; MA and speed-ratio input fields; solution reveal with gear-train visualization.
 **Feedback/scoring logic:** MA validated against radius or tooth-count ratio; speed ratio checked (input/output teeth or radii); torque ratio validated as inverse of speed ratio (conservation of power).
 
+
 ---
 
 ### Tool: Angle of Repose & Self-Locking Calculator
@@ -175,3 +114,76 @@
 **Content/data needed:** Angle of repose formula (θ = arctan(μ)); self-locking criterion (friction angle > lead angle for screws/wedges); typical coefficients of friction.
 **UI components:** Problem display; angle calculator (arctan function); self-locking criterion selector; solution reveal with physical interpretation.
 **Feedback/scoring logic:** Angle of repose validated against arctan(μ); self-locking determination checked against friction angle vs. lead angle comparison; physical interpretation validated for understanding of when systems back-drive.
+
+---
+
+### Tool: Efficiency Analysis for Friction Losses
+**Event:** Machines C
+**Purpose:** Estimate and account for real-world friction losses in a machine design, improving predictions of actual vs. ideal performance.
+**Core interaction loop:**
+1. Tool shows: "An ideal lever system should lift 200N with 50N effort (MA=4). But the actual effort needed is 60N. Calculate efficiency and determine friction losses."
+2. User calculates: efficiency = ideal MA / real MA = 50/60 = 83%, so 17% of work is lost to friction.
+3. Tool extends: "If friction at the pivot is constant (10N), what would the efficiency be if the load increased to 500N?" (Efficiency improves because friction loss is now smaller relative to total work).
+**Content/data needed:** Problem bank covering friction losses in different machine types; typical efficiency ranges (40-80% for real machines).
+**UI components:** Problem display; ideal vs. real-effort comparison; efficiency calculation display; friction-loss estimation; graph showing efficiency vs. load (demonstrating how constant friction losses have larger percentage impact at small loads).
+**Feedback/scoring logic:** Efficiency calculation validated (real MA / ideal MA); friction loss as percentage of input work correctly computed; reasoning about how friction losses scale with load validated.
+
+
+---
+
+### Tool: Simple Machine Type Identifier & Classifier
+**Event:** Machines C
+**Purpose:** Quickly recognize all six required simple machine types and distinguish them, supporting rapid analysis during the exam (at least 6 types guaranteed to appear).
+**Core interaction loop:**
+1. Tool shows an image of a machine (or a description) and asks: "What type of simple machine is this?"
+2. User selects from six options (lever classes 1/2/3, inclined plane, wedge, wheel-and-axle, pulley, screw).
+3. Tool validates and reveals the type with a diagram and explanation of how it works (e.g., "This is a Class 2 lever — load is between fulcrum and effort").
+4. Tool can ask: "What is the MA equation for this type?" (reasoning).
+**Content/data needed:** Images/descriptions of all six types; MA formulas for each; real-world applications and examples.
+**UI components:** Machine image/description display; type selector (6-choice multiple-choice); type reveal with working diagram; MA formula display; examples from the real world.
+**Feedback/scoring logic:** Type selection validated; explanation of why it's that type checked for correct reasoning (e.g., "lever because it has a fulcrum and rigid bar").
+
+
+---
+
+### Tool: Device Testing Mass Ratio Simulator
+**Event:** Machines C
+**Purpose:** Practice the actual device-testing task: measure mass ratios using lever equilibrium, under simulated competition conditions with timing and precision requirements.
+**Core interaction loop:**
+1. Tool simulates a compound lever device (matching the official event specs: Class 1 connected to Class 2 or 3).
+2. User adjusts lever positions (fulcrums, mass attachments) to balance unknown masses A, B, C.
+3. User inputs measured ratios (A/B, B/C) to specified precision.
+4. Tool scores accuracy and time, matching the official competition scoring formula (relative accuracy of measured ratio vs. true ratio).
+**Content/data needed:** Simulated mass sets with known ratios (at Regional, State, National tightness levels); physics model for lever balancing; competition scoring formula (accuracy-based, with time bonus).
+**UI components:** Device visualization (interactive lever diagram); mass attachment position sliders; ratio-input fields; timer (optional); results display (measured ratio, true ratio, accuracy score, time score).
+**Feedback/scoring logic:** Balance validation checks (is the lever actually in equilibrium given the positions and masses?); ratio accuracy scored as given in competition rules (closer to true ratio = more points); timing tracked.
+
+
+---
+
+### Tool: Device Design & Compliance Checker
+**Event:** Machines C
+**Purpose:** Verify that a pre-built device design meets construction specifications (two lever classes connected, beam lengths ≤40cm each, can accommodate test masses) before physical construction.
+**Core interaction loop:**
+1. User describes their device design (lever class 1 and which of class 2 or 3, beam lengths, mass attachment points).
+2. Tool validates compliance: checks that beams don't exceed 40cm, that the two lever classes are distinct, that mass-attachment geometry is feasible.
+3. Tool runs a theoretical equilibrium analysis: "Can this device balance masses up to the 8x (Regional) / 10x (State) / 12x (National) ratio?"
+4. Tool flags any design issues (e.g., "Second lever arm too short — won't have enough sensitivity to distinguish small mass differences").
+**Content/data needed:** Official Machines C device specifications (requirements for two lever classes, beam length limits, mass-ratio range).
+**UI components:** Device-specification input form (lever classes, beam lengths, pivot/attachment positions); compliance checker (pass/fail per requirement); equilibrium simulator showing theoretical range of detectable mass ratios; recommendation panel for design adjustments.
+**Feedback/scoring logic:** Compliance checked against explicit rules (beam length ≤40cm, two different lever classes, etc.); theoretical performance estimated using lever equations and typical mass ranges.
+
+
+---
+
+### Tool: State/National Advanced Topics (Non-Equilibrium Dynamics)
+**Event:** Machines C
+**Purpose:** Support students advancing from Regional (equilibrium-focused) to State/Nationals by introducing dynamics of non-equilibrium machines (acceleration, velocity, momentum).
+**Core interaction loop:**
+1. Tool presents: "A 5kg mass is pushed by a 30N force up a 30° incline. Calculate the net force, acceleration, and time to travel 2m."
+2. User breaks problem into components: gravity component along incline, net force, then kinematics.
+3. Tool validates step-by-step and reveals the solution.
+**Content/data needed:** Problem bank for dynamics (forces, Newton's 2nd law, kinematics) applied to machine scenarios; inclined-plane dynamics at various angles.
+**UI components:** Problem display; free-body diagram tool (user can draw or adjust force vectors); force-component calculator; net-force and acceleration computation; kinematics solver; solution reveal with annotated free-body diagram.
+**Feedback/scoring logic:** Free-body diagram validated (all forces correctly identified); force components calculated correctly (mg sin θ along incline, mg cos θ perpendicular); net force and acceleration derived from F_net = ma; kinematics applied correctly.
+

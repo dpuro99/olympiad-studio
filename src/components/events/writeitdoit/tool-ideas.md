@@ -12,6 +12,7 @@
 **UI components:** Text-input area (paste/type description); real-time phrase-highlighting scanner; flag list with explanations; allowed-vs.-forbidden examples sidebar.
 **Feedback/scoring logic:** Patterns are flagged for user review (not auto-rejected) since context matters; tool provides guidance but human judgment is final (some flagged phrases may be OK).
 
+
 ---
 
 ### Tool: Instruction Sequencing Validator
@@ -26,6 +27,7 @@
 **UI components:** Text input; piece-extraction list (showing all unique pieces identified); step-by-step trace (highlighting potential sequencing issues); suggestions for reordering.
 **Feedback/scoring logic:** Sequencing issues flagged where a piece is used before being introduced; suggestions provided but final sequence is user's responsibility.
 
+
 ---
 
 ### Tool: Piece Naming Consistency Checker
@@ -39,6 +41,7 @@
 **Content/data needed:** Synonym-detection logic; typical naming schemes (e.g., "color + type," "type + size," "numbered pieces") to suggest consistent alternatives.
 **UI components:** Text input; piece-name extraction with variant highlighting; synonym-detection flagging; suggested consistent-naming scheme (e.g., "Connector A, Connector B, Connector C" or "Red connector, Blue connector"); help text on naming strategies.
 **Feedback/scoring logic:** Inconsistencies flagged; tool suggests consistent schemes but user chooses final naming.
+
 
 ---
 
@@ -55,6 +58,7 @@
 **UI components:** Vocabulary-definition worksheet (interactive form); example phrases using defined vocabulary; description-checking tool (flags violations of user's own chosen vocabulary); practice objects to describe.
 **Feedback/scoring logic:** Consistency validated against user's declared vocabulary (not a universal standard, but consistent within the description).
 
+
 ---
 
 ### Tool: Color & Orientation Explicit Reminder
@@ -68,6 +72,53 @@
 **Content/data needed:** Language patterns for color mention (e.g., "the red X," "the blue piece"), orientation mention (e.g., "facing up," "rotated 90 degrees," "with the hole on top").
 **UI components:** Text input; piece-mention highlighting; per-mention checklist (color? orientation? position?); suggestion prompts for clearer phrasing.
 **Feedback/scoring logic:** Flags where color/orientation are not explicitly mentioned; provides phrasing suggestions but user decides whether a piece's color/orientation is unambiguous without saying so.
+
+
+---
+
+### Tool: Description Structure Analyzer & Scaffolder
+**Event:** Write It...Do It B
+**Purpose:** Guide writers toward a systematic structure: piece introduction → detailed assembly sequence → final checks. Unstructured descriptions are harder for builders to follow.
+**Core interaction loop:**
+1. Tool provides a structured template: (1) Piece list and introduction (colors, sizes, distinguishing features), (2) Assembly sequence (step by step, in buildable order), (3) Final orientation/checks.
+2. User can fill in the template or paste their existing description for the tool to analyze and suggest restructuring.
+3. Tool checks: Are all pieces introduced before first use? Is there a clear first step? A last step? Is the sequence logical (can you actually build it in this order)?
+4. Tool provides a reorganized version (suggestion) that user can adopt or adapt.
+**Content/data needed:** Template structure; reorganization algorithm to reorder steps if sequencing is out of order.
+**UI components:** Template form (fillable sections) or paste-and-analyze mode; current-description structure visualization (showing where pieces are introduced, where first used, etc.); suggested reorganization display (side-by-side with original).
+**Feedback/scoring logic:** Structure analyzed for piece-introduction-before-use, logical step ordering, and narrative flow (not a style score, just a logical-completeness check).
+
+
+---
+
+### Tool: Description Completeness Checker (Piece-by-Piece)
+**Event:** Write It...Do It B
+**Purpose:** Verify that every piece in the original object has been mentioned in the description — missing pieces mean lost points since scoring is piece-by-piece.
+**Core interaction loop:**
+1. User provides a description; tool references the original object (image provided alongside the description).
+2. Tool identifies all pieces in the original object (from the image, via user input or pre-tagged object metadata).
+3. Tool extracts all piece mentions from the description and checks which pieces were not mentioned.
+4. Tool reports: "You mentioned 8/10 pieces. Missing: 'small green connector' and 'yellow wheel' — these will score 0."
+5. Tool can highlight which mentioned pieces lack color/orientation specifications.
+**Content/data needed:** Object-piece metadata (list of all pieces per object); description parsing logic.
+**UI components:** Original-object reference image; description input; piece-mention extraction; missing-piece list; solution reveal with side-by-side comparison.
+**Feedback/scoring logic:** Missing pieces flagged; scoring impact estimated (missing piece = 0 for size, color, location, orientation, connection — 5× the point loss); tool can estimate total potential score if all missing pieces were added.
+
+
+---
+
+### Tool: Writer Time-Allocation Coach
+**Event:** Write It...Do It B
+**Purpose:** Help writers pace their 25-minute writing phase effectively — many students either rush through piece descriptions and run out of time for assembly steps, or spend too long on one section.
+**Core interaction loop:**
+1. Tool sets a 25-minute countdown timer and provides phase milestones (e.g., "By minute 8, you should have described all pieces; by minute 20, you should have completed assembly steps; minutes 20-25 reserved for review and clarification").
+2. As user writes, tool tracks time spent in each phase (estimated from text-input position) and gives gentle nudges if behind schedule.
+3. At end of 25 min, tool provides a phase-time breakdown: "You spent 12 min on piece descriptions, 10 min on assembly, 3 min on review."
+4. Tool can recommend a personalized time allocation strategy based on object complexity (more pieces → more time on description; complex connections → more time on assembly).
+**Content/data needed:** Phase time-allocation templates for different object complexities; milestone timing recommendations.
+**UI components:** Countdown timer with phase markers; soft-nudge notifications; phase-time tracking; post-session breakdown chart.
+**Feedback/scoring logic:** Time allocation evaluated against recommended template; tool provides feedback on whether pacing was efficient (not too fast/slow per phase).
+
 
 ---
 
@@ -84,19 +135,20 @@
 **UI components:** Object image display (clear, from multiple angles if possible); description input area; optional timer (25 min for timed practice); builder-feedback display (showing what was built vs. original); mismatch identification ("The builder put the red piece on the left, but your description said right").
 **Feedback/scoring logic:** Simulated builder reconstructions are approximate (not perfect logic, but realistic human interpretation); mismatches highlighted to show ambiguities; user iterates and improves.
 
+
 ---
 
-### Tool: Description Structure Analyzer & Scaffolder
+### Tool: Builder Phase Practice (20-Minute Reconstruction)
 **Event:** Write It...Do It B
-**Purpose:** Guide writers toward a systematic structure: piece introduction → detailed assembly sequence → final checks. Unstructured descriptions are harder for builders to follow.
+**Purpose:** Practice the builder role in isolation — given only a written description (no access to the original object), reconstruct the object in 20 minutes. This is a distinct skill from writing.
 **Core interaction loop:**
-1. Tool provides a structured template: (1) Piece list and introduction (colors, sizes, distinguishing features), (2) Assembly sequence (step by step, in buildable order), (3) Final orientation/checks.
-2. User can fill in the template or paste their existing description for the tool to analyze and suggest restructuring.
-3. Tool checks: Are all pieces introduced before first use? Is there a clear first step? A last step? Is the sequence logical (can you actually build it in this order)?
-4. Tool provides a reorganized version (suggestion) that user can adopt or adapt.
-**Content/data needed:** Template structure; reorganization algorithm to reorder steps if sequencing is out of order.
-**UI components:** Template form (fillable sections) or paste-and-analyze mode; current-description structure visualization (showing where pieces are introduced, where first used, etc.); suggested reorganization display (side-by-side with original).
-**Feedback/scoring logic:** Structure analyzed for piece-introduction-before-use, logical step ordering, and narrative flow (not a style score, just a logical-completeness check).
+1. Tool provides a written description (from a previous writer's session, or a sample description from the library).
+2. User (as builder) reads the description and attempts to build the object using available materials, within a 20-minute timer.
+3. Tool checks the build against the original object and provides feedback: "You built the structure correctly, but the orientation of the red piece was wrong — the description said 'facing up' but you placed it sideways."
+4. Tool can also measure: time spent re-reading the description (good builders read it fully before starting), time stuck on ambiguous steps, etc.
+**Content/data needed:** Sample descriptions paired with original objects; materials list for builds; builder-strategy tips.
+**UI components:** Description display; countdown timer; builder-strategy hints (e.g., "Read fully first, then start building"); build-result input/photo; feedback display.
+**Feedback/scoring logic:** Builder accuracy per piece validated; builder strategy evaluated (e.g., did they read fully first? did they reference the description multiple times?); time management within 20 min checked.
 
 ---
 
@@ -113,20 +165,6 @@
 **UI components:** Description input; builder-profile selector; built-object visualization (showing what builder created from the description); mismatch highlighting with explanations; revision input; re-test functionality.
 **Feedback/scoring logic:** Simulated-builder accuracy varies by clarity of description (clear descriptions = consistent results across profiles; ambiguous descriptions = different builders interpret differently, shown as mismatches).
 
----
-
-### Tool: Peer Review & Collaborative Editing
-**Event:** Write It...Do It B
-**Purpose:** Enable students to share descriptions with peers for review — a builder peer can catch ambiguities that the writer missed.
-**Core interaction loop:**
-1. User writes a description and optionally shares it with a peer (study partner, teammate, or coach).
-2. Peer reads the description WITHOUT seeing the object and provides feedback: "Which steps are unclear? Which piece names are confusing? Where did you get stuck?"
-3. Peer optionally attempts to build from the description (if they have the materials) to provide real feedback.
-4. Writer collects feedback and revises.
-5. Revised description can be re-shared and re-tested.
-**Content/data needed:** Platform for sharing descriptions and collecting feedback; no specific content, just a collaboration framework.
-**UI components:** Description-sharing link generator; feedback-input form for reviewer (free-text or structured checklist); version history (showing original vs. revisions); re-test function after revision.
-**Feedback/scoring logic:** Feedback is qualitative (peer insights); version history shows iterative improvement; this is a practice tool, not a scoring tool.
 
 ---
 
@@ -144,45 +182,19 @@
 **UI components:** Full event simulation interface (writing phase with tools, timer, description submission; building phase with object visualization, timer, scoring result); score breakdown (per-piece feedback); post-event analysis and suggestions for improvement.
 **Feedback/scoring logic:** Scoring follows official rules (per-piece, multi-dimensional); feedback highlights which dimensions (color, orientation, connection) were most often missed, suggesting focus areas for description clarity.
 
----
-
-### Tool: Writer Time-Allocation Coach
-**Event:** Write It...Do It B
-**Purpose:** Help writers pace their 25-minute writing phase effectively — many students either rush through piece descriptions and run out of time for assembly steps, or spend too long on one section.
-**Core interaction loop:**
-1. Tool sets a 25-minute countdown timer and provides phase milestones (e.g., "By minute 8, you should have described all pieces; by minute 20, you should have completed assembly steps; minutes 20-25 reserved for review and clarification").
-2. As user writes, tool tracks time spent in each phase (estimated from text-input position) and gives gentle nudges if behind schedule.
-3. At end of 25 min, tool provides a phase-time breakdown: "You spent 12 min on piece descriptions, 10 min on assembly, 3 min on review."
-4. Tool can recommend a personalized time allocation strategy based on object complexity (more pieces → more time on description; complex connections → more time on assembly).
-**Content/data needed:** Phase time-allocation templates for different object complexities; milestone timing recommendations.
-**UI components:** Countdown timer with phase markers; soft-nudge notifications; phase-time tracking; post-session breakdown chart.
-**Feedback/scoring logic:** Time allocation evaluated against recommended template; tool provides feedback on whether pacing was efficient (not too fast/slow per phase).
 
 ---
 
-### Tool: Description Completeness Checker (Piece-by-Piece)
+### Tool: Peer Review & Collaborative Editing
 **Event:** Write It...Do It B
-**Purpose:** Verify that every piece in the original object has been mentioned in the description — missing pieces mean lost points since scoring is piece-by-piece.
+**Purpose:** Enable students to share descriptions with peers for review — a builder peer can catch ambiguities that the writer missed.
 **Core interaction loop:**
-1. User provides a description; tool references the original object (image provided alongside the description).
-2. Tool identifies all pieces in the original object (from the image, via user input or pre-tagged object metadata).
-3. Tool extracts all piece mentions from the description and checks which pieces were not mentioned.
-4. Tool reports: "You mentioned 8/10 pieces. Missing: 'small green connector' and 'yellow wheel' — these will score 0."
-5. Tool can highlight which mentioned pieces lack color/orientation specifications.
-**Content/data needed:** Object-piece metadata (list of all pieces per object); description parsing logic.
-**UI components:** Original-object reference image; description input; piece-mention extraction; missing-piece list; solution reveal with side-by-side comparison.
-**Feedback/scoring logic:** Missing pieces flagged; scoring impact estimated (missing piece = 0 for size, color, location, orientation, connection — 5× the point loss); tool can estimate total potential score if all missing pieces were added.
+1. User writes a description and optionally shares it with a peer (study partner, teammate, or coach).
+2. Peer reads the description WITHOUT seeing the object and provides feedback: "Which steps are unclear? Which piece names are confusing? Where did you get stuck?"
+3. Peer optionally attempts to build from the description (if they have the materials) to provide real feedback.
+4. Writer collects feedback and revises.
+5. Revised description can be re-shared and re-tested.
+**Content/data needed:** Platform for sharing descriptions and collecting feedback; no specific content, just a collaboration framework.
+**UI components:** Description-sharing link generator; feedback-input form for reviewer (free-text or structured checklist); version history (showing original vs. revisions); re-test function after revision.
+**Feedback/scoring logic:** Feedback is qualitative (peer insights); version history shows iterative improvement; this is a practice tool, not a scoring tool.
 
----
-
-### Tool: Builder Phase Practice (20-Minute Reconstruction)
-**Event:** Write It...Do It B
-**Purpose:** Practice the builder role in isolation — given only a written description (no access to the original object), reconstruct the object in 20 minutes. This is a distinct skill from writing.
-**Core interaction loop:**
-1. Tool provides a written description (from a previous writer's session, or a sample description from the library).
-2. User (as builder) reads the description and attempts to build the object using available materials, within a 20-minute timer.
-3. Tool checks the build against the original object and provides feedback: "You built the structure correctly, but the orientation of the red piece was wrong — the description said 'facing up' but you placed it sideways."
-4. Tool can also measure: time spent re-reading the description (good builders read it fully before starting), time stuck on ambiguous steps, etc.
-**Content/data needed:** Sample descriptions paired with original objects; materials list for builds; builder-strategy tips.
-**UI components:** Description display; countdown timer; builder-strategy hints (e.g., "Read fully first, then start building"); build-result input/photo; feedback display.
-**Feedback/scoring logic:** Builder accuracy per piece validated; builder strategy evaluated (e.g., did they read fully first? did they reference the description multiple times?); time management within 20 min checked.

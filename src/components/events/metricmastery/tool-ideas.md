@@ -12,6 +12,7 @@
 **UI components:** Problem display (one at a time); numeric input field for converted value; unit input or selector; per-problem feedback (right/wrong); countdown timer; session summary showing accuracy and weakest prefixes.
 **Feedback/scoring logic:** Both value and unit must be correct (0/5 points if either is wrong); timer enforces speed; weak-prefix problems are requeued for extra practice.
 
+
 ---
 
 ### Tool: Estimation Calibration Trainer
@@ -26,6 +27,7 @@
 **Content/data needed:** Reference set of common objects with known masses, volumes, lengths (coin, water bottle, ruler, textbook, etc.); expected accuracy thresholds by Regional/State/National level (15%/10%/5% for full credit).
 **UI components:** Object image or photo; estimation input field (with appropriate unit); actual-value reveal with error percentage; calibration trend display (scatter plot of estimates vs. actual); heuristic hints (e.g., "Water is 1kg/liter").
 **Feedback/scoring logic:** Percent-error calculation; trend analysis (is student improving? consistent bias?); optional automated feedback (e.g., "Your estimates are 8% too high on average — adjust by reducing by ~8%").
+
 
 ---
 
@@ -42,19 +44,6 @@
 **UI components:** Measurement scenario (instrument type shown); result input field; format-validation checker (explicit notification of required precision); worked examples showing correct formatting; instrument-specific precision rules sidebar.
 **Feedback/scoring logic:** Format validated strictly (must match instrument resolution rules); numeric value validated only if format is correct; session feedback highlights systematic format mistakes (e.g., "You're adding extra significant figures to digital readings").
 
----
-
-### Tool: Significant Figures Calculator
-**Event:** Metric Mastery C
-**Purpose:** Apply significant figures rules to calculated results — when you multiply/divide measurements, how many sig figs should your answer have?
-**Core interaction loop:**
-1. Tool presents: "You measure length = 9.2 cm and width = 4.3 cm. Calculate area. How many significant figures should your answer have?"
-2. User calculates (area = 9.2 × 4.3 = 39.56) and determines sig figs (both measurements have 2 sig figs, so area should be 40 cm² — 2 sig figs).
-3. Tool validates the sig fig reasoning and the rounded result.
-4. Tool extends: "If you add 9.2 cm + 4.3 cm, how many decimal places should the sum have?" (2 sig figs for both, but addition rule uses least decimal places, so answer is 13.5 cm, or 14 cm depending on rounding).
-**Content/data needed:** Sig fig rules (multiplication/division use least sig figs; addition/subtraction use least decimal places); worked examples for each rule type.
-**UI components:** Problem display; calculation workspace; sig-fig-rule selector or free-text reasoning input; result input with sig-fig count; solution reveal with rule explanation.
-**Feedback/scoring logic:** Sig-fig reasoning validated against rules; final-result validation (both value and format must be correct).
 
 ---
 
@@ -70,6 +59,7 @@
 **UI components:** Measurement data display with instruments noted (digital scale, analog ruler, etc.); calculation workspace; formula reference; sig-fig reasoning input; solution reveal with measurement-uncertainty explanation.
 **Feedback/scoring logic:** Intermediate calculations checked (volume, area); final sig-fig count determined by least-precise input; precision metadata (which measurement was limiting) validated.
 
+
 ---
 
 ### Tool: Force & Spring Constant Calculator
@@ -84,6 +74,7 @@
 **UI components:** Problem display; force calculation workspace (mass × g); spring-constant formula reference; input fields for F and Δx; unit selector (N/m is correct); solution reveal.
 **Feedback/scoring logic:** Force calculation checked; spring-constant calculation validated; unit correctness verified (many students forget units, losing points).
 
+
 ---
 
 ### Tool: Mechanical Energy (Gravitational PE, Kinetic Energy) Calculator
@@ -96,6 +87,22 @@
 **Content/data needed:** Problem bank for PE and KE calculations; energy conservation scenarios; derived velocities from energy relationships.
 **UI components:** Problem display; formula reference (PE = mgh, KE = ½mv²); input fields for energy values; height-by-height energy breakdown (optional); solution reveal with energy-conservation annotation.
 **Feedback/scoring logic:** PE and KE calculations validated independently; total-energy conservation checked (PE + KE = constant); velocity derived correctly from KE.
+
+
+---
+
+### Tool: Significant Figures Calculator
+**Event:** Metric Mastery C
+**Purpose:** Apply significant figures rules to calculated results — when you multiply/divide measurements, how many sig figs should your answer have?
+**Core interaction loop:**
+1. Tool presents: "You measure length = 9.2 cm and width = 4.3 cm. Calculate area. How many significant figures should your answer have?"
+2. User calculates (area = 9.2 × 4.3 = 39.56) and determines sig figs (both measurements have 2 sig figs, so area should be 40 cm² — 2 sig figs).
+3. Tool validates the sig fig reasoning and the rounded result.
+4. Tool extends: "If you add 9.2 cm + 4.3 cm, how many decimal places should the sum have?" (2 sig figs for both, but addition rule uses least decimal places, so answer is 13.5 cm, or 14 cm depending on rounding).
+**Content/data needed:** Sig fig rules (multiplication/division use least sig figs; addition/subtraction use least decimal places); worked examples for each rule type.
+**UI components:** Problem display; calculation workspace; sig-fig-rule selector or free-text reasoning input; result input with sig-fig count; solution reveal with rule explanation.
+**Feedback/scoring logic:** Sig-fig reasoning validated against rules; final-result validation (both value and format must be correct).
+
 
 ---
 
@@ -110,6 +117,7 @@
 **Content/data needed:** Worked examples of error propagation (multiplication/division multiply relative errors; addition/subtraction add absolute errors).
 **UI components:** Measurement display with uncertainty ranges; nominal and worst-case calculations; error-propagation visualization (error bands on results); formula reference for error estimation.
 **Feedback/scoring logic:** Nominal calculation checked; min/max scenario calculations validated; uncertainty estimate in final result reasonable (within order of magnitude).
+
 
 ---
 

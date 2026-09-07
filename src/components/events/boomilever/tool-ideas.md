@@ -13,6 +13,7 @@
 **UI components:** 2D truss-building canvas (place nodes, draw members, snap-to-grid optional); member property editor (cross-section dimensions); results panel showing per-member force/status (safe/at-risk/failing), total estimated mass, estimated max load, and computed score; save/load design capability for iteration tracking.
 **Feedback/scoring logic:** Not a quiz — output is the estimated engineering performance of the user's design (per-member stress status + overall score estimate). Accuracy of the underlying simplified physics model should be clearly caveated as an estimate, not a guarantee, since real wood/glue joints introduce variability the model can't fully capture.
 
+
 ---
 
 ### Tool: Testing Wall Geometry Visualizer
@@ -26,6 +27,7 @@
 **Content/data needed:** Fixed geometric constants from the official rules (wall dimensions, bolt position, contact depth line positions, contact width line positions, valid chain centerline zone) — no external content needed beyond these rule-derived constants.
 **UI components:** To-scale 2D diagram canvas with the wall's official markings pre-drawn; freeform draw or shape-overlay tool for the user's structure silhouette; toggle switch for Base vs. Bonus Option constraint mode; pass/fail visual indicator (e.g., green/red zone highlighting) for compliance.
 **Feedback/scoring logic:** Simple geometric pass/fail check — does the user's overlaid shape violate any exclusion zone, and does it satisfy the required chain/loading-block position for the selected option. No scoring beyond compliant/non-compliant per rule.
+
 
 ---
 
@@ -41,18 +43,6 @@
 **UI components:** Entry form (name, mass, load, notes, bonus-option toggle); sortable/filterable table view of all entries; simple chart (e.g., mass vs. load scatter, or score-over-time line) to visualize iteration progress.
 **Feedback/scoring logic:** Purely calculated (load÷mass, plus the 5000g bonus if the bonus-option toggle is checked) — no external grading, this is a personal tracking tool.
 
----
-
-### Tool: Wood/Adhesive Strength Reference Tool
-**Event:** Boomilever C
-**Purpose:** Give teams quick access to comparative strength-to-weight data for common competition-legal woods and adhesive joint strength, since material choice is one of the few free design variables under the rules' strict material restrictions.
-**Core interaction loop:**
-1. User browses or searches a reference table of common Boomilever-legal wood types (e.g., balsa, basswood) by property: density, compressive strength (with/against grain), tensile strength (with/against grain), typical size availability.
-2. User can similarly browse a comparison of common allowed adhesives (glue, cement, cyanoacrylate, epoxy, hot melt, polyurethane, super glue) by typical joint strength and cure time/working time tradeoffs.
-3. Tool may allow simple side-by-side comparison of 2-3 selected materials.
-**Content/data needed:** Reference dataset — wood species properties (density, compressive/tensile strength by grain direction) and adhesive properties (joint strength, working time, cure time) sourced from published material science data.
-**UI components:** Searchable/filterable table view; optional side-by-side comparison view for selected items; simple detail view per material showing all properties.
-**Feedback/scoring logic:** None — pure reference lookup tool, no quiz or grading involved.
 
 ---
 
@@ -66,6 +56,21 @@
 **Content/data needed:** A structured knowledge base of common failure patterns: `{failure_description, likely_causes: [], suggested_fixes: []}` — built from established truss engineering failure modes (buckling, tension failure, joint/glue failure, grain-direction weakness).
 **UI components:** Simple diagram/selector for failure location and type; text/dropdown input for loading condition at failure; results panel showing likely cause(s) and suggested fixes; optional "was this helpful" feedback control.
 **Feedback/scoring logic:** No scoring — this is diagnostic/advisory output, not a quiz. The tool should clearly present its diagnosis as a probabilistic best-guess rather than a certain answer, since real failure diagnosis benefits from physically inspecting the break.
+
+
+---
+
+### Tool: Wood/Adhesive Strength Reference Tool
+**Event:** Boomilever C
+**Purpose:** Give teams quick access to comparative strength-to-weight data for common competition-legal woods and adhesive joint strength, since material choice is one of the few free design variables under the rules' strict material restrictions.
+**Core interaction loop:**
+1. User browses or searches a reference table of common Boomilever-legal wood types (e.g., balsa, basswood) by property: density, compressive strength (with/against grain), tensile strength (with/against grain), typical size availability.
+2. User can similarly browse a comparison of common allowed adhesives (glue, cement, cyanoacrylate, epoxy, hot melt, polyurethane, super glue) by typical joint strength and cure time/working time tradeoffs.
+3. Tool may allow simple side-by-side comparison of 2-3 selected materials.
+**Content/data needed:** Reference dataset — wood species properties (density, compressive/tensile strength by grain direction) and adhesive properties (joint strength, working time, cure time) sourced from published material science data.
+**UI components:** Searchable/filterable table view; optional side-by-side comparison view for selected items; simple detail view per material showing all properties.
+**Feedback/scoring logic:** None — pure reference lookup tool, no quiz or grading involved.
+
 
 ---
 

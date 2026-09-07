@@ -12,6 +12,7 @@
 **UI components:** Punnett square grid (user can select size 2×2, 4×4, 8×8); gamete input areas; offspring genotype cells; auto-calculate phenotype ratios based on selected dominance model; visual feedback on correct/incorrect entries.
 **Feedback/scoring logic:** Grid accuracy checked cell-by-cell; phenotype ratios auto-calculated once grid is correct; problems missed are queued for later replay; session summary shows weakest dominance patterns (incomplete dominance, etc.).
 
+
 ---
 
 ### Tool: Probability & Testcross Analyzer
@@ -25,6 +26,7 @@
 **Content/data needed:** Problem bank covering conditional probability, multiplication/addition rules, testcross logic, and scenarios requiring multi-step reasoning.
 **UI components:** Problem statement display; step-by-step solver (user fills in Punnett square, identifies possible genotypes, calculates ratios, then answers the probability question); solution reveal with conditional probability highlighted.
 **Feedback/scoring logic:** Each logical step independently validated (possible parental genotypes, offspring ratios, filtering to the phenotype in question); incorrect identification of possible genotypes triggers Punnett square reconstruction; incorrect probability calculation triggers re-examination of the ratio.
+
 
 ---
 
@@ -40,6 +42,7 @@
 **UI components:** Pedigree diagram display; inheritance-pattern selector (4-choice: autosomal dominant, autosomal recessive, X-linked dominant, X-linked recessive); genotype input fields for each individual; pattern and genotype reveal.
 **Feedback/scoring logic:** Inheritance pattern accuracy checked first (if incorrect, hints trigger: "Count affected males vs. females," "Do carrier females appear?" "Can affected fathers pass the trait to sons?"); genotype accuracy checked once pattern is correct.
 
+
 ---
 
 ### Tool: Hardy-Weinberg Equilibrium Solver
@@ -54,6 +57,7 @@
 **UI components:** Problem display; formula reference (p+q=1, p²+2pq+q²=1) with variable input fields; calculator tool (optional); solution reveal with step-by-step algebra.
 **Feedback/scoring logic:** Intermediate calculations (p, q, p², 2pq, q²) validated independently; incorrect intermediate steps trigger hints about the equation structure.
 
+
 ---
 
 ### Tool: Gene Mapping & Recombination Calculator
@@ -66,6 +70,7 @@
 **Content/data needed:** Testcross datasets for 2-point and 3-point crosses; parental, single-crossover, double-crossover, and (if applicable) triple-crossover classes clearly marked in the problem or revealed on answer.
 **UI components:** Offspring class data display (with counts); input fields for recombination frequencies; gene-order selector (for 3-point crosses); map-distance display; solution reveal with identification of parental vs. recombinant classes.
 **Feedback/scoring logic:** Recombination frequency accuracy checked (student must correctly identify recombinant classes first); gene order determination checked via three-point cross logic (which double-crossover class requires the middle gene to flip relative to the other two?).
+
 
 ---
 
@@ -81,6 +86,7 @@
 **UI components:** Tree diagram display or interactive tree-building canvas; multiple-choice or text-input relationship identifier; tree-building tool (place taxa, set distances, auto-generate tree); clade highlighting on answer reveal.
 **Feedback/scoring logic:** Relationship accuracy checked against tree structure; tree-building problems validated by checking whether the constructed tree reflects the given pairwise distances within tolerance.
 
+
 ---
 
 ### Tool: Mutation Type & Protein Consequence Predictor
@@ -93,6 +99,21 @@
 **Content/data needed:** Problem bank with varied mutations: synonymous (silent), missense (various amino acid substitutions), nonsense (stop codon), frameshifts (insertion/deletion of non-3n nucleotides); genetic code table.
 **UI components:** DNA sequence display with mutation highlighted; mutation-type selector (4 options or free text); codon/amino-acid lookup tool; consequences input (protein sequence change); genetic code reference table (collapsible).
 **Feedback/scoring logic:** Mutation type checked against the actual codon change; protein consequence validated using genetic code; frameshift direction and downstream impact validated for insertion/deletion mutations.
+
+
+---
+
+### Tool: Lac & Trp Operon Regulator Simulator
+**Event:** Designer Genes C
+**Purpose:** Simulate gene regulation in the lac and trp operons under varying conditions (inducer presence, repressor presence, glucose levels) — a core prokayrotic gene-expression content area.
+**Core interaction loop:**
+1. Tool presents a scenario: "E. coli is in a medium with lactose present and glucose absent. Is the lac operon ON or OFF? Why?"
+2. User predicts operon state and explains the regulatory logic: lactose binds LacI repressor (removing repression) AND low glucose means high cAMP → CAP-cAMP binds promoter (activating transcription).
+3. Tool validates and reveals the answer with the full regulatory cascade.
+4. Similar scenarios for trp operon: "With high tryptophan, is trp operon ON or OFF?" (OFF — Trp acts as corepressor with TrpR to block transcription).
+**Content/data needed:** Regulatory logic for both operons: lacI repressor, CAP-cAMP activator, lactose as inducer, glucose as catabolite repressor; trpR repressor, tryptophan as corepressor, attenuation mechanism.
+**UI components:** Scenario display (cell environment: lactose? glucose? tryptophan?); operon state selector; regulation-step tracer (showing which proteins are active); solution reveal with full regulatory cascade diagram.
+**Feedback/scoring logic:** Operon state validated; regulatory reasoning checked for mention of correct regulatory components (e.g., for lac+glucose−: both LacI inactivation AND CAP-cAMP activation required for full expression).
 
 ---
 
@@ -108,31 +129,6 @@
 **UI components:** DNA molecule visualization (color-coded or label-marked strands); generation-by-generation display with interactive strand tracking; scenario prompts asking student to predict molecule composition after replication.
 **Feedback/scoring logic:** Molecule count and composition validated per generation; mutation scenarios checked for correct understanding of which future cells carry the error.
 
----
-
-### Tool: PCR, Sequencing & Molecular Cloning Technique Matcher
-**Event:** Designer Genes C
-**Purpose:** Match experimental questions to appropriate techniques (PCR vs. Sanger sequencing vs. next-gen sequencing, molecular cloning components) — a conceptual skill requiring understanding of each technique's capabilities and limitations.
-**Core interaction loop:**
-1. Tool presents a research question: "We have an unknown virus sample and need to identify it. Which sequencing approach would you use and why?"
-2. User selects a technique (PCR, Sanger sequencing, Illumina, Nanopore, etc.) and optionally explains reasoning.
-3. Tool validates the answer, reveals the best choice, and explains why other options are less suitable (e.g., "Nanopore is good for long reads but slower than Illumina for a quick identification task").
-**Content/data needed:** Question bank covering varied experimental scenarios; for each: best-choice technique, rationale for best choice, rationale for why alternatives are suboptimal.
-**UI components:** Question display; technique selector (multiple-choice or searchable dropdown); explanation input or reveal; pros/cons sidebar for each technique.
-**Feedback/scoring logic:** Technique selection validated against scenario context (what's the goal: speed, read length, accuracy?); explanation accuracy checked if free-text (keyword checklist for "long reads," "parallelizable," etc.).
-
----
-
-### Tool: State/National Advanced Topics Reference (Heritability, Protein Secretion, ChIP-seq)
-**Event:** Designer Genes C
-**Purpose:** Support students advancing from Regional to State/Nationals by providing reference and practice for the new content: heritability calculations, protein secretion, ChIP-seq/RNA-seq analysis.
-**Core interaction loop:**
-1. Tool presents a heritability scenario: "In a population, broad-sense heritability (H²) for height is 0.9. A trait shows a phenotypic variance of 100. What is the genetic variance?"
-2. User applies heritability formulas (H² = V_G/V_P, h² = V_A/V_P) and calculates unknowns.
-3. Tool reveals the correct calculation and can explain the conceptual difference between broad-sense and narrow-sense heritability.
-**Content/data needed:** Heritability problems and datasets; ChIP-seq/RNA-seq data interpretation scenarios; protein secretion pathway (Sec and Tat systems) diagrams and questions.
-**UI components:** Problem display; formula reference; input fields for variance calculations; data visualization (scatterplots for breeding data if applicable); reference diagrams for protein secretion pathways.
-**Feedback/scoring logic:** Calculations validated per formula; conceptual explanations checked for key distinctions (H² vs. h², what each tells you about trait inheritance).
 
 ---
 
@@ -148,16 +144,31 @@
 **UI components:** Problem display with variance values or selection data; formula reference (H²=V_G/V_P, h²=V_A/V_P, h²=R/S); calculator; solution reveal with formula application; concept-explanation panel.
 **Feedback/scoring logic:** Each calculation validated against formula; conceptual understanding checked via follow-up: "If H² = 0.8 but h² = 0.3, what does that tell you about the genetic architecture?" (lots of dominance/epistasis, low additive component, hard to select for).
 
+
 ---
 
-### Tool: Lac & Trp Operon Regulator Simulator
+### Tool: PCR, Sequencing & Molecular Cloning Technique Matcher
 **Event:** Designer Genes C
-**Purpose:** Simulate gene regulation in the lac and trp operons under varying conditions (inducer presence, repressor presence, glucose levels) — a core prokayrotic gene-expression content area.
+**Purpose:** Match experimental questions to appropriate techniques (PCR vs. Sanger sequencing vs. next-gen sequencing, molecular cloning components) — a conceptual skill requiring understanding of each technique's capabilities and limitations.
 **Core interaction loop:**
-1. Tool presents a scenario: "E. coli is in a medium with lactose present and glucose absent. Is the lac operon ON or OFF? Why?"
-2. User predicts operon state and explains the regulatory logic: lactose binds LacI repressor (removing repression) AND low glucose means high cAMP → CAP-cAMP binds promoter (activating transcription).
-3. Tool validates and reveals the answer with the full regulatory cascade.
-4. Similar scenarios for trp operon: "With high tryptophan, is trp operon ON or OFF?" (OFF — Trp acts as corepressor with TrpR to block transcription).
-**Content/data needed:** Regulatory logic for both operons: lacI repressor, CAP-cAMP activator, lactose as inducer, glucose as catabolite repressor; trpR repressor, tryptophan as corepressor, attenuation mechanism.
-**UI components:** Scenario display (cell environment: lactose? glucose? tryptophan?); operon state selector; regulation-step tracer (showing which proteins are active); solution reveal with full regulatory cascade diagram.
-**Feedback/scoring logic:** Operon state validated; regulatory reasoning checked for mention of correct regulatory components (e.g., for lac+glucose−: both LacI inactivation AND CAP-cAMP activation required for full expression).
+1. Tool presents a research question: "We have an unknown virus sample and need to identify it. Which sequencing approach would you use and why?"
+2. User selects a technique (PCR, Sanger sequencing, Illumina, Nanopore, etc.) and optionally explains reasoning.
+3. Tool validates the answer, reveals the best choice, and explains why other options are less suitable (e.g., "Nanopore is good for long reads but slower than Illumina for a quick identification task").
+**Content/data needed:** Question bank covering varied experimental scenarios; for each: best-choice technique, rationale for best choice, rationale for why alternatives are suboptimal.
+**UI components:** Question display; technique selector (multiple-choice or searchable dropdown); explanation input or reveal; pros/cons sidebar for each technique.
+**Feedback/scoring logic:** Technique selection validated against scenario context (what's the goal: speed, read length, accuracy?); explanation accuracy checked if free-text (keyword checklist for "long reads," "parallelizable," etc.).
+
+
+---
+
+### Tool: State/National Advanced Topics Reference (Heritability, Protein Secretion, ChIP-seq)
+**Event:** Designer Genes C
+**Purpose:** Support students advancing from Regional to State/Nationals by providing reference and practice for the new content: heritability calculations, protein secretion, ChIP-seq/RNA-seq analysis.
+**Core interaction loop:**
+1. Tool presents a heritability scenario: "In a population, broad-sense heritability (H²) for height is 0.9. A trait shows a phenotypic variance of 100. What is the genetic variance?"
+2. User applies heritability formulas (H² = V_G/V_P, h² = V_A/V_P) and calculates unknowns.
+3. Tool reveals the correct calculation and can explain the conceptual difference between broad-sense and narrow-sense heritability.
+**Content/data needed:** Heritability problems and datasets; ChIP-seq/RNA-seq data interpretation scenarios; protein secretion pathway (Sec and Tat systems) diagrams and questions.
+**UI components:** Problem display; formula reference; input fields for variance calculations; data visualization (scatterplots for breeding data if applicable); reference diagrams for protein secretion pathways.
+**Feedback/scoring logic:** Calculations validated per formula; conceptual explanations checked for key distinctions (H² vs. h², what each tells you about trait inheritance).
+
