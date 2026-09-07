@@ -12,19 +12,6 @@
 **UI components:** Single-question card view; text input or multiple-choice selector; immediate right/wrong feedback; progress bar showing which ions have been drilled; optional audio pronunciation.
 **Feedback/scoring logic:** Per-ion accuracy tracking; ions scoring <80% accuracy get prioritized in shuffle order; optional session-end summary showing weakest ions.
 
----
-
-### Tool: Chemical Equation Balancer & Classifier
-**Event:** Chemistry Lab C
-**Purpose:** Practice balancing equations by type (acid-base, redox, metathesis, combustion, decomposition) and understand why certain equations are tricky to balance (odd-numbered atoms, polyatomic ion units).
-**Core interaction loop:**
-1. Tool displays an unbalanced equation (or a word description of a reaction: "Potassium permanganate reacts with hydrogen peroxide in acidic solution").
-2. User balances the equation by typing coefficients.
-3. On submit, tool validates the balance (atom count on each side), checks for lowest whole-number ratios, and reveals the correct balanced form.
-4. Tool classifies the equation type and highlights key features (e.g., "This is a redox reaction — note the change in oxidation states for Mn and H").
-**Content/data needed:** Equation bank covering all required reaction types: acid-base, metathesis (including precipitation), redox, decomposition, synthesis — each with multiple examples, increasing in difficulty (simple → complex with polyatomic ions → complex with odd-numbered atoms).
-**UI components:** Equation display area with blank coefficient boxes before each compound; coefficient input fields; visual atom-count checker (shows atom tallies on each side as user enters coefficients, greens them when balanced); explanation panel on reveal.
-**Feedback/scoring logic:** Per-equation accuracy; equations scored wrong are queued for later in same session and prioritized in future sessions; optional difficulty scaling (Regional: basic equations only; State/Nationals: includes complex balancing).
 
 ---
 
@@ -40,6 +27,7 @@
 **UI components:** Problem statement display; input field(s) for answer or step-by-step work; optional scaffold mode with guided prompts (e.g., "What is the molar mass of the product?"); solution reveal with full working and intermediate values called out; optional step-by-step checker that validates each step.
 **Feedback/scoring logic:** Per-problem accuracy; wrong answers trigger reveal of worked solution; problems scored wrong are queued for replay; optional session summary showing which problem types (mole-to-mass, limiting-reagent, etc.) need more practice.
 
+
 ---
 
 ### Tool: Reaction Type Classifier & Product Predictor
@@ -53,6 +41,22 @@
 **Content/data needed:** Solubility rule reference (what combinations form precipitates, strong acids/bases, etc.); problem bank of metathesis reactions covering common precipitation, acid-base, and gas-forming scenarios at Regional level, plus redox at State/Nationals.
 **UI components:** Reactant display; free-text or dropdown product selector; ionic-equation editor (multi-part form: molecular → total ionic → net ionic); solubility rule reference panel (collapsible or always-visible); explanation reveal.
 **Feedback/scoring logic:** Per-equation accuracy; accuracy tracked separately for product prediction vs. net ionic simplification (user might predict correct products but write wrong net ionic, or vice versa — each gets feedback); problems missed are queued for review.
+
+
+---
+
+### Tool: Chemical Equation Balancer & Classifier
+**Event:** Chemistry Lab C
+**Purpose:** Practice balancing equations by type (acid-base, redox, metathesis, combustion, decomposition) and understand why certain equations are tricky to balance (odd-numbered atoms, polyatomic ion units).
+**Core interaction loop:**
+1. Tool displays an unbalanced equation (or a word description of a reaction: "Potassium permanganate reacts with hydrogen peroxide in acidic solution").
+2. User balances the equation by typing coefficients.
+3. On submit, tool validates the balance (atom count on each side), checks for lowest whole-number ratios, and reveals the correct balanced form.
+4. Tool classifies the equation type and highlights key features (e.g., "This is a redox reaction — note the change in oxidation states for Mn and H").
+**Content/data needed:** Equation bank covering all required reaction types: acid-base, metathesis (including precipitation), redox, decomposition, synthesis — each with multiple examples, increasing in difficulty (simple → complex with polyatomic ions → complex with odd-numbered atoms).
+**UI components:** Equation display area with blank coefficient boxes before each compound; coefficient input fields; visual atom-count checker (shows atom tallies on each side as user enters coefficients, greens them when balanced); explanation panel on reveal.
+**Feedback/scoring logic:** Per-equation accuracy; equations scored wrong are queued for later in same session and prioritized in future sessions; optional difficulty scaling (Regional: basic equations only; State/Nationals: includes complex balancing).
+
 
 ---
 
@@ -68,46 +72,20 @@
 **UI components:** Data table display; graph tool (optional — auto-generate graphs of [A] vs. t, ln[A] vs. t, 1/[A] vs. t to help students identify order); rate law input fields (e.g., "Rate = k[A]^m[B]^n"); rate constant input with unit selector; step-by-step solution reveal.
 **Feedback/scoring logic:** Order determination graded separately from rate constant calculation (user might get order right but calculate k with wrong units, for example); incorrect orders trigger hint about which graph linearizes the data.
 
----
-
-### Tool: Lab Safety Compliance Checker
-**Event:** Chemistry Lab C
-**Purpose:** Ensure students understand the dress code and safe material-handling requirements before competition — violations result in real penalties or disqualification.
-**Core interaction loop:**
-1. Tool presents a scenario (e.g., "You arrive at the event with shoulder-length hair. Can you compete?") or a dress-code checklist.
-2. User selects compliant/non-compliant or answers yes/no questions about safety requirements.
-3. Tool reveals correct answers and explains why (e.g., "No — hair must be tied back to prevent it catching fire or being exposed to chemicals").
-4. Tool can simulate a full safety inspection (user goes through checklist of goggles, apron, skin coverage, hair, equipment).
-**Content/data needed:** Official dress code requirements from the event rules; common mistake scenarios; reference list of required vs. prohibited equipment.
-**UI components:** Scenario cards or checklist view; simple yes/no or compliant/non-compliant selector; explanation reveal; optional full-competition checklist view.
-**Feedback/scoring logic:** Simple right/wrong per scenario; no partial credit, since safety is binary. Summary at end shows any areas of misunderstanding.
 
 ---
 
-### Tool: Reaction Condition Effect Explainer
+### Tool: Solubility Rule Practice & Precipitation Predictor
 **Event:** Chemistry Lab C
-**Purpose:** Build conceptual understanding of how temperature, concentration, particle size, and catalysts affect reaction rate, and why — aligned with the event's emphasis on explaining mechanism, not just naming.
+**Purpose:** Drill the solubility rules (always soluble: Group 1, NH₄⁺, NO₃⁻; usually soluble: Cl⁻, SO₄²⁻; usually insoluble: CO₃²⁻, PO₄³⁻, OH⁻, S²⁻) and predict whether mixing two solutions forms a precipitate.
 **Core interaction loop:**
-1. Tool presents a scenario (e.g., "Increasing temperature increases the reaction rate. Explain why in terms of particle collisions and activation energy").
-2. User enters a free-text explanation.
-3. Tool reveals a correct explanation emphasizing collision theory (more kinetic energy → more frequent/energetic collisions → more successful collisions per unit time).
-4. User is asked to apply the same reasoning to a new scenario (e.g., "How would adding a catalyst change the rate? Why?").
-**Content/data needed:** Set of mechanism-based explanation prompts (temperature, concentration, particle size, catalyst, solvent polarity) with model answers emphasizing collision theory and activation energy.
-**UI components:** Scenario prompt display; free-text input area for explanation; model explanation reveal; optional follow-up prompt for application to related scenario.
-**Feedback/scoring logic:** No automatic grading of free-text responses; user compares their explanation to the model explanation; optional keyword checker (highlights if explanation mentions "activation energy," "collision frequency," etc.).
-
----
-
-### Tool: Equipment & Procedure Reference Guide
-**Event:** Chemistry Lab C
-**Purpose:** Give students quick lookup access to required lab equipment and correct procedure (safe and accurate measurement techniques) for tasks likely to appear in the event.
-**Core interaction loop:**
-1. User searches or browses the equipment list: glassware (beakers, Erlenmeyer flasks, graduated cylinders, burettes, pipettes), heating apparatus, safety gear.
-2. For each item, tool shows: image/diagram, volume/capacity ranges, typical use case, and correct handling (e.g., "Graduated cylinders: read at meniscus, at eye level, ±0.5 mL precision").
-3. Tool includes animated procedure demonstrations for common lab tasks: measuring liquids, heating, titration setup, safe chemical handling.
-**Content/data needed:** Images/diagrams of all equipment on the Division C Chemistry Lab Equipment List; reference accuracy tolerances for each piece; video or step-by-step animation of common procedures.
-**UI components:** Searchable/browsable equipment library with images; procedure video/animation carousel; reference tolerances and safe-handling notes for each item.
-**Feedback/scoring logic:** Pure reference tool — no scoring, just lookup and demonstration.
+1. Tool presents two ionic compounds dissolved in water (e.g., "AgNO₃ + NaCl") and asks: "Does a precipitate form? If so, what is it?"
+2. User applies solubility rules, identifies the potentially-insoluble combination, and names the precipitate.
+3. Tool validates and reveals the correct answer with the solubility rule cited (e.g., "AgCl is insoluble — all chlorides are soluble except Ag⁺, Pb²⁺, Hg₂²⁺").
+4. Tool can ask: "Write the net ionic equation for the precipitation."
+**Content/data needed:** Solubility rule table (with exceptions clearly noted); problem bank of ion combinations covering all major rule categories and their exceptions.
+**UI components:** Ion pair display; precipitation prediction (yes/no); precipitate name input; net ionic equation editor; solubility rule reference (collapsible).
+**Feedback/scoring logic:** Precipitation prediction validated against rules; precipitate name checked for correct cation-anion pairing; net ionic equation validated for correct spectator ion removal.
 
 ---
 
@@ -122,6 +100,7 @@
 **Content/data needed:** Set of molecules/ions with varied oxidation states (transition metals in multiple oxidation states, polyatomic ions, peroxides); common redox reactions in acidic and basic solution.
 **UI components:** Molecule/ion display with atom-selection tool; oxidation state input field; reaction display with half-reaction editor (oxidation/reduction sides, electron balance, atom/charge balancing); solution reveal with rules reference.
 **Feedback/scoring logic:** Oxidation state assignment validated per atom using standard rules; half-reaction balancing checked for correct atom and charge balance; electron transfer validated (electrons lost = electrons gained).
+
 
 ---
 
@@ -138,16 +117,47 @@
 **UI components:** Equation display; reactant amount inputs; visual bar chart showing product capacity from each reactant; limiting-reagent selector; excess-remainder calculator; solution reveal.
 **Feedback/scoring logic:** Limiting-reagent identification validated (the one with lower theoretical yield); product amount validated from limiting reagent; excess calculation checked (starting minus consumed).
 
+
 ---
 
-### Tool: Solubility Rule Practice & Precipitation Predictor
+### Tool: Reaction Condition Effect Explainer
 **Event:** Chemistry Lab C
-**Purpose:** Drill the solubility rules (always soluble: Group 1, NH₄⁺, NO₃⁻; usually soluble: Cl⁻, SO₄²⁻; usually insoluble: CO₃²⁻, PO₄³⁻, OH⁻, S²⁻) and predict whether mixing two solutions forms a precipitate.
+**Purpose:** Build conceptual understanding of how temperature, concentration, particle size, and catalysts affect reaction rate, and why — aligned with the event's emphasis on explaining mechanism, not just naming.
 **Core interaction loop:**
-1. Tool presents two ionic compounds dissolved in water (e.g., "AgNO₃ + NaCl") and asks: "Does a precipitate form? If so, what is it?"
-2. User applies solubility rules, identifies the potentially-insoluble combination, and names the precipitate.
-3. Tool validates and reveals the correct answer with the solubility rule cited (e.g., "AgCl is insoluble — all chlorides are soluble except Ag⁺, Pb²⁺, Hg₂²⁺").
-4. Tool can ask: "Write the net ionic equation for the precipitation."
-**Content/data needed:** Solubility rule table (with exceptions clearly noted); problem bank of ion combinations covering all major rule categories and their exceptions.
-**UI components:** Ion pair display; precipitation prediction (yes/no); precipitate name input; net ionic equation editor; solubility rule reference (collapsible).
-**Feedback/scoring logic:** Precipitation prediction validated against rules; precipitate name checked for correct cation-anion pairing; net ionic equation validated for correct spectator ion removal.
+1. Tool presents a scenario (e.g., "Increasing temperature increases the reaction rate. Explain why in terms of particle collisions and activation energy").
+2. User enters a free-text explanation.
+3. Tool reveals a correct explanation emphasizing collision theory (more kinetic energy → more frequent/energetic collisions → more successful collisions per unit time).
+4. User is asked to apply the same reasoning to a new scenario (e.g., "How would adding a catalyst change the rate? Why?").
+**Content/data needed:** Set of mechanism-based explanation prompts (temperature, concentration, particle size, catalyst, solvent polarity) with model answers emphasizing collision theory and activation energy.
+**UI components:** Scenario prompt display; free-text input area for explanation; model explanation reveal; optional follow-up prompt for application to related scenario.
+**Feedback/scoring logic:** No automatic grading of free-text responses; user compares their explanation to the model explanation; optional keyword checker (highlights if explanation mentions "activation energy," "collision frequency," etc.).
+
+
+---
+
+### Tool: Lab Safety Compliance Checker
+**Event:** Chemistry Lab C
+**Purpose:** Ensure students understand the dress code and safe material-handling requirements before competition — violations result in real penalties or disqualification.
+**Core interaction loop:**
+1. Tool presents a scenario (e.g., "You arrive at the event with shoulder-length hair. Can you compete?") or a dress-code checklist.
+2. User selects compliant/non-compliant or answers yes/no questions about safety requirements.
+3. Tool reveals correct answers and explains why (e.g., "No — hair must be tied back to prevent it catching fire or being exposed to chemicals").
+4. Tool can simulate a full safety inspection (user goes through checklist of goggles, apron, skin coverage, hair, equipment).
+**Content/data needed:** Official dress code requirements from the event rules; common mistake scenarios; reference list of required vs. prohibited equipment.
+**UI components:** Scenario cards or checklist view; simple yes/no or compliant/non-compliant selector; explanation reveal; optional full-competition checklist view.
+**Feedback/scoring logic:** Simple right/wrong per scenario; no partial credit, since safety is binary. Summary at end shows any areas of misunderstanding.
+
+
+---
+
+### Tool: Equipment & Procedure Reference Guide
+**Event:** Chemistry Lab C
+**Purpose:** Give students quick lookup access to required lab equipment and correct procedure (safe and accurate measurement techniques) for tasks likely to appear in the event.
+**Core interaction loop:**
+1. User searches or browses the equipment list: glassware (beakers, Erlenmeyer flasks, graduated cylinders, burettes, pipettes), heating apparatus, safety gear.
+2. For each item, tool shows: image/diagram, volume/capacity ranges, typical use case, and correct handling (e.g., "Graduated cylinders: read at meniscus, at eye level, ±0.5 mL precision").
+3. Tool includes animated procedure demonstrations for common lab tasks: measuring liquids, heating, titration setup, safe chemical handling.
+**Content/data needed:** Images/diagrams of all equipment on the Division C Chemistry Lab Equipment List; reference accuracy tolerances for each piece; video or step-by-step animation of common procedures.
+**UI components:** Searchable/browsable equipment library with images; procedure video/animation carousel; reference tolerances and safe-handling notes for each item.
+**Feedback/scoring logic:** Pure reference tool — no scoring, just lookup and demonstration.
+

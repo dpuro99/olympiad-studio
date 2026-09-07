@@ -12,6 +12,7 @@
 **UI components:** Specimen image display or property-description text; multiple-choice mineral selector or free-text input; property highlights on reveal (which features made the ID certain?); optional property filter tool (narrow choices by checking specific properties).
 **Feedback/scoring logic:** Mineral ID validated against official list; properties highlighted that confirm the ID; alternate likely candidates shown if student was close but wrong (building reasoning for why one mineral was chosen over a similar one).
 
+
 ---
 
 ### Tool: Rock Classifier (Igneous/Sedimentary/Metamorphic)
@@ -25,6 +26,7 @@
 **Content/data needed:** Rock image bank with varied textures and compositions; classification decision tree (start with texture, then composition, etc.); plate-tectonic context for rock formation.
 **UI components:** Rock image display; rock-type selector (3 options); specific-rock identifier (multiple-choice or free-text); explanation reveal with texture annotations; tectonic-context map (showing where this rock type typically forms).
 **Feedback/scoring logic:** Rock-type classification validated against diagnostic textures; specific-rock ID validated if attempted; tectonic-context reasoning checked for plausibility.
+
 
 ---
 
@@ -40,6 +42,7 @@
 **UI components:** Ternary diagram display; composition readout (grid lines or coordinate tool to help user read the diagram); percentage input fields for each component (K, Na, Ca); solution reveal with coordinate-reading explanation.
 **Feedback/scoring logic:** Coordinate reading validated (percentages should sum to 100%); feldspar-type identification checked against compositional fields (e.g., >50% K = K-feldspar).
 
+
 ---
 
 ### Tool: Phase Diagram Interpreter (T-P and T-Composition)
@@ -54,33 +57,6 @@
 **UI components:** Phase diagram display (with axis labels and phase fields colored); user can click/select a point on the diagram; phase prediction output; boundary-crossing scenario questions (e.g., "Cool from 1200°C to 600°C at constant pressure — what minerals crystallize?").
 **Feedback/scoring logic:** Phase selection validated against diagram fields; boundary-crossing predictions checked (user should understand that crossing a phase boundary causes mineral transformation).
 
----
-
-### Tool: Crystal System Matcher (State/National)
-**Event:** Rocks and Minerals C
-**Purpose:** Match crystal structures (cubic, hexagonal, tetragonal, orthorhombic, monoclinic, triclinic, trigonal) to crystal shapes and physical properties like cleavage — State/National content.
-**Core interaction loop:**
-1. Tool displays a crystal image and asks: "What crystal system does this mineral belong to?"
-2. User selects from seven crystal-system options, optionally explaining reasoning (cubic crystals show 90° angles, hexagonal show 120° angles, etc.).
-3. Tool validates and explains how crystal structure determines crystal shape, cleavage planes, and other physical properties.
-4. Tool can reverse-prompt: "If a mineral shows perfect octahedral cleavage, what crystal systems is it likely to belong to?" (cubic, typically).
-**Content/data needed:** Crystal images for each system; crystal-system geometric descriptions (axis lengths, angles); cleavage patterns for each system.
-**UI components:** Crystal image or diagram display; crystal-system selector (7 options); explanation input or multiple-choice geometric properties (90° angles, etc.); cleavage-pattern reference (showing typical cleavage for each system).
-**Feedback/scoring logic:** Crystal-system identification validated against image geometry; property-reasoning checked (e.g., "cubic because all angles are 90°").
-
----
-
-### Tool: Thin Section Analyzer (State/National)
-**Event:** Rocks and Minerals C
-**Purpose:** Identify minerals in photomicrographs and distinguish rock types from microscopic texture — State/National-level skill requiring optical identification.
-**Core interaction loop:**
-1. Tool displays a photomicrograph (mineral or rock) taken in polarized light, showing optical properties (twinning, extinction angles, birefringence colors).
-2. User identifies the mineral (if showing a mineral photo) or rock type (if showing a rock section).
-3. Tool validates and highlights optical features that confirmed the ID (e.g., "Plagioclase shows polysynthetic twinning visible here").
-4. Tool can ask: "Is this igneous basalt or sedimentary sandstone?" (based on texture: interlocking crystals vs. rounded grains).
-**Content/data needed:** Photomicrograph bank (polarized-light microscope images) of common minerals and rock types; optical property reference (plagioclase twinning, quartz extinction, garnet isotropy, etc.); rock-texture reference (crystalline vs. detrital).
-**UI components:** Photomicrograph display; feature-annotation tool (user can click to highlight visible features); mineral/rock identifier (multiple-choice or free-text); optical-property reference sidebar; solution reveal with feature annotations.
-**Feedback/scoring logic:** Mineral/rock ID validated; optical-property reasoning checked (user should identify which visible feature confirmed the ID).
 
 ---
 
@@ -96,6 +72,7 @@
 **UI components:** Bowen's series display (visual or listed); temperature scale; mineral-sequencing input (drag-and-drop or selection); cooling-scenario prompts; solution reveal with reasoning.
 **Feedback/scoring logic:** Crystallization order validated against series; reasoning checked for understanding of temperature control (higher temp = earlier crystallization).
 
+
 ---
 
 ### Tool: Metamorphic Facies & Grade Identifier
@@ -110,6 +87,7 @@
 **UI components:** Rock image or mineral list display; grade/facies selector; T-P diagram overlay (showing where this facies occurs); index-mineral reference table (collapsible).
 **Feedback/scoring logic:** Grade determination validated (presence of diagnostic index minerals); facies selection checked against T-P conditions shown on diagram.
 
+
 ---
 
 ### Tool: Protolith Predictor
@@ -122,6 +100,7 @@
 **Content/data needed:** Metamorphic-protolith correspondence table (shale→slate, granite→gneiss, basalt→amphibolite, etc.); reasoning: mica in a schist indicates the protolith had clay minerals (shale).
 **UI components:** Rock description or image display; protolith selector (multiple-choice); reasoning input or explanation reveal; composition-to-protolith mapping reference.
 **Feedback/scoring logic:** Protolith selection validated against expected compositions; reasoning explanation checked for logical connection (e.g., "contains quartz and feldspar → likely derived from granitic rock").
+
 
 ---
 
@@ -137,6 +116,7 @@
 **UI components:** Rock image/description display; tectonic-setting or depositional-environment selector; explanation reveal; plate-tectonics map (showing where this rock type forms); reverse-lookup (user given a setting, predicts rock type).
 **Feedback/scoring logic:** Setting selection validated against rock mineralogy/texture; reasoning checked for understanding of geologic process (e.g., how subduction produces andesite through partial melting of basalt).
 
+
 ---
 
 ### Tool: Sedimentary Depositional Environment Identifier
@@ -151,6 +131,7 @@
 **UI components:** Rock/structure image or description; environment selector; primary-structure selector; solution reveal with cross-section of depositional environment.
 **Feedback/scoring logic:** Environment identification validated against rock type and structures; reasoning checked for understanding of energy, transport mechanism, and depositional setting.
 
+
 ---
 
 ### Tool: Sedimentary Structure Identifier
@@ -164,6 +145,37 @@
 **Content/data needed:** Image bank of primary sedimentary structures; environmental interpretations; depositional process explanations.
 **UI components:** Structure image display; structure name input; environmental-interpretation input; solution reveal with formation-process diagram.
 **Feedback/scoring logic:** Structure identification validated against visual features; environmental interpretation checked for correct process and setting linkage.
+
+
+---
+
+### Tool: Crystal System Matcher (State/National)
+**Event:** Rocks and Minerals C
+**Purpose:** Match crystal structures (cubic, hexagonal, tetragonal, orthorhombic, monoclinic, triclinic, trigonal) to crystal shapes and physical properties like cleavage — State/National content.
+**Core interaction loop:**
+1. Tool displays a crystal image and asks: "What crystal system does this mineral belong to?"
+2. User selects from seven crystal-system options, optionally explaining reasoning (cubic crystals show 90° angles, hexagonal show 120° angles, etc.).
+3. Tool validates and explains how crystal structure determines crystal shape, cleavage planes, and other physical properties.
+4. Tool can reverse-prompt: "If a mineral shows perfect octahedral cleavage, what crystal systems is it likely to belong to?" (cubic, typically).
+**Content/data needed:** Crystal images for each system; crystal-system geometric descriptions (axis lengths, angles); cleavage patterns for each system.
+**UI components:** Crystal image or diagram display; crystal-system selector (7 options); explanation input or multiple-choice geometric properties (90° angles, etc.); cleavage-pattern reference (showing typical cleavage for each system).
+**Feedback/scoring logic:** Crystal-system identification validated against image geometry; property-reasoning checked (e.g., "cubic because all angles are 90°").
+
+
+---
+
+### Tool: Thin Section Analyzer (State/National)
+**Event:** Rocks and Minerals C
+**Purpose:** Identify minerals in photomicrographs and distinguish rock types from microscopic texture — State/National-level skill requiring optical identification.
+**Core interaction loop:**
+1. Tool displays a photomicrograph (mineral or rock) taken in polarized light, showing optical properties (twinning, extinction angles, birefringence colors).
+2. User identifies the mineral (if showing a mineral photo) or rock type (if showing a rock section).
+3. Tool validates and highlights optical features that confirmed the ID (e.g., "Plagioclase shows polysynthetic twinning visible here").
+4. Tool can ask: "Is this igneous basalt or sedimentary sandstone?" (based on texture: interlocking crystals vs. rounded grains).
+**Content/data needed:** Photomicrograph bank (polarized-light microscope images) of common minerals and rock types; optical property reference (plagioclase twinning, quartz extinction, garnet isotropy, etc.); rock-texture reference (crystalline vs. detrital).
+**UI components:** Photomicrograph display; feature-annotation tool (user can click to highlight visible features); mineral/rock identifier (multiple-choice or free-text); optical-property reference sidebar; solution reveal with feature annotations.
+**Feedback/scoring logic:** Mineral/rock ID validated; optical-property reasoning checked (user should identify which visible feature confirmed the ID).
+
 
 ---
 

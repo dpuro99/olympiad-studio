@@ -12,6 +12,7 @@
 **UI components:** Scenario display; input field(s) for unknown(s); formula reference panel (collapsible); solution reveal with working; optional unit selector for power output.
 **Feedback/scoring logic:** Per-problem accuracy; wrong answers trigger solution reveal and are queued for later replay; session summary highlights which variable relationships (V-I, I-R, power) need more practice.
 
+
 ---
 
 ### Tool: Kirchhoff's Law Circuit Analyzer
@@ -25,6 +26,7 @@
 **Content/data needed:** Circuit bank with 2-loop, 3-loop, and mixed scenarios; some with dependent sources; problems with varying difficulty and current/voltage unknowns.
 **UI components:** Interactive circuit diagram (can select a junction for KCL or a loop for KVL); equation-builder tool (text input or visual formula constructor); step-by-step solution reveal showing current/voltage assignments, equation setup, and algebraic solution.
 **Feedback/scoring logic:** Equation setup accuracy tracked separately from final answer accuracy (user might set up equations correctly but solve them wrong, or vice versa); incorrect equation setup triggers hint about KCL/KVL application at that point.
+
 
 ---
 
@@ -40,6 +42,7 @@
 **UI components:** Circuit diagram display; problem description; calculation workspace/input area; solution reveal showing the voltage/current reasoning chain.
 **Feedback/scoring logic:** Per-problem accuracy; incorrect answers trigger working backward from the solution (e.g., "What current flows through the known resistor, given the voltage drop across it?").
 
+
 ---
 
 ### Tool: Circuit Diagram Interpreter & Builder
@@ -53,6 +56,7 @@
 **Content/data needed:** Bank of circuit diagrams (increasing complexity from simple series/parallel to mixed); for each, questions about equivalent resistance, voltage division, current split, and power.
 **UI components:** Circuit diagram display or drawing canvas; multiple-choice or numeric input for questions; circuit-element palette for building circuits (resistors, batteries, switches, wires); solution reveal with series/parallel annotations.
 **Feedback/scoring logic:** Per-question accuracy; incorrect analyses trigger prompts to identify series vs. parallel groupings first, then recalculate.
+
 
 ---
 
@@ -68,6 +72,7 @@
 **UI components:** Circuit diagram with draggable multimeter probe connectors; multimeter setting selector (V/A/Ω, AC/DC where relevant); simulated meter display (analog or digital); visual feedback on probe placement (green for correct series/parallel, red for incorrect).
 **Feedback/scoring logic:** Setup accuracy checked first (if probes connected wrong, meter reads show "ERROR" or are out-of-range, prompting student to reconsider setup); reading accuracy then validated.
 
+
 ---
 
 ### Tool: LED Brightness Equalizer Calculator
@@ -81,6 +86,7 @@
 **Content/data needed:** LED specifications (forward voltage, rated current); power supply voltages; resistor value calculators (for current-limiting).
 **UI components:** Circuit-drawing canvas (place LEDs, battery, resistors, connect); LED and resistor parameter inputs; current/voltage calculator for each LED; pass/fail indication on design validation.
 **Feedback/scoring logic:** Design validated for equal current through both LEDs (equal brightness), component ratings, and feasibility; incorrect designs trigger analysis of where brightness inequality occurs (e.g., "If LEDs are in series, they get the same current but different voltages — are you sure they're equally bright?").
+
 
 ---
 
@@ -96,19 +102,6 @@
 **UI components:** Problem display; formula reference (F=BIL with vector/angle version); input fields for magnitude and direction; solution reveal with diagram showing force direction.
 **Feedback/scoring logic:** Magnitude and direction graded separately; incorrect directions prompt right-hand-rule visualization.
 
----
-
-### Tool: Historical Figures Quick Reference & Quiz
-**Event:** Circuit Lab C
-**Purpose:** Ensure students can quickly answer the "free points" guaranteed historical-figure questions: Ampere, Coulomb, Kirchhoff, Volta, Ohm, Tesla, Faraday and their contributions.
-**Core interaction loop:**
-1. Tool shows a scientist's name and asks: "What is this person credited with?" or shows a contribution and asks "Who is this credited to?"
-2. User selects from a list or types the answer.
-3. Tool reveals the correct answer and a brief fact (e.g., "Ampere — quantified the relationship between current and magnetic force; unit of current named after him").
-4. Tool cycles through all seven figures, randomizing order, with emphasis on previously-missed figures.
-**Content/data needed:** Table of 7 scientists: `{name, contribution, unit_named_after, interesting_fact}`.
-**UI components:** Single-question card; multiple-choice or text-input selector; fact reveal; progress indicator (X of 7 figures).
-**Feedback/scoring logic:** Per-scientist accuracy; all seven must be learned to "pass" the module; weak figures are requeued.
 
 ---
 
@@ -124,6 +117,7 @@
 **UI components:** Prompt display; free-text input or multiple-choice conceptual options; model explanation reveal; animated diagram (optional) showing AC waveform vs. static DC field.
 **Feedback/scoring logic:** Free-text responses scored against keyword checklist (mentions "changing flux," "induction," "time-varying," etc.); multiple-choice responses directly validated.
 
+
 ---
 
 ### Tool: Diode & Transistor Behavior Analyzer (State/National)
@@ -137,3 +131,18 @@
 **Content/data needed:** Diode I-V characteristic reference; transistor bias regions (cutoff/active/saturation); op-amp gain formulas for inverting/non-inverting/differential configurations.
 **UI components:** Circuit diagram with diode/transistor/op-amp; voltage input fields; bias-region or output selector; solution reveal with characteristic curve or gain calculation.
 **Feedback/scoring logic:** Diode current validated against characteristic curve; transistor bias region checked against Vbe/Vce thresholds; op-amp output validated against gain formula.
+
+---
+
+### Tool: Historical Figures Quick Reference & Quiz
+**Event:** Circuit Lab C
+**Purpose:** Ensure students can quickly answer the "free points" guaranteed historical-figure questions: Ampere, Coulomb, Kirchhoff, Volta, Ohm, Tesla, Faraday and their contributions.
+**Core interaction loop:**
+1. Tool shows a scientist's name and asks: "What is this person credited with?" or shows a contribution and asks "Who is this credited to?"
+2. User selects from a list or types the answer.
+3. Tool reveals the correct answer and a brief fact (e.g., "Ampere — quantified the relationship between current and magnetic force; unit of current named after him").
+4. Tool cycles through all seven figures, randomizing order, with emphasis on previously-missed figures.
+**Content/data needed:** Table of 7 scientists: `{name, contribution, unit_named_after, interesting_fact}`.
+**UI components:** Single-question card; multiple-choice or text-input selector; fact reveal; progress indicator (X of 7 figures).
+**Feedback/scoring logic:** Per-scientist accuracy; all seven must be learned to "pass" the module; weak figures are requeued.
+
