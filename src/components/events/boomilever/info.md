@@ -1,13 +1,22 @@
-# Boomilever C — 2027 status
+# Boomilever C — 2027 Rules Summary
 
-## Verified event-page scope
-Teams build a cantilevered beam or truss structure that extends from a vertical testing wall and supports a load at a specified height and distance. The official event page describes the score at a high level as combining structural efficiency and a Load Scored Bonus.
+**Status:** Verified against the supplied Division C Rules Manual, pp. C7–C12 (PDF pp. 12–17), checked October 8, 2026. Consult the manual for exact construction and apparatus language.
 
-## Verification boundary
-This summary is not a rule interpretation. Construction materials, dimensions, testing setup, bonus eligibility, tiers, scoring formula, and penalties must be checked directly in the 2027 Rules Manual and current corrections/clarifications. The detailed prior draft has been retired because it was not verified against the 2027 packet.
+## Format and design
+- Team of up to 2; approximately 10 minutes; required Eye Protection B (Z87+); no impound.
+- One prebuilt structure, made from wood joined with adhesive only; no separate/detachable pieces. Participants must answer design/construction/operation questions. At in-person tournaments the ES provides the apparatus; teams may not bring tools or apparatus.
+- The structure rests on the mounting bolt and supports the loading block. Chain centerline is 40–45 cm from the wall and within 2.5 cm of its centerline. It may contact the wall only outside the marked vertical contact-width lines. Before sand loading, the loading block bottom must be above the bolt centerline.
+- Base option contact rule: touch only above the 15 cm horizontal depth line. Load Scored Bonus option: touch only above the 10 cm line; a bonus is awarded only if the structure also holds 15 kg. Failure to hold 15 kg does not itself cause a construction violation.
 
-## Official sources
-- [2027 event page](https://www.soinc.org/boomilever-c)
-- [2027 rules access](https://www.soinc.org/rules-2027)
-- [Official rule corrections](https://www.soinc.org/events/rules-clarifications)
-- [Rules clarifications](https://www.soinc.org/frequently_asked_questions)
+## Competition and scoring
+- Check-in prevents leaving or receiving outside help/materials; no structure alterations after check-in. Team submits estimated load as a tiebreaker; structure mass is measured.
+- Six-minute setup/testing window. Stop loading at structural failure, external support, or time expiration. Supported load is assembly plus sand, rounded to grams, capped at 15,000 g. Unable to support the empty assembly, no eye protection, or specified safety/fit failures receive participation-only scoring.
+- Score = Load Scored ÷ Structure Mass. Load Scored = Load Supported + **7,500 g** when eligible for the Load Scored Bonus. (The older draft incorrectly stated 5,000 g.)
+- Tier 1 meets all requirements; Tier 2 misses one or more requirements; unable-to-load/other listed conditions are participation-only. Tiebreakers: lower structure mass, then estimated load closest to actual.
+
+## Materials and apparatus notes
+The manual defines permitted wood/adhesive, excludes commercially laminated wood and tape, permits team-made wood lamination, and specifies the testing wall, bolt, loading assembly, sand and stabilizing sticks. Verify dimensions and details directly in pp. C9–C12 before building a compliance checker.
+
+## Official verification sources
+- Science Olympiad, 2027 Division C Rules Manual, pp. C7–C12.
+- [Official event FAQ](https://www.soinc.org/boomilever-div-c) · [2027 rules](https://www.soinc.org/rules-2027) · [Corrections](https://www.soinc.org/events/rules-clarifications)

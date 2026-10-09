@@ -1,13 +1,19 @@
-# Write It, Do It B — 2027 status
+# Write It, Do It B — 2027 Rules Summary
 
-## Verified event-page scope
-The official 2027 Science Olympiad event page describes one participant writing a description of an object and how to build it, followed by the other participant attempting to construct the object from that description.
+**Status:** Verified against the supplied Division B Rules Manual, p. B61 (PDF p. 66), checked October 8, 2026.
 
-## Verification boundary
-The previous detailed draft included unverified phase timings, materials restrictions, drawing penalties, scoring dimensions, and tiebreak assumptions. Those are retired until checked against the complete 2027 Rules Manual and current corrections/clarifications. This page is only a high-level orientation, not an extension of the rules.
+## Format and resources
+- Exactly 2 participants; approximately 50 minutes.
+- The writer brings a writing utensil. No other materials or resources are allowed.
+- One participant views an object (which may be abstract and is identical for all teams); they may not touch it unless the Event Supervisor permits. Objects use science/inexpensive materials or commercial construction sets. Supervisors try to use different materials from the prior year.
+
+## Two phases
+- **Writing:** 25 minutes to describe the object and how to build it; no advantage to finishing early. Drawings/diagrams of the model or subsections are prohibited. Words, numerals, single letters, abbreviations, editing, punctuation and scientific symbols are allowed when used in the context of written description.
+- **Building:** the ES passes the description to the second participant, who has 20 minutes to recreate the object.
+
+## Scoring
+The team must build the closest object and comply with the no-drawing rule. Pieces can score for size, color, location, orientation and/or connection. Correct connections beyond an incorrectly connected piece still count; unused parts are not penalized. Drawing a subsection places the team in Tier 2; drawing a picture of the model results in disqualification. Construction-phase time is the tiebreaker. The rules do not specify “faster wins”; do not assume direction beyond the manual’s wording.
 
 ## Official sources
-- [2027 event page](https://www.soinc.org/write-it-do-it-b)
-- [2027 rules access](https://www.soinc.org/rules-2027)
-- [Official rule corrections](https://www.soinc.org/events/rules-clarifications)
-- [Rules clarifications](https://www.soinc.org/frequently_asked_questions)
+- Science Olympiad, 2027 Division B Rules Manual, p. B61.
+- [Official event page](https://www.soinc.org/write-it-do-it-b) · [2027 rules](https://www.soinc.org/rules-2027) · [Corrections](https://www.soinc.org/events/rules-clarifications)

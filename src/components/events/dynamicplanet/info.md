@@ -1,13 +1,24 @@
-# Dynamic Planet C — 2027 status
+# Dynamic Planet C — 2027 Rules Summary
 
-## Verified event-page scope
-The official 2027 Science Olympiad event page states that teams complete tasks related to the properties and processes of Earth’s fresh waters. The previous oceanography-focused draft does not describe the 2027 focus and has been retired.
+**Status:** Verified against the supplied Division C Rules Manual, pp. C24–C25 (PDF pp. 29–30), checked October 8, 2026. The old oceanography draft was incorrect for 2027.
 
-## Verification boundary
-Specific subtopics, permitted resources, station rules, scoring, timing, and penalties must be checked against the complete 2027 Rules Manual and current corrections/clarifications. This page is only a high-level orientation, not an extension of the rules.
+## Format and resources
+- Team of up to 2; approximately 50 minutes; Class II calculator.
+- Teams may bring writing utensils, two Class II calculators and a binder of any size/content/source. Tabs, labels, lamination and sheet protectors are permitted. During stations involving samples/specimens/displays, binder material cannot be removed.
+- Assessment may be an exam and/or timed stations.
+
+## Current scope: properties and processes of Earth’s fresh waters
+- Hydrologic cycle, water budgets, critical zone, reservoirs and residence time.
+- Climatic/topographic controls on freshwater and arid–semiarid–humid regimes.
+- Drainage basins, watersheds, stream order/network patterns.
+- Fluvial sediment, transport/capacity, channel patterns, bedforms, geomorphology and landforms.
+- Streamflow, open-channel relationships, floods and recurrence intervals.
+- Groundwater, aquifers, hydraulic gradients, surface-water exchange, saltwater intrusion and karst.
+- Lakes and wetlands: formation, water budgets, stratification/turnover, shoreline processes and wetland types.
+- Geologic/paleohydrologic records; human impacts, engineering, extraction and pollution; freshwater mapping, well data, gauging, hydrographs and monitoring.
+
+Scoring is high score wins with credit for quality/accuracy, reasoning and scientific method; preselected questions break ties.
 
 ## Official sources
-- [2027 event page](https://www.soinc.org/dynamic-planet-c)
-- [2027 rules access](https://www.soinc.org/rules-2027)
-- [Official rule corrections](https://www.soinc.org/events/rules-clarifications)
-- [Rules clarifications](https://www.soinc.org/frequently_asked_questions)
+- Science Olympiad, 2027 Division C Rules Manual, pp. C24–C25.
+- [Official event page](https://www.soinc.org/dynamic-planet-c) · [2027 rules](https://www.soinc.org/rules-2027) · [Corrections](https://www.soinc.org/events/rules-clarifications)
