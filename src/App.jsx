@@ -349,13 +349,13 @@ export default function App() {
       {/* Main Content Pane */}
       <div ref={dashboardContentRef} style={{ flex: 1, overflowY: "auto" }}>
         <header style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, padding: "14px 28px", borderBottom: "0.5px solid var(--color-border-tertiary)", background: "var(--color-background-secondary)" }}>
-          <button onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "50%" }}>
+          <button type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "50%" }}>
             <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true"></i>
           </button>
           {isGuest ? (
-            <button onClick={handleGoogleLogin} disabled={authLoading} style={{
-              padding: "8px 16px", background: "#ffffff", color: "#1f1f1f",
-              border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500,
+            <button type="button" aria-label="Sign in with Google" onClick={handleGoogleLogin} disabled={authLoading} style={{
+              padding: "8px 16px", background: "var(--color-background-secondary)", color: "var(--color-text-primary)",
+              border: "1px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", fontWeight: 500,
               display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13,
               boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
             }}>
@@ -372,7 +372,7 @@ export default function App() {
               <span style={{ maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--color-text-info)" }} title={currentUser?.email}>
                 {currentUser?.email}
               </span>
-              <button onClick={handleLogout} style={{ background: "none", border: "0.5px solid var(--color-text-danger)", color: "var(--color-text-danger)", padding: "7px 12px", borderRadius: "var(--border-radius-md)", fontSize: 12, }}>
+              <button type="button" aria-label="Log out" onClick={handleLogout} style={{ background: "none", border: "0.5px solid var(--color-text-danger)", color: "var(--color-text-danger)", padding: "7px 12px", borderRadius: "var(--border-radius-md)", fontSize: 12, }}>
                 Log Out
               </button>
             </>

@@ -6,7 +6,7 @@ export default function AuthRequired({ mod, onLogin }) {
       <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.5, marginBottom: 18 }}>
         Guest mode supports local preparation tools. Sign in with Google to use {mod.label}.
       </p>
-      <button type="button" onClick={onLogin} style={{ padding: "9px 14px", background: "var(--color-text-info)", color: "#fff", border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500 }}>
+      <button type="button" aria-label="Sign in with Google to unlock this tool" onClick={onLogin} style={{ padding: "9px 14px", background: "var(--color-text-info)", color: "var(--color-background-primary)", border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500 }}>
         Sign In with Google
       </button>
     </div>

@@ -2,48 +2,21 @@
 
 ## Verified Current State
 
-- React 19 + Vite single-page application is running without a routing library.
-- Supabase provides Google OAuth and persistence for practice runs.
-- `src/App.jsx` controls theme, authentication/session state, the public landing view, the event lobby, the selected event, and the active module.
-- `src/components/events/registry.js` is the source of truth for event workspaces and modules.
-- Electric Vehicle is the only registered event. Arc Visualizer, Score Calculator, and Run Logger are live; the remaining EV modules render `ComingSoon`.
-- Event-specific code is isolated under `src/components/events/electricvehicle/`.
-- The UI uses CSS custom properties and a `data-theme` attribute for light/dark themes.
+- React 19 + Vite single-page application; Supabase provides Google OAuth and persistence.
+- `src/components/events/registry.js` is the source of truth for event workspaces.
+- The registry now lists only project events present on the official 2027 B/C slate: Anatomy and Physiology C, Boomilever C, Chemistry Lab C, Circuit Lab C, Designer Genes C, Dynamic Planet C, Electric Vehicle C, Rocks and Minerals C, and Write It, Do It B.
+- Official Science Olympiad event pages establish high-level objectives, but explicitly defer to the current Rules Manual.
+- EV displays only the official high-level objective; numeric scoring remains disabled until the 2027 manual and current clarifications are checked.
+- Other event-specific modules are disabled pending rule-by-rule verification.
 
-## Known Technical Debt
+## Domain Risks and Blockers
 
-- Supabase URL and anon key are currently hardcoded in `src/supabaseClient.js`; move them to Vite environment variables before treating configuration as production-safe.
-- Some navigation and event cards use clickable `div` elements and JavaScript hover handlers instead of semantic controls and CSS states.
-- Several components use hardcoded colors and inline SVGs despite the stated design rules.
-- `RunLogger` uses dummy fallback records when the database request fails, which can make unavailable data look real.
-- Mutation feedback, error presentation, and authenticated delete scoping need review.
-- There are no focused automated tests for registry behavior, geometry calculations, score calculations, or persistence workflows.
-
-## Domain Uncertainties
-
-- The 2026 Electric Vehicle score inputs used by the preparation estimator are verified: base score 100, distance score 2.0 pt/cm, time score absolute target/run-time difference, and can bonus `-0.5 x (110 - Inside Can Distance)`.
-- The score tool intentionally remains a single-run preparation estimator. Two-run selection, failed-run scoring, event-time bonus, and automatic violation categories are out of scope; users manually enter optional penalty points.
-- The arc visualizer is a design estimator. The rules define can placement and track geometry, but do not prescribe a single vehicle turning model.
-- Arc terminology and the relationship between the selected inner-can distance and the visualized path still need product clarification.
-
-## Recent Improvements
-
-- Lint is clean across the project.
-- Dashboard cards and navigation controls use semantic buttons with CSS hover/focus states.
-- Run Logger distinguishes database errors from empty history, prevents duplicate saves, shows delete progress, and scopes deletes by user and event.
-- Score calculation is isolated in `scoreUtils.js` and covered by focused Node tests using the official worked example.
-- Guest mode is available from the landing page and opens the dashboard with in-memory calculator use; Run Logger requires Google sign-in and does not contact Supabase while in guest mode.
-- Backend access is now modular: registry entries declare `requiresAuth`, and `App.jsx` renders the shared `AuthRequired` gate before protected tools mount.
+- Previous `info.md` and `tool-ideas.md` files contained detailed rules claims that were not verified against the official 2027 manuals. They must not be used as active 2027 references.
+- The official 2027 rules are distributed from the Science Olympiad rules page by email form. The complete Division B/C packets are not present in this workspace.
+- Rules corrections and event clarifications change or clarify the manuals during the season; both sources must be checked before enabling formulas or requirements.
 
 ## Working Agreement
 
-- Run `npm run lint` after JavaScript/JSX changes and `npm run build` for changes affecting application integration.
+- Run `npm run lint` after JavaScript/JSX changes and `npm run build` after application integration changes.
 - Keep event calculations and rule-specific behavior inside the owning event directory.
-- Record meaningful architecture, scope, behavior, or uncertainty changes here; do not add progress noise for routine edits.
-
-## Next Milestones
-
-1. Consolidate `.clinerules/` around this verified project state and the discovery-question workflow.
-2. Resolve security and accessibility mismatches.
-3. Verify the Electric Vehicle domain formulas and add focused tests.
-4. Improve persistence and error states in `RunLogger`.
+- Do not report rule-specific compliance as complete until it has been checked against the current official packet and current corrections/clarifications.

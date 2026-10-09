@@ -12,10 +12,10 @@ export default function LandingHome({ currentUser, onGoToDashboard, onGuestAcces
       <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 40px", borderBottom: "0.5px solid var(--color-border-tertiary)", backgroundColor: "var(--color-background-secondary)", position: "sticky", top: 0, zIndex: 100 }}>
         <Logo />
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "50%" }}>
+          <button type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "50%" }}>
             <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true"></i>
           </button>
-          <button onClick={currentUser ? onGoToDashboard : onGuestAccess} style={{ padding: "8px 16px", background: "var(--color-background-info)", color: "var(--color-text-info)", border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500, fontSize: 13 }}>Open Dashboard &rarr;</button>
+          <button type="button" aria-label={currentUser ? 'Open dashboard' : 'Continue as guest'} onClick={currentUser ? onGoToDashboard : onGuestAccess} style={{ padding: "8px 16px", background: "var(--color-background-info)", color: "var(--color-text-info)", border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500, fontSize: 13 }}>Open Dashboard &rarr;</button>
         </div>
       </header>
 
@@ -30,7 +30,7 @@ export default function LandingHome({ currentUser, onGoToDashboard, onGuestAcces
           <p style={{ fontSize: 16, color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: 32 }}>
             Olympiad Studio supports the wide range of preparation styles across Science Olympiad, from analytical study and scoring to design, modeling, and event-specific workflows.
           </p>
-          <button onClick={currentUser ? onGoToDashboard : onGuestAccess} style={{ padding: "12px 28px", background: "var(--color-text-info)", color: "#ffffff", border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500, fontSize: 14 }}>
+          <button type="button" aria-label={currentUser ? 'Open workspace' : 'Get started'} onClick={currentUser ? onGoToDashboard : onGuestAccess} style={{ padding: "12px 28px", background: "var(--color-text-info)", color: "var(--color-background-primary)", border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500, fontSize: 14 }}>
             {currentUser ? "Open Workspace" : "Get Started"}
           </button>
         </div>
