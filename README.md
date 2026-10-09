@@ -1,16 +1,27 @@
-# React + Vite
+# Olympiad Studio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite single-page app of rule-grounded Science Olympiad preparation tools. Event workspaces are registered in `src/components/events/registry.js`; navigation is local state in `src/App.jsx` (no router).
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+cp .env.example .env   # fill in VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+npm run dev
+```
 
-## React Compiler
+`src/supabaseClient.js` throws if either Supabase env var is missing. Supabase currently provides Google OAuth only; practice tools persist explicitly to browser `localStorage`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Scripts
 
-## Expanding the ESLint configuration
+- `npm run dev` — Vite dev server (base path `/olympiad-studio/`)
+- `npm test` — Node's built-in test runner over `tests/`; single file: `npm test -- tests/electricvehicle-score.test.js`
+- `npm run lint` — ESLint
+- `npm run build` — production build to `dist/`
+- `npm run deploy` — build then publish `dist/` with `gh-pages`
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Node is invoked through npm; there is no standalone `node` on the shell PATH.
+
+## Contributing
+
+See `AGENTS.md` for commands, conventions, and gotchas, and `.opencode/skill/build-event-tool/SKILL.md` for the event-tool workflow. `memory_bank/` holds project context. New tools must be registered in `registry.js`; event-specific logic stays inside its event folder. Never commit the official rule manuals in `rules/` or `.env`.

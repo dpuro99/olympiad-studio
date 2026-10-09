@@ -186,7 +186,7 @@ export const EVENT_REGISTRY = {
       component: FreshwaterTools,
       desc: 'Calculate stream discharge and user-entered water-budget balance from your own measurements.',
       eventName: 'Dynamic Planet',
-      manualReference: 'Division C Rules Manual, §3.a and §3.f, pp. C24–C25',
+      manualReference: 'Division C Rules Manual, §3.f, pp. C24–C25',
       eventUrl: 'https://www.soinc.org/dynamic-planet-c',
       rulesUrl: 'https://www.soinc.org/rules-2027'
     }],

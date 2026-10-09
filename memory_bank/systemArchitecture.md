@@ -22,8 +22,9 @@ There is no URL router. Navigation state is intentionally local to the SPA for n
 - `src/supabaseClient.js` owns the singleton browser Supabase client.
 - Authentication uses Google OAuth through Supabase Auth.
 - `App.jsx` calls `getSession()` during startup and subscribes to `onAuthStateChange`.
-- Practice runs are stored in the `practice_runs` table and should be filtered by both the authenticated user id and event id.
-- Row Level Security is part of the data-safety contract; client-side filters do not replace database policies.
+- Supabase is used for authentication only. No backend data reads or writes exist yet; every practice tool persists explicitly to browser `localStorage` and never uploads user data.
+- `requiresAuth` / `AuthRequired` exist to gate modules that will need a backend identity, but no registered module sets `requiresAuth: true` yet.
+- When backend practice storage is added, it must be scoped by the authenticated user id and event id, and Row Level Security (not client-side filters) must be the guard.
 - Database failures must be distinguishable from an empty result. Demo/fallback records must never appear as real user history without an explicit demo state.
 
 ## Registry Contract
@@ -43,17 +44,17 @@ There is no URL router. Navigation state is intentionally local to the SPA for n
 }
 ```
 
-Shared views consume registry data. New tools must be registered rather than hardcoded into `Home.jsx` or `App.jsx`. Unfinished tools use `live: false` and render `ComingSoon` unless a deliberate preview behavior is specified.
+Shared views consume registry data. New tools must be registered rather than hardcoded into `Home.jsx` or `App.jsx`. Unfinished tools use `live: false`.
 
 `requiresAuth: true` identifies modules that need an authenticated Supabase user or another backend capability. `App.jsx` gates those modules for guests with the shared `AuthRequired` view before the module component mounts. Backend-dependent tools should declare this capability in the registry instead of implementing guest checks themselves.
 
 ## Module Boundaries
 
-- `src/components/general/` contains the public landing page, dashboard shell views, and shared coming-soon state.
+- `src/components/general/` contains the public landing page and dashboard shell views.
 - `src/components/events/[event-name]/` contains event-specific UI and domain logic.
 - EV geometry belongs in `electricvehicle/ArcVisualizer.jsx` or a nearby EV utility module.
 - EV scoring belongs in `electricvehicle/ScoreCalc.jsx` or a nearby EV utility module.
-- EV practice persistence belongs in `electricvehicle/RunLogger.jsx` and must respect auth and RLS.
+- EV practice persistence belongs in `electricvehicle/RunLogger.jsx` and currently writes only to browser `localStorage`.
 - Global files should provide composition and shared infrastructure, not event-specific formulas.
 
 ## Implementation Invariants

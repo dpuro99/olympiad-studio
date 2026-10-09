@@ -1,43 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { buildNotesCsv, safeParseNotes, STORAGE_KEY, SYSTEMS } from './anatomyNotes';
 
-const STORAGE_KEY = 'olympiad-studio-anatomy-c-2027-notebook';
-
-const SYSTEMS = [
-  { id: 'respiratory', label: 'Respiratory system' },
-  { id: 'digestive', label: 'Digestive system' },
-  { id: 'immune', label: 'Immune system' }
-];
-
-function createEmptyNote() {
-  return {
-    systemId: 'respiratory',
-    label: '',
-    focus: '',
-    notes: ''
-  };
-}
-
-function safeParseNotes(serialized) {
-  try {
-    const data = JSON.parse(serialized);
-    if (!data || typeof data !== 'object' || Array.isArray(data)) return { error: 'Saved anatomy notes have an unsupported format.' };
-    return { value: { ...createEmptyNote(), ...data, notes: Array.isArray(data.notes) ? data.notes : [] } };
-  } catch {
-    return { error: 'Saved anatomy notes could not be read.' };
-  }
-}
-
-function buildNotesCsv(notes) {
-  const headers = ['system', 'label', 'focus', 'notes'];
-  const rows = notes.map((note) => [
-    note.systemId,
-    note.label,
-    note.focus,
-    note.notes
-  ]);
-  const safeCell = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
-  return [headers.join(','), ...rows.map((row) => row.map(safeCell).join(','))].join('\r\n');
-}
+const cardStyle = {
+  background: 'var(--color-background-secondary)',
+  border: '1px solid var(--color-border-tertiary)',
+  borderRadius: 'var(--border-radius-lg)',
+  padding: 18
+};
+const inputStyle = {
+  width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)',
+  border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)',
+  borderRadius: 6, fontSize: 13, fontFamily: 'var(--font-mono)'
+};
 
 export default function AnatomyPractice() {
   const [systemId, setSystemId] = useState('respiratory');
@@ -49,31 +23,37 @@ export default function AnatomyPractice() {
   const [messageIsError, setMessageIsError] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
-  const currentSystem = SYSTEMS.find((system) => system.id === systemId) || SYSTEMS[0];
-
-  useState(() => {
+  useEffect(() => {
+    let cancelled = false;
     const timer = window.setTimeout(() => {
       try {
         const stored = window.localStorage.getItem(STORAGE_KEY);
         if (stored) {
           const parsed = safeParseNotes(stored);
           if (parsed.error) {
-            setMessage(parsed.error);
-            setMessageIsError(true);
-          } else {
+            if (!cancelled) {
+              setMessage(parsed.error);
+              setMessageIsError(true);
+            }
+          } else if (!cancelled) {
             setSavedNotes(parsed.value.notes || []);
             setMessage('Saved anatomy notes loaded from this browser.');
           }
         }
       } catch {
-        setMessage('Local storage unavailable; you can still export notes as CSV.');
-        setMessageIsError(true);
+        if (!cancelled) {
+          setMessage('Local storage unavailable; you can still export notes as CSV.');
+          setMessageIsError(true);
+        }
       } finally {
-        setLoaded(true);
+        if (!cancelled) setLoaded(true);
       }
     }, 0);
-    return () => window.clearTimeout(timer);
-  });
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   const saveNotes = () => {
     const entry = { systemId, label, focus, notes: notesText };
