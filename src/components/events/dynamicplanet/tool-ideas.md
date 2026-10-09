@@ -1,10 +1,11 @@
-# Dynamic Planet C — 2027 tool planning
+# Dynamic Planet C — verified 2027 tool plan
 
-The previous tool specifications were centered on oceanography and are retired. The official 2027 event page states the focus is properties and processes of Earth’s fresh waters.
+Source: supplied 2027 Division C Rules Manual, pp. C24–C25. This season is freshwater-focused; the former oceanography, ENSO and ocean-circulation tools are out of scope for this event year.
 
-No topic-specific simulator, dataset, formula, or scoring behavior is approved from the event-page summary alone. Rebuild the tool plan after reviewing the 2027 Rules Manual and current corrections/clarifications, mapping each feature to a verified rule provision.
+## Freshwater map/data stations
+Practice topographic-map interpretation, watershed/drainage divides, stream networks, well-level contour maps, groundwater flow lines, hydrographs, stream gauging, discharge and lag/peak analysis. Use clearly sourced datasets and ask students to reason from the supplied evidence.
 
-- [Official event page](https://www.soinc.org/dynamic-planet-c)
-- [2027 Rules Manual access](https://www.soinc.org/rules-2027)
-- [Corrections](https://www.soinc.org/events/rules-clarifications)
-- [Clarifications](https://www.soinc.org/frequently_asked_questions)
+## Process and calculation practice
+Cover water budgets/reservoirs, climate/topography controls, stream order, channel sinuosity, sediment competence/capacity, channel/floodplain processes, flood recurrence, aquifers/karst, lake stratification/turnover, wetlands and human impacts. Any formula implementation should be checked against the course content and user-provided values; do not invent official score weights.
+
+A binder of any size is permitted; during relevant specimen/display station rotations, pages may not be removed from the binder.

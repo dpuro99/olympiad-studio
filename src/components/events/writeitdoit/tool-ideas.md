@@ -1,10 +1,9 @@
-# Write It, Do It B — 2027 tool planning
+# Write It, Do It B — verified 2027 tool plan
 
-The previous tool specifications contained unverified phase timings, scoring dimensions, and drawing penalties and are retired. The official 2027 event page describes one participant writing a description of an object and how to build it, while a teammate constructs from that description.
+Source: supplied Division B Rules Manual, p. B61. Exactly two participants: 25-minute writer phase, 20-minute builder phase; only the writer may bring a writing utensil and no other materials/resources are allowed.
 
-Do not encode rules about timing, materials, prohibited content, penalties, or scoring until checked against the 2027 Rules Manual and current corrections/clarifications. Any future practice tool must distinguish educational suggestions from official requirements.
+## Writer practice timer
+Provide a 25-minute timer and free-text description area. Warn against drawings/diagrams of the object or any subsection. The application should not decide whether written language violates the rule; that is not an automated interpretation.
 
-- [Official event page](https://www.soinc.org/write-it-do-it-b)
-- [2027 Rules Manual access](https://www.soinc.org/rules-2027)
-- [Corrections](https://www.soinc.org/events/rules-clarifications)
-- [Clarifications](https://www.soinc.org/frequently_asked_questions)
+## Builder practice and rubric worksheet
+Provide a separate 20-minute builder timer and a self/peer rubric for size, color, location, orientation and connection per piece. Preserve credit for correctly connected pieces beyond a wrong connection and do not subtract for unused pieces. Label this as practice, not official scoring. A subsection drawing corresponds to Tier 2; drawing a picture of the model corresponds to disqualification. Construction-phase time is the tiebreaker; do not assume which direction wins.

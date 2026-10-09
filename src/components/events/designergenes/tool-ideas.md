@@ -1,10 +1,11 @@
-# Designer Genes C — 2027 tool planning
+# Designer Genes C — verified 2027 tool plan
 
-The previous tool specifications are retired pending review of the full 2027 Rules Manual. The official event page describes questions, problem solving, and data analysis in classic, evolutionary, and molecular genetics, but does not establish a complete scope or tool requirements.
+Source: supplied 2027 Division C Rules Manual, pp. C20–C21. The topic list is exhaustive and assessment emphasizes quantitative reasoning, experiments, data and evidence-based conclusions. Avoid carrying over the prior draft’s prokaryotic lac/trp operon and protein-secretion assumptions.
 
-No question bank or topic-specific calculator is approved until the official manual and current corrections/clarifications are reviewed. Map each proposed activity to a verified 2027 rule provision before implementation.
+## Genetics problem/data workbench
+Provide level-tagged cross, probability, pedigree, karyotype, Hardy–Weinberg, population genetics, phylogeny and heritability problems. Include data interpretation and a reasoning workspace; State/National gene mapping and heritability tasks must be gated to the levels specified by the manual.
 
-- [Official event page](https://www.soinc.org/designer-genes-c)
-- [2027 Rules Manual access](https://www.soinc.org/rules-2027)
-- [Corrections](https://www.soinc.org/events/rules-clarifications)
-- [Clarifications](https://www.soinc.org/frequently_asked_questions)
+## Eukaryotic molecular biology/technique practice
+Cover DNA structure/replication/damage/repair, eukaryotic transcription and RNA processing, translation, yeast two-hybrid, PCR, Illumina/Nanopore comparison, cloning (including Golden Gate), and knockout/knockdown/complementation. Gate mobile elements and ChIP-seq/Hi-C/RNA-Seq to State/National as written.
+
+Respect the one double-sided 8.5 × 11 in notes sheet and two Class II calculators. Scoring credits answer quality, supporting reasoning and scientific method.
