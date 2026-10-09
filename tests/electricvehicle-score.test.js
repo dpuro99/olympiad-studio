@@ -1,35 +1,28 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { calculatePracticeScore } from '../src/components/events/electricvehicle/scoreUtils.js';
 
-test('matches the 2026 rules example with a can bonus', () => {
-  const score = calculatePracticeScore({
-    distanceFromTarget: 27.6,
-    targetTime: 14,
-    runTime: 16.37,
-    hasCans: true,
-    successCan: true,
-    insideCanDist: 50,
-    penalties: 0
-  });
+const registrySource = readFileSync(new URL('../src/components/events/registry.js', import.meta.url), 'utf8');
+const evOverviewSource = readFileSync(new URL('../src/components/events/electricvehicle/ArcVisualizer.jsx', import.meta.url), 'utf8');
 
-  assert.equal(score.distanceScore, 55.2);
-  assert.ok(Math.abs(score.timeScore - 2.37) < 1e-12);
-  assert.equal(score.canBonus, -30);
-  assert.equal(Number(score.totalScore.toFixed(2)), 127.57);
+test('registry is limited to current-season project events', () => {
+  assert.match(registrySource, /year: 2027/);
+  assert.doesNotMatch(registrySource, /entomology|machines|metricmastery/i);
 });
 
-test('does not apply a can bonus when the run does not earn it', () => {
-  const score = calculatePracticeScore({
-    distanceFromTarget: 5,
-    targetTime: 15,
-    runTime: 15,
-    hasCans: true,
-    successCan: false,
-    insideCanDist: 50,
-    penalties: 10
-  });
+test('EV numeric scoring stays disabled until the official 2027 rules are verified', () => {
+  const score = calculatePracticeScore();
 
-  assert.equal(score.canBonus, 0);
-  assert.equal(score.totalScore, 120);
+  assert.equal(score.status, 'pending-2027-rule-verification');
+  assert.match(score.note, /official 2027 Rules Manual/);
+  assert.equal(score.totalScore, null);
+  assert.equal('canBonus' in score, false);
+  assert.equal('distanceScore' in score, false);
+});
+
+test('EV overview contains the verified 2027 task and omits old task assumptions', () => {
+  assert.match(evOverviewSource, /push a bottle past a line/i);
+  assert.match(evOverviewSource, /Move backward/i);
+  assert.doesNotMatch(evOverviewSource, /can bonus|arc-and-can/i);
 });
