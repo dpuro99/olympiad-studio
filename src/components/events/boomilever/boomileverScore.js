@@ -13,8 +13,8 @@ export function calculateBoomileverScore({
   if (!isPositiveFinite(structureMassGrams)) {
     return { error: 'Structure mass must be a positive finite value.' };
   }
-  if (loadSupportedGrams !== null && !isPositiveFinite(loadSupportedGrams)) {
-    return { error: 'Load supported must be a positive finite value or null.' };
+  if (loadSupportedGrams !== null && !(Number.isFinite(loadSupportedGrams) && loadSupportedGrams >= 0)) {
+    return { error: 'Load supported must be a finite, non-negative value or null.' };
   }
   if (loadSupportedGrams !== null && loadSupportedGrams > 15000) {
     return { error: 'Load supported is capped at 15,000 g.' };

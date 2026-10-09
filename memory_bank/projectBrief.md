@@ -9,10 +9,10 @@ The product should feel like a practical engineering workbench: clear about unit
 ## Current Scope
 
 - React 19 + Vite single-page application with local state navigation.
-- Google sign-in uses Supabase Auth. EV practice-run notes currently persist in the user's browser, not Supabase.
+- Google sign-in uses Supabase Auth; Supabase is authentication-only. Practice tools persist explicitly in the user's browser (`localStorage`), never to a backend.
 - The registry includes eight Division C events and Write It, Do It B from the official 2027 event slate.
 - Official 2027 Division B/C manuals are stored in the locally ignored `rules/` directory; do not commit or deploy these PDFs.
-- Registered events have manual-backed 2027 overview summaries. EV has a numeric two-run score calculator and local practice journal. Other event-specific interactive tools remain planned.
+- Registered events have manual-backed 2027 overview summaries. Live interactive tools exist for Electric Vehicle, Chemistry Lab, Circuit Lab, Dynamic Planet, Boomilever, and Anatomy and Physiology; Designer Genes, Rocks and Minerals, and Write It, Do It currently have overview modules only.
 
 ## Product Truthfulness
 
@@ -26,4 +26,4 @@ The product should feel like a practical engineering workbench: clear about unit
 - `src/components/events/registry.js` is the source of truth for event/module registration.
 - Event-specific formulas, parsing, and UI belong inside the owning event directory.
 - Theme tokens are defined in `src/index.css` and applied through `data-theme`.
-- Unfinished functionality uses `live: false` and/or `ComingSoon`.
+- Unfinished functionality uses `live: false`.

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { calculateEquivalentResistance, calculateSeriesParallel, calculateOhmsLaw } from './circuitUtils';
+import { calculateEquivalentResistance, calculateOhmsLaw } from './circuitUtils';
 
 const cardStyle = {
   background: 'var(--color-background-secondary)',

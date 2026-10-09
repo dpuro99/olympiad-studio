@@ -78,7 +78,7 @@ export default function FreshwaterTools() {
         </div>
         <h2 style={{ margin: 0, fontSize: 20 }}>Freshwater measurement workbench</h2>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
-          Enter your own measured values to calculate stream discharge or a simple water-budget balance. No preset questions or sample datasets are supplied. Use consistent units and cite the time interval represented by your flows.
+          Your own measured values drive both calculators: stream discharge and a simple water-budget balance. No preset questions or pre-filled data are supplied. Use consistent units and cite the time interval represented by your flows.
         </p>
       </section>
 
