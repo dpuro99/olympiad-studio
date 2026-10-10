@@ -4,6 +4,9 @@ Append-only log of architectural and process decisions, with the reasoning. Newe
 
 ## 2026-10-09
 
+- **Git push authentication works through Windows Git Credential Manager.** WSL git uses the helper script `~/.local/bin/git-credential-manager.sh` (set as `git config --global credential.helper`), which delegates to `/mnt/c/Program Files/Git/mingw64/bin/git-credential-manager.exe`. It reuses the GitHub credentials already stored by Windows, so pushes are non-interactive. A space-free wrapper is required because git splits credential.helper on whitespace. The git identity (`David` / `dpuro14@gmail.com`) lives in the repo-local `.git/config`, and this file is not committed.
+- **WSL cannot write `git config` on the OneDrive mount.** `git config user.name`/`email` fails with `chmod ... Operation not permitted` on `.git/config.lock`. Workaround: edit `.git/config` directly. Global config (`~/.gitconfig`) is on the Linux filesystem and writes fine.
+
 - **Line endings normalized to LF in the repository.** Added `.gitattributes` (`* text=auto` plus explicit `eol=lf` for source and `binary` for images/PDFs) and ran `git add --renormalize`. The working tree had accumulated CRLF from Windows editors, which turned small edits into whole-file diffs and would have polluted `git blame`. Rationale: keep reviewable diffs and a consistent repository.
 
 - **Memory bank is the cross-session memory mechanism.** opencode has no persistent memory between sessions, so `memory_bank/` (`projectBrief.md`, `systemArchitecture.md`, `progress.md`, `decisions.md`) is the durable project context. `memory_bank/projectBrief.md`, `systemArchitecture.md`, and `decisions.md` are auto-loaded every session via the `instructions` field in the root `opencode.json`; `progress.md` is read on demand because it changes often.
