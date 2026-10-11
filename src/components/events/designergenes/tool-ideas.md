@@ -1,11 +1,29 @@
 # Designer Genes C — verified 2027 tool plan
 
-Source: supplied 2027 Division C Rules Manual, pp. C20–C21. The topic list is exhaustive and assessment emphasizes quantitative reasoning, experiments, data and evidence-based conclusions. Avoid carrying over the prior draft’s prokaryotic lac/trp operon and protein-secretion assumptions.
+Source: supplied 2027 Division C Rules Manual, pp. C20–C23. 2027 focus is genetics plus standard molecular biology. No prior-year-only topics; a standard calculator, writing utensil, and clipboard are allowed.
 
-## Genetics problem/data workbench
-Provide level-tagged cross, probability, pedigree, karyotype, Hardy–Weinberg, population genetics, phylogeny and heritability problems. Include data interpretation and a reasoning workspace; State/National gene mapping and heritability tasks must be gated to the levels specified by the manual.
+## Tool: Genetics Workbench
+- **Status:** Planned
+- **Category:** Calculator
+- **Goal:** Work through 2027 genetics problems that show work: Mendelian/classical genetics, molecular biology of a gene (DNA/RNA/protein), gene expression, crosses/pedigrees, DNA fingerprinting, population genetics, and advanced topics (gene expression control at State/National, biotech/genomics at National).
+- **Core interaction loop:** 1) Enter the given genotypes/allele data or select a cross. 2) Generate/hold the Punnett-square, pedigree, or frequency calculation with shown steps. 3) Review results against the manual §3 topic list.
+- **Content & data:** Manual §3 topics (p. C21) and their level tags; user-entered values.
+- **UI components:** Topic selector, input fields, step-by-step result panel.
+- **Scoring & feedback:** Formulas and results shown as work; labeled practice, not official scoring.
+- **Level gating:** core Regional; gene-expression control gated State/National; biotech/genomics National.
+- **Persistence:** none.
+- **Open questions:** Students may use scratch paper at some sites; decide whether work should be auto-saved.
 
-## Eukaryotic molecular biology/technique practice
-Cover DNA structure/replication/damage/repair, eukaryotic transcription and RNA processing, translation, yeast two-hybrid, PCR, Illumina/Nanopore comparison, cloning (including Golden Gate), and knockout/knockdown/complementation. Gate mobile elements and ChIP-seq/Hi-C/RNA-Seq to State/National as written.
+## Tool: Eukaryotic Molecular Biology Practice
+- **Status:** Planned
+- **Category:** Practice
+- **Goal:** Practice standard-eukaryotic biology: DNA structure/replication, transcription, translation, protein structure, gene expression, and the listed advanced topics at higher levels.
+- **Core interaction loop:** 1) Choose a topic and source-standard scenario. 2) Answer/classify the item (sequence logic, complement/antiparallel reads, amino-acid translation). 3) Check against manual-cited feedback.
+- **Content & data:** Manual §3 topic list only; no sequence/citation improvisation outside the manual's eukaryotic standard.
+- **UI components:** Topic menu, prompt, answer validation, reference panel.
+- **Scoring & feedback:** Feedback tied to manual objectives; practice only.
+- **Level gating:** advanced topics level-gated per manual.
+- **Persistence:** none.
+- **Open questions:** Authoring content architecture needed if a larger bank is added.
 
-Respect the one double-sided 8.5 × 11 in notes sheet and two Class II calculators. Scoring credits answer quality, supporting reasoning and scientific method.
+This is a planning document only and does not invent official scoring.

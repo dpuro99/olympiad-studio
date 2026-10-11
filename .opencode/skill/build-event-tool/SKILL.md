@@ -1,44 +1,67 @@
 ---
 name: build-event-tool
-description: Use when building or extending an event-specific practice tool for Olympiad Studio. Reads the event's info.md + tool-ideas.md spec, asks only critical clarifying questions, then generates JSX and registers it in the event registry. Trigger on requests like "build the next tool for <event>", "implement <tool name>", or adding a module under src/components/events/<event>/.
+description: Use when building or extending an event-specific practice tool for Olympiad Studio. Reads the target event's info.md + tool-ideas.md, extracts the tool contract, asks only critical clarifying questions, then generates the domain module + unit test + JSX and registers it lazily in the event registry. Trigger on "build the next tool for <event>", "implement <tool name>", or "add a module to <event>".
 ---
 
 # Build an event tool
 
-Each event lives in its own folder `src/components/events/<event>/`, containing:
+Every event owns a folder `src/components/events/<event>/`:
 
-- `info.md` — full event breakdown (rules, format, scoring, competition-day walkthrough).
-- `tool-ideas.md` — ranked tool specs, each in this format:
+- `info.md` — the verified rules, format, and scoring contract for the current season.
+- `tool-ideas.md` — the source spec: one `## Tool:` block per candidate tool (see template below). Built tools are marked `Status: Live` with their file path.
 
-  Tool: [Name]
-  Purpose: ...
-  Core interaction loop: ...
-  Content/data needed: ...
-  UI components: ...
-  Feedback/scoring logic: ...
-  Difficulty/level filtering: ...
+Use these two files as the single source of truth. Do not import rules or content from prior seasons or other events.
+
+## Tool spec template (used in `tool-ideas.md`)
+
+```markdown
+## Tool: <Name>
+- **Status:** Planned | Live — `src/components/events/<event>/<File>.jsx`
+- **Category:** Calculator | Practice | Notebook | Worksheet
+- **Goal:** one sentence on what the student accomplishes.
+- **Core interaction loop:** numbered steps the user goes through.
+- **Content & data:** required constants/datasets/shapes and their source (manual section); what the user supplies.
+- **UI components:** controls, panels, and outputs to build.
+- **Scoring & feedback:** how results are computed/displayed; what is practice vs official.
+- **Level gating:** Regional | State | National constraints from the manual.
+- **Persistence:** localStorage (explicit) | none | notes-export (CSV).
+- **Open questions:** only genuinely unresolved items; leave empty when none.
+```
 
 ## Workflow
 
-1. **Read context.** Load only the target event's `info.md` (rules/scoring/format) and `tool-ideas.md` (the specific spec). Do not pull in other events' files unless the user explicitly asks for a cross-event tool (e.g. a shared quiz engine).
+1. **Read context.** Load only the target event's `info.md` and `tool-ideas.md`. Never pull other events' files unless the user asks for a cross-event tool.
 
-2. **Identify the target tool.** If the user names a tool, find its `### Tool:` block. If they don't, ask which tool from the ranked list to build next (default to the highest-ranked one not yet built).
+2. **Pick the tool.** If the user named a tool, find its `## Tool:` block. Otherwise choose the highest-ranked `Status: Planned` tool. If every tool is built or the spec is ambiguous, say so and ask the user what to build.
 
-3. **Gap-check before asking.** The spec should already answer most implementation questions. Only ask what it genuinely leaves open:
-   - Missing or ambiguous scoring/grading logic.
-   - Unknown data source (spec defines a shape but no real content exists — confirm placeholder vs user-supplied content).
-   - Genuinely ambiguous UI behavior (e.g. "drag-and-drop or click-to-order" with no pick).
-   - Persistence method (localStorage, backend, or session-only) if not already established.
-   - Whether tournament-level content differences from `info.md` should be reflected.
+3. **Extract the contract.** From the tool block, pin down: inputs, the calculation/interaction loop, level gating, persistence, and what must be labeled practice vs official. Cross-check formulas against `info.md` and a manual section.
 
-   **Do not ask about** colors, styling, fonts, spacing, or anything covered by the existing design system — infer these from the reference components. Re-read the spec before raising questions.
+4. **Gap-check before asking.** The block answers most implementation questions. Ask only about what it genuinely leaves open:
+   - Unspecified scoring/grading logic or an ambiguous formula.
+   - Content defined by shape but with no real data (confirm placeholder vs user-supplied).
+   - Persistence unspecified (localStorage vs session-only vs none).
+   - A real UI-behavior fork the spec doesn't resolve.
 
-4. **Generate the component.** Build the JSX in `src/components/events/<event>/`, following existing conventions (reference: `electricvehicle/ArcVisualizer.jsx`, `RunLogger.jsx`, `ScoreCalc.jsx` for component patterns, state style, and shared utilities).
-   - Name the file descriptively from its function (e.g. `HormoneMatrixTrainer.jsx`).
-   - Co-locate formulas/scoring/parsing in the event folder (a `*Utils.js` / `*.js` module) and unit-test it.
-   - Use clearly marked placeholder data (`// TODO: replace with full content set`) when real content wasn't supplied.
-   - Implement the full interaction loop, UI, and feedback/scoring logic — not a stub.
+   **Do not ask about** colors, fonts, spacing, or layout — infer them from the reference components:
+   - `electricvehicle/RunLogger.jsx` / `ScoreCalc.jsx` — panels, inputs, result tables, localStorage persistence.
+   - `circuitlab/CircuitLabPractice.jsx` / `chemlab/GasLawPractice.jsx` — generated-question or calculator patterns.
+   - `dynamicplanet/FreshwaterTools.jsx` — multi-field measurement tools.
+   - `anatomy/AnatomyPractice.jsx` + `anatomyNotes.js` — notebook/notes and CSV export with formula-injection protection.
+   - Always use theme variables, `ti-*` Tabler icons, monospace for technical values, and stacking layouts for narrow screens.
 
-5. **Register the tool.** Add a module entry in `src/components/events/registry.js` with `id, ti, label, cat, live, requiresAuth, component, desc` (plus `eventName`, `manualReference`, `eventUrl`, `rulesUrl` as the other entries do). Only set `live: false` for a genuinely unfinished module. Wire `component` up as a lazy module: name it at the top of `registry.js` with `const MyTool = lazy(() => import('./myevent/MyTool'));` (matching the existing per-tool chunk pattern) instead of an eager top-level default import.
+5. **Implement, logic-first.**
+   - Put all formulas/parsing/constants in a co-located `*Utils.js` / `*.js` module (no UI logic).
+   - Write a focused unit test for that module first in `tests/<event>-<util>.test.js` using `node:test` (import the module directly; follow `tests/` naming and style).
+   - Build the JSX component against the contract, wiring `localStorage`/CSV persistence where the spec calls for it and labeling practice-vs-official output.
+   - Mark placeholder content clearly (`// TODO: replace with full content set`) when real data wasn't supplied — never present it as real.
 
-6. **Verify and confirm.** Run `npm test`, `npm run lint`, and `npm run build`. Summarize the component path, what is placeholder vs real, and any assumptions from step 3 before considering the tool complete.
+6. **Register the tool.** Add a module entry in `src/components/events/registry.js` with `id, ti, label, cat, live, requiresAuth, component, desc` plus `eventName`, `manualReference`, `eventUrl`, `rulesUrl` as the other entries do. Wire `component` as a lazy import at the top of `registry.js`: `const MyTool = lazy(() => import('./myevent/MyTool'));`. Only set `live: false` for a genuinely unfinished module.
+
+7. **Verify and report.** Run `npm test`, `npm run lint`, and `npm run build`. Summarize: the component path, the new test file, what is placeholder vs real, and any assumptions from step 4 — then stop; do not commit unless asked.
+
+## Hard rules
+
+- Never invent Science Olympiad rules or scoring formulas. Cite the manual page/section beside rule-specific summaries and calculators.
+- Default to Regional/Invitational scope; keep State/National content level-gated, not front and center.
+- Prefer student-authored data tools over hardcoded quiz/answer banks. No preset quiz questions without an explicit, approved content architecture.
+- CSV/text exports must escape cells and neutralize spreadsheet formula injection (see `anatomyNotes.js`).
