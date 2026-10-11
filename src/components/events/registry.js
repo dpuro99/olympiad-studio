@@ -1,13 +1,15 @@
+import { lazy } from 'react';
 import EventRulesOverview from '../general/EventRulesOverview';
-import ArcVisualizer from './electricvehicle/ArcVisualizer';
-import RunLogger from './electricvehicle/RunLogger';
-import ScoreCalc from './electricvehicle/ScoreCalc';
-import GasLawPractice from './chemlab/GasLawPractice';
-import KineticsPractice from './chemlab/KineticsPractice';
-import FreshwaterTools from './dynamicplanet/FreshwaterTools';
-import CircuitLabPractice from './circuitlab/CircuitLabPractice';
-import BoomileverEstimator from './boomilever/BoomileverEstimator';
-import AnatomyPractice from './anatomy/AnatomyPractice';
+
+const ArcVisualizer = lazy(() => import('./electricvehicle/ArcVisualizer'));
+const RunLogger = lazy(() => import('./electricvehicle/RunLogger'));
+const ScoreCalc = lazy(() => import('./electricvehicle/ScoreCalc'));
+const GasLawPractice = lazy(() => import('./chemlab/GasLawPractice'));
+const KineticsPractice = lazy(() => import('./chemlab/KineticsPractice'));
+const FreshwaterTools = lazy(() => import('./dynamicplanet/FreshwaterTools'));
+const CircuitLabPractice = lazy(() => import('./circuitlab/CircuitLabPractice'));
+const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'));
+const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, additionalModules = [] }) {
   return {
@@ -140,7 +142,7 @@ export const EVENT_REGISTRY = {
     ],
     additionalModules: [{
       id: 'circuit-practice',
-      ti: 'ti-circuit',
+      ti: 'ti-bulb',
       label: 'Circuit Practice Calculator',
       cat: 'Event',
       live: true,

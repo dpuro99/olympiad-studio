@@ -39,6 +39,7 @@
 
 ## Changelog
 
+- **2026-10-10** — Performance and hygiene pass: lazy-loaded all 9 event tool components (`React.lazy` in `registry.js`, `Suspense` fallback in `App.jsx`), cutting the initial bundle from 634 kB to 561 kB with per-tool async chunks. Validated session-restored navigation against the registry so stale event/module ids no longer leave an empty pane. Fixed the sidebar Workspace Home button emitting `module_opened` analytics for a nonexistent module. Made the dashboard shell sticky-free and stacked below 720px (`.dashboard-shell`/`.dashboard-sidebar` media query). Guarded GA4 calls when `VITE_GA4_MEASUREMENT_ID` is unset and documented the var in `.env.example`. Pinned Tabler icons to 3.49.0 and replaced the nonexistent `ti-circuit` icon with `ti-bulb`. Removed the empty `src/components/events/general/` folder.
 - **2026-10-09** — Cleanup and tooling pass: removed Vite/template leftovers and the orphaned `ComingSoon.jsx`; removed off-slate event folders and `scripts/rank_tools.py`; migrated off Cline (folded `.clinerules/` into `AGENTS.md`, converted the ToolBuilder spec into the `.opencode/skill/build-event-tool` skill). Fixed the Anatomy effect/CSV issues, the unused Circuit Lab import, the Boomilever zero-load case, and the Dynamic Planet citation. Normalized line endings to LF (`.gitattributes` + `git add --renormalize`) to end whole-file CRLF churn. Added `opencode.json` memory auto-loading, `memory_bank/decisions.md`, and the `.opencode/command/commit-push.md` workflow command.
 
 ## Working Agreement
