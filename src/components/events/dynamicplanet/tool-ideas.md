@@ -37,7 +37,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C24–C25. This season is fre
 - **Persistence:** none.
 
 ## Tool: Reference & Study Compiler
-- **Status:** Planned
+- **Status:** Live — `src/components/events/dynamicplanet/DynamicPlanetReferenceCompiler.jsx` (shared engine `src/components/general/ReferenceCompiler.jsx`)
 - **Category:** Notebook
 - **Goal:** Build the allowed reference binder and track coverage of the manual's course content.
 - **Core interaction loop:** 1) Work the objective checklist transcribed from the manual's course content and mark each item Not started / Studying / Confident. 2) Author reference blocks (text, tables, diagrams) filed under the matching objective. 3) Export a print-ready, paginated binder with a tab/section index, flagged so it stays intact during specimen/display stations.

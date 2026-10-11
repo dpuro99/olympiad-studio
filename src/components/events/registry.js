@@ -14,6 +14,7 @@ const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCo
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
 const CircuitLabReferenceCompiler = lazy(() => import('./circuitlab/CircuitLabReferenceCompiler'));
+const DynamicPlanetReferenceCompiler = lazy(() => import('./dynamicplanet/DynamicPlanetReferenceCompiler'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, additionalModules = [] }) {
   return {
@@ -250,6 +251,20 @@ export const EVENT_REGISTRY = {
       desc: 'Calculate stream discharge and user-entered water-budget balance from your own measurements.',
       eventName: 'Dynamic Planet',
       manualReference: 'Division C Rules Manual, §3.a.ii, §3.f.ii–iii, §3.h.ii, pp. C24–C25',
+      eventUrl: 'https://www.soinc.org/dynamic-planet-c',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }, {
+      id: 'dynamicplanet-reference-compiler',
+      ti: 'ti-notes',
+      label: 'Reference & Study Compiler',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: DynamicPlanetReferenceCompiler,
+      desc: 'Track the manual’s course content and compile an allowed binder; save locally, print, and export JSON.',
+      eventName: 'Dynamic Planet',
+      manualReference: 'Division C Rules Manual, pp. C24–C25',
       eventUrl: 'https://www.soinc.org/dynamic-planet-c',
       rulesUrl: 'https://www.soinc.org/rules-2027'
     }],
