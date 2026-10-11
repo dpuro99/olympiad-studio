@@ -1,0 +1,81 @@
+{
+  "events": [
+    {
+      "code": "anatomy",
+      "label": "Anatomy and Physiology",
+      "modules": [
+        { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
+        { "id": "anatomy-notes", "label": "Practice Notes", "expectText": "Add a note" },
+        { "id": "anatomy-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
+      ]
+    },
+    {
+      "code": "boomilever",
+      "label": "Boomilever",
+      "modules": [
+        { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
+        { "id": "boomilever-estimator", "label": "Efficiency Estimator", "expectText": "Structure efficiency estimator" }
+      ]
+    },
+    {
+      "code": "chemlab",
+      "label": "Chemistry Lab",
+      "modules": [
+        { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
+        { "id": "gas-laws", "label": "Gas-Law Practice", "expectText": "Gas-law calculation notebook" },
+        { "id": "kinetics", "label": "Kinetics Practice", "expectText": "Reaction-rate experiment notebook" },
+        { "id": "chemlab-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
+      ]
+    },
+    {
+      "code": "circuitlab",
+      "label": "Circuit Lab",
+      "modules": [
+        { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
+        { "id": "circuit-practice", "label": "Circuit Practice Calculator", "expectText": "Equivalent resistance" },
+        { "id": "circuitlab-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
+      ]
+    },
+    {
+      "code": "designergenes",
+      "label": "Designer Genes",
+      "modules": [
+        { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
+        { "id": "designergenes-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
+      ]
+    },
+    {
+      "code": "dynamicplanet",
+      "label": "Dynamic Planet",
+      "modules": [
+        { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
+        { "id": "freshwater-tools", "label": "Freshwater Measurement Tools", "expectText": "Freshwater measurement workbench" },
+        { "id": "dynamicplanet-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
+      ]
+    },
+    {
+      "code": "ev",
+      "label": "Electric Vehicle",
+      "modules": [
+        { "id": "arc", "label": "2027 Event Overview", "expectText": "Electric Vehicle C" },
+        { "id": "score", "label": "Score Calculator", "expectText": "Electric Vehicle score calculator" },
+        { "id": "log", "label": "Practice Run Logger", "expectText": "Practice run journal" }
+      ]
+    },
+    {
+      "code": "rocksandminerals",
+      "label": "Rocks and Minerals",
+      "modules": [
+        { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
+        { "id": "rocksandminerals-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
+      ]
+    },
+    {
+      "code": "writeitdoit",
+      "label": "Write It, Do It",
+      "modules": [
+        { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" }
+      ]
+    }
+  ]
+}

@@ -25,3 +25,6 @@ dist-ssr
 *.sw?
 .env
 rules
+test-results
+playwright-report
+.opencode-audit.baseline

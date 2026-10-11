@@ -200,7 +200,6 @@ export default function ReferenceCompiler({ config }) {
         <div style={{ color: 'var(--color-text-info)', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
           {config.eventName} {config.division} · 2027 · {config.manualReference}
         </div>
-        <h2 style={{ margin: 0, fontSize: 20 }}>Reference &amp; Study Compiler</h2>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
           Track the manual&rsquo;s objectives and compile the one allowed reference sheet. Content is authored by you and stored only in this browser; nothing is uploaded. This organizer does not replace the official Rules Manual.
         </p>
@@ -215,7 +214,7 @@ export default function ReferenceCompiler({ config }) {
 
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
-          <h3 style={{ margin: 0, fontSize: 15 }}>Study progress</h3>
+          <h2 style={{ margin: 0, fontSize: 15 }}>Study progress</h2>
           <span style={{ color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
             {progress.confident}/{progress.total} confident · {progress.studying} studying
           </span>
@@ -268,7 +267,7 @@ export default function ReferenceCompiler({ config }) {
       </section>
 
       <section style={{ ...cardStyle, display: 'grid', gap: 14 }}>
-        <h3 style={{ margin: 0, fontSize: 15 }}>{form.editingId ? 'Edit reference block' : 'Add reference block'}</h3>
+        <h2 style={{ margin: 0, fontSize: 15 }}>{form.editingId ? 'Edit reference block' : 'Add reference block'}</h2>
         <form onSubmit={submitBlock} style={{ display: 'grid', gap: 12 }}>
           <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
             Objective
@@ -296,7 +295,7 @@ export default function ReferenceCompiler({ config }) {
       </section>
 
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h3 style={{ margin: 0, fontSize: 15 }}>Compiled blocks ({state.blocks.length})</h3>
+        <h2 style={{ margin: 0, fontSize: 15 }}>Compiled blocks ({state.blocks.length})</h2>
         {state.blocks.length === 0
           ? <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12 }}>No reference blocks yet. Add one above.</p>
           : config.objectiveGroups.map((group) => {
@@ -324,7 +323,7 @@ export default function ReferenceCompiler({ config }) {
       </section>
 
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h3 style={{ margin: 0, fontSize: 15 }}>Sheet space budget</h3>
+        <h2 style={{ margin: 0, fontSize: 15 }}>Sheet space budget</h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'end' }}>
           <label style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>Text density
             <select value={state.density} onChange={(event) => mutate((current) => ({ ...current, density: event.target.value }))} style={{ ...inputStyle, marginTop: 4, width: 'auto' }}>
@@ -345,7 +344,7 @@ export default function ReferenceCompiler({ config }) {
 
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
-          <h3 style={{ margin: 0, fontSize: 15 }}>Save, print &amp; export</h3>
+          <h2 style={{ margin: 0, fontSize: 15 }}>Save, print &amp; export</h2>
           {dirty
             ? <span style={{ color: 'var(--color-text-warning)', fontSize: 11 }}>Unsaved changes</span>
             : <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>All changes saved</span>}

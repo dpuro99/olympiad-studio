@@ -104,14 +104,13 @@ export default function AnatomyPractice() {
         <div style={{ color: 'var(--color-text-info)', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
           Anatomy and Physiology C · 2027 · Manual C3–C5
         </div>
-        <h2 style={{ margin: 0, fontSize: 20 }}>Practice notes</h2>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
           This is a user-authored study journal for the 2027 respiratory, digestive, and immune systems. It does not contain preset quiz questions or simulated exam data. Save notes explicitly in this browser profile; they are not uploaded and may be visible to others sharing this profile. Export notes as CSV.
         </p>
       </section>
 
       <section style={{ ...cardStyle, display: 'grid', gap: 14 }}>
-        <h3 style={{ margin: 0, fontSize: 15 }}>Add a note</h3>
+        <h2 style={{ margin: 0, fontSize: 15 }}>Add a note</h2>
         <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
           System
           <select value={systemId} onChange={(event) => { setSystemId(event.target.value); setMessage(''); }} style={inputStyle}>
@@ -141,7 +140,7 @@ export default function AnatomyPractice() {
       </section>
 
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h3 style={{ margin: 0, fontSize: 15 }}>Saved notes ({savedNotes.length})</h3>
+        <h2 style={{ margin: 0, fontSize: 15 }}>Saved notes ({savedNotes.length})</h2>
         {savedNotes.length === 0 ? <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12 }}>No notes saved in this browser yet.</p> : savedNotes.map((note, index) => (
           <article key={index} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>

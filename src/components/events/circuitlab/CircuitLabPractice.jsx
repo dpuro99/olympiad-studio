@@ -88,14 +88,13 @@ export default function CircuitLabPractice() {
         <div style={{ color: 'var(--color-text-info)', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
           Circuit Lab C · 2027 · Manual C16–C17
         </div>
-        <h2 style={{ margin: 0, fontSize: 20 }}>Circuit practice calculator</h2>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
           Practice Ohm’s law, series/parallel equivalent resistance, and basic circuit calculations from user-entered measurements. This is a learning calculator, not an official event score or a replacement for hands-on tasks.
         </p>
       </section>
 
       <form onSubmit={submitResistance} style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h3 style={{ margin: 0, fontSize: 15 }}>Equivalent resistance (series and parallel)</h3>
+        <h2 style={{ margin: 0, fontSize: 15 }}>Equivalent resistance (series and parallel)</h2>
         <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
           Resistance values (comma-separated, Ω)
           <input type="text" value={resistancesText} onChange={handleResistanceChange} placeholder="e.g. 100, 200, 300" style={{ ...inputStyle, fontFamily: 'var(--font-sans)' }} />
@@ -112,7 +111,7 @@ export default function CircuitLabPractice() {
       </form>
 
       <form onSubmit={submitOhm} style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h3 style={{ margin: 0, fontSize: 15 }}>Ohm’s law</h3>
+        <h2 style={{ margin: 0, fontSize: 15 }}>Ohm’s law</h2>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
           Enter exactly two of voltage, current, and resistance. The calculator solves for the remaining value.
         </p>

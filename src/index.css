@@ -198,6 +198,7 @@ input[type=checkbox] {
 
   .dashboard-sidebar .dashboard-brand-button {
     flex-shrink: 0;
+    width: auto;
     border-bottom: none;
   }
 
@@ -222,18 +223,23 @@ input[type=checkbox] {
     color: #000 !important;
   }
 
-  #root,
-  .dashboard-shell,
-  .dashboard-sidebar,
-  .dashboard-content,
-  .reference-print-area {
-    display: none;
+  /* Hide everything with visibility (not display:none), so the print area —
+     which is nested inside #root — can be re-revealed. An ancestor
+     display:none cannot be overridden by a descendant. */
+  body * {
+    visibility: hidden;
+  }
+
+  .reference-print-area,
+  .reference-print-area * {
+    visibility: visible !important;
   }
 
   .reference-print-area {
-    display: block !important;
-    visibility: visible !important;
-    position: static !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
     padding: 0.5in;
     background: #fff;
     color: #000;
