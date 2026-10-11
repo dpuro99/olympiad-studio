@@ -148,6 +148,64 @@ input[type=checkbox] {
   accent-color: var(--color-text-info);
 }
 
+.dashboard-shell {
+  flex-direction: row;
+}
+
+.dashboard-sidebar {
+  width: 186px;
+}
+
+/* Stack the shell and collapse the sidebar into a horizontal scroll bar on narrow screens */
+@media (max-width: 720px) {
+  .dashboard-shell {
+    flex-direction: column !important;
+  }
+
+  .dashboard-sidebar {
+    flex-direction: row !important;
+    align-items: center;
+    width: auto !important;
+    flex-shrink: 0;
+    border-right: none;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .dashboard-sidebar > nav {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: row !important;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 6px;
+  }
+
+  .dashboard-sidebar nav > div {
+    display: flex;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 4px;
+    margin-top: 0;
+  }
+
+  .dashboard-sidebar nav button {
+    width: auto;
+    white-space: nowrap;
+    margin-bottom: 0;
+  }
+
+  .dashboard-sidebar .dashboard-brand-button {
+    flex-shrink: 0;
+    border-bottom: none;
+  }
+
+  .dashboard-content {
+    padding: 16px !important;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

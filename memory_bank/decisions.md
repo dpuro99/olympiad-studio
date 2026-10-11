@@ -18,3 +18,7 @@ Append-only log of architectural and process decisions, with the reasoning. Newe
 - **Supabase is authentication only.** Google OAuth via `src/supabaseClient.js`; practice tools persist explicitly to browser `localStorage`. When backend practice storage is added, it must be scoped by authenticated user id and event id and guarded by Row Level Security, not client-side filters.
 
 - **Domain scope.** Focus on Regional/Invitational material unless asked otherwise. Prefer student-authored data tools over hardcoded quiz/answer banks. Never invent Science Olympiad rules or scoring formulas; cite the manual page/section beside rule-specific summaries and calculators.
+
+## 2026-10-10
+
+- **Event tool components are lazy-loaded.** `registry.js` wraps each event tool in `React.lazy(() => import(...))` (see the `ti-*` module `component` shape); `App.jsx` renders them inside a single `<Suspense>` fallback. Rationale: shrink the initial bundle (634 kB → 561 kB) and ship only the tool a user opens. `EventRulesOverview` stays an eager import so event overviews remain part of the main chunk. New event tools should keep the same lazy pattern; do not add eager top-level `import` of tool components to `registry.js`.

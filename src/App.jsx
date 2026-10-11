@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { supabase } from './supabaseClient';
 import { trackEvent, trackPageView } from './analytics';
@@ -25,6 +25,16 @@ function getStoredNavigation() {
 export default function App() {
   const storedNavigation = getStoredNavigation();
   const storedGuestAccess = storedNavigation.isGuest === true;
+  // Restored navigation must be valid against the current registry: ignore
+  // stale event/module ids (e.g. from events that were later removed).
+  const initialEventId = storedNavigation.selectedEventId && EVENT_REGISTRY[storedNavigation.selectedEventId]
+    ? storedNavigation.selectedEventId
+    : null;
+  const initialEvent = initialEventId ? EVENT_REGISTRY[initialEventId] : null;
+  const initialPage = initialEvent && storedNavigation.page !== "home" &&
+    !initialEvent.modules.some(m => m.id === storedNavigation.page)
+    ? "home"
+    : storedNavigation.page || "home";
   // Global Theme State: 'dark' or 'light' (default)
   const [theme, setTheme] = useState(storedNavigation.theme || 'light');
   
@@ -39,9 +49,9 @@ export default function App() {
   
   // Workspace Navigation drill-down state
   // null means user is in the Multi-Event Lobby (Lobby Home)
-  const [selectedEventId, setSelectedEventId] = useState(storedNavigation.selectedEventId || null); 
+  const [selectedEventId, setSelectedEventId] = useState(initialEventId); 
   // "home" means event main dashboard, or custom module ID string (e.g. "arc", "score")
-  const [page, setPage] = useState(storedNavigation.page || "home"); 
+  const [page, setPage] = useState(initialPage); 
 
   // Resolve active event from registry dynamically
   const currentEvent = selectedEventId ? EVENT_REGISTRY[selectedEventId] : null;
@@ -200,11 +210,13 @@ export default function App() {
     setPage(moduleId);
   };
 
+  const openWorkspaceHome = () => setPage("home");
+
   // Helper renderer for module navigation buttons in Sidebar
-  const navBtn = (id, icon, label, live, sub) => (
+  const navBtn = (id, icon, label, live, sub, customOnClick) => (
     <button 
       key={id} 
-      onClick={() => handleModuleNavigation(id)}
+      onClick={customOnClick || (() => handleModuleNavigation(id))}
       style={{
         display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "7px 8px",
         background: page === id ? "var(--color-background-info)" : "transparent", border: "none",
@@ -269,10 +281,10 @@ export default function App() {
   }
 
   const dashboardContent = (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "var(--font-sans)", backgroundColor: "var(--color-background-primary)" }}>
+    <div className="dashboard-shell" style={{ display: "flex", minHeight: "100vh", fontFamily: "var(--font-sans)", backgroundColor: "var(--color-background-primary)" }}>
       
       {/* Sidebar Navigation Dashboard Panel */}
-      <div style={{ width: 186, flexShrink: 0, background: "var(--color-background-secondary)", borderRight: "0.5px solid var(--color-border-tertiary)", display: "flex", flexDirection: "column" }}>
+      <div className="dashboard-sidebar" style={{ width: 186, flexShrink: 0, background: "var(--color-background-secondary)", borderRight: "0.5px solid var(--color-border-tertiary)", display: "flex", flexDirection: "column" }}>
         
         {/* Clickable Header Button: Contextually changes depending on Workspace level */}
         {selectedEventId ? (
@@ -308,7 +320,7 @@ export default function App() {
           {selectedEventId ? (
             /* Inside Workspace: Show tools belonging specifically to active event workspace */
             <>
-              {navBtn("home", "ti-home", "Workspace Home", true, true)}
+              {navBtn("home", "ti-home", "Workspace Home", true, true, openWorkspaceHome)}
               {CATS.map(cat => {
                 const mods = MODS.filter(m => m.cat === cat);
                 if (mods.length === 0) return null;
@@ -378,7 +390,7 @@ export default function App() {
             </>
           )}
         </header>
-        <div style={{ padding: "24px 28px", maxWidth: 860 }}>
+        <div className="dashboard-content" style={{ padding: "24px 28px", maxWidth: 860 }}>
           {/* Breadcrumbs Section */}
           {page !== "home" && (
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--color-text-secondary)" }}>
@@ -402,7 +414,13 @@ export default function App() {
           
           <AnimatePresence mode="wait" initial={false}>
             <PageTransition key={`${selectedEventId || "lobby"}-${page}`}>
-              {RenderComponent}
+              <Suspense fallback={
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 220, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", fontSize: 13 }}>
+                  Loading tool…
+                </div>
+              }>
+                {RenderComponent}
+              </Suspense>
             </PageTransition>
           </AnimatePresence>
         </div>

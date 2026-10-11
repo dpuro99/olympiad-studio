@@ -39,6 +39,6 @@ Each event lives in its own folder `src/components/events/<event>/`, containing:
    - Use clearly marked placeholder data (`// TODO: replace with full content set`) when real content wasn't supplied.
    - Implement the full interaction loop, UI, and feedback/scoring logic — not a stub.
 
-5. **Register the tool.** Add a module entry in `src/components/events/registry.js` with `id, ti, label, cat, live, requiresAuth, component, desc` (plus `eventName`, `manualReference`, `eventUrl`, `rulesUrl` as the other entries do). Only set `live: false` for a genuinely unfinished module.
+5. **Register the tool.** Add a module entry in `src/components/events/registry.js` with `id, ti, label, cat, live, requiresAuth, component, desc` (plus `eventName`, `manualReference`, `eventUrl`, `rulesUrl` as the other entries do). Only set `live: false` for a genuinely unfinished module. Wire `component` up as a lazy module: name it at the top of `registry.js` with `const MyTool = lazy(() => import('./myevent/MyTool'));` (matching the existing per-tool chunk pattern) instead of an eager top-level default import.
 
 6. **Verify and confirm.** Run `npm test`, `npm run lint`, and `npm run build`. Summarize the component path, what is placeholder vs real, and any assumptions from step 3 before considering the tool complete.
