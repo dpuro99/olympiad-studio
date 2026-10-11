@@ -12,6 +12,7 @@ const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
+const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, additionalModules = [] }) {
   return {
@@ -142,6 +143,20 @@ export const EVENT_REGISTRY = {
       desc: 'Plan a user-defined reaction-rate experiment and calculate rates from entered measurements (Regional/Invitational scope).',
       eventName: 'Chemistry Lab',
       manualReference: 'Division C Rules Manual, §3.f.i, p. C14',
+      eventUrl: 'https://www.soinc.org/chemistry-lab-c-0',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }, {
+      id: 'chemlab-reference-compiler',
+      ti: 'ti-notes',
+      label: 'Reference & Study Compiler',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: ChemistryLabReferenceCompiler,
+      desc: 'Track the manual’s objectives and compile each participant’s allowed double-sided reference sheet; save locally, print, and export JSON.',
+      eventName: 'Chemistry Lab',
+      manualReference: 'Division C Rules Manual, pp. C14–C15',
       eventUrl: 'https://www.soinc.org/chemistry-lab-c-0',
       rulesUrl: 'https://www.soinc.org/rules-2027'
     }],

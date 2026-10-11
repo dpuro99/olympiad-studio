@@ -37,7 +37,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C14–C15. The event requires
 - **Open questions:** confirm which ion/formula lists are Regional vs State/National (manual §3.d).
 
 ## Tool: Reference & Study Compiler
-- **Status:** Planned
+- **Status:** Live — `src/components/events/chemlab/ChemistryLabReferenceCompiler.jsx` (shared engine `src/components/general/ReferenceCompiler.jsx`)
 - **Category:** Notebook
 - **Goal:** Build each participant's allowed double-sided reference sheet and track coverage of the manual's topics.
 - **Core interaction loop:** 1) Work the objective checklist transcribed from the manual's topic list and mark each item Not started / Studying / Confident. 2) Author reference blocks (text, small tables, diagrams) filed under the matching objective. 3) Prune: hide Confident items so the sheet holds only what still needs support. 4) Export a print-ready sheet sized to 8.5 × 11 in, both sides.
