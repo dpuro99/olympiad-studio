@@ -10,6 +10,8 @@ const FreshwaterTools = lazy(() => import('./dynamicplanet/FreshwaterTools'));
 const CircuitLabPractice = lazy(() => import('./circuitlab/CircuitLabPractice'));
 const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'));
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
+const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
+const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, additionalModules = [] }) {
   return {
@@ -58,6 +60,20 @@ export const EVENT_REGISTRY = {
       requiresAuth: false,
       component: AnatomyPractice,
       desc: 'Record study observations for respiratory, digestive, and immune systems; save locally and export as CSV.',
+      eventName: 'Anatomy and Physiology',
+      manualReference: 'Division C Rules Manual, pp. C3–C5',
+      eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }, {
+      id: 'anatomy-reference-compiler',
+      ti: 'ti-notes',
+      label: 'Reference & Study Compiler',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: AnatomyReferenceCompiler,
+      desc: 'Track the manual’s objectives and compile the one allowed double-sided reference sheet; save locally, print, and export JSON.',
       eventName: 'Anatomy and Physiology',
       manualReference: 'Division C Rules Manual, pp. C3–C5',
       eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c',
@@ -166,6 +182,21 @@ export const EVENT_REGISTRY = {
       'Exhaustive scope emphasizes quantitative reasoning, data interpretation and evidence-based conclusions.',
       '2027 molecular-expression scope is eukaryotic; specified tournament levels add gene mapping, heritability and techniques.'
     ],
+    additionalModules: [{
+      id: 'designergenes-reference-compiler',
+      ti: 'ti-notes',
+      label: 'Reference & Study Compiler',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: DesignerGenesReferenceCompiler,
+      desc: 'Track the manual’s objectives and compile the one allowed double-sided reference sheet; save locally, print, and export JSON.',
+      eventName: 'Designer Genes',
+      manualReference: 'Division C Rules Manual, pp. C20–C21',
+      eventUrl: 'https://www.soinc.org/designer-genes-c',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }],
     eventUrl: 'https://www.soinc.org/designer-genes-c'
   }),
   dynamicplanet: overview({

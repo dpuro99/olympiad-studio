@@ -37,7 +37,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C20–C21. 2027 focus is gene
 - **Persistence:** none.
 
 ## Tool: Reference & Study Compiler
-- **Status:** Planned
+- **Status:** Live — `src/components/events/designergenes/DesignerGenesReferenceCompiler.jsx` (shared engine `src/components/general/ReferenceCompiler.jsx`)
 - **Category:** Notebook
 - **Goal:** Build the one allowed double-sided reference sheet and track coverage of the manual's official objectives.
 - **Core interaction loop:** 1) Work the objective checklist transcribed from the manual's topic list and mark each item Not started / Studying / Confident. 2) Author reference blocks (text, small tables, diagrams) filed under the matching objective. 3) Prune: hide Confident items so the sheet holds only what still needs support. 4) Export a print-ready sheet sized to 8.5 × 11 in, both sides.
