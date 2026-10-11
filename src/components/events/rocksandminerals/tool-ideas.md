@@ -37,7 +37,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C52–C56 (main event C52–C
 - **Persistence:** none.
 
 ## Tool: Reference & Study Compiler
-- **Status:** Planned
+- **Status:** Live — `src/components/events/rocksandminerals/RocksAndMineralsReferenceCompiler.jsx` (shared engine `src/components/general/ReferenceCompiler.jsx`)
 - **Category:** Notebook
 - **Goal:** Build the allowed reference binder and track coverage of the manual's topics and specimen list.
 - **Core interaction loop:** 1) Work the objective checklist transcribed from the manual's topics and the official specimen list and mark each item Not started / Studying / Confident. 2) Author reference blocks (text, tables, diagrams) filed under the matching objective. 3) Export a print-ready, paginated binder with a tab/section index.

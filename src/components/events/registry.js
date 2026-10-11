@@ -15,6 +15,7 @@ const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/Design
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
 const CircuitLabReferenceCompiler = lazy(() => import('./circuitlab/CircuitLabReferenceCompiler'));
 const DynamicPlanetReferenceCompiler = lazy(() => import('./dynamicplanet/DynamicPlanetReferenceCompiler'));
+const RocksAndMineralsReferenceCompiler = lazy(() => import('./rocksandminerals/RocksAndMineralsReferenceCompiler'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, additionalModules = [] }) {
   return {
@@ -313,6 +314,21 @@ export const EVENT_REGISTRY = {
       'Scope includes properties, identification, composition, formation, igneous/sedimentary/metamorphic processes and economic uses.',
       'State/National include specified thin-section photomicrograph skills; consult the official 2027 specimen list and its footnotes.'
     ],
+    additionalModules: [{
+      id: 'rocksandminerals-reference-compiler',
+      ti: 'ti-notes',
+      label: 'Reference & Study Compiler',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: RocksAndMineralsReferenceCompiler,
+      desc: 'Track the manual’s topics and specimen list and compile the allowed binder; save locally, print, and export JSON.',
+      eventName: 'Rocks and Minerals',
+      manualReference: 'Division C Rules Manual, pp. C52–C56',
+      eventUrl: 'https://www.soinc.org/rocks-and-minerals-c',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }],
     eventUrl: 'https://www.soinc.org/rocks-and-minerals-c'
   }),
   writeitdoit: overview({
