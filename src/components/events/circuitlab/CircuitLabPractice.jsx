@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { calculateEquivalentResistance, calculateOhmsLaw } from './circuitUtils';
+import { calculateSeriesParallel, calculateOhmsLaw } from './circuitUtils';
 
 const cardStyle = {
   background: 'var(--color-background-secondary)',
@@ -56,7 +56,7 @@ export default function CircuitLabPractice() {
   const submitResistance = (event) => {
     event.preventDefault();
     const values = resistancesText.split(',').map((value) => Number(value.trim())).filter((value) => value !== '');
-    const result = calculateEquivalentResistance({ resistances: values });
+    const result = calculateSeriesParallel({ resistances: values });
     if (result.error) {
       setResistanceError(result.error);
       setResistanceResult(null);
@@ -95,12 +95,19 @@ export default function CircuitLabPractice() {
       </section>
 
       <form onSubmit={submitResistance} style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h3 style={{ margin: 0, fontSize: 15 }}>Equivalent resistance</h3>
+        <h3 style={{ margin: 0, fontSize: 15 }}>Equivalent resistance (series and parallel)</h3>
         <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
           Resistance values (comma-separated, Ω)
           <input type="text" value={resistancesText} onChange={handleResistanceChange} placeholder="e.g. 100, 200, 300" style={{ ...inputStyle, fontFamily: 'var(--font-sans)' }} />
         </label>
-        <ResultBox result={resistanceResult} error={resistanceError} />
+        {resistanceError ? (
+          <div role="alert" style={{ color: 'var(--color-text-danger)', fontSize: 12 }}>{resistanceError}</div>
+        ) : resistanceResult ? (
+          <div role="status" aria-live="polite" style={{ display: 'grid', gap: 6, padding: 12, border: '1px solid var(--color-border-info)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-info)', fontSize: 12 }}>
+            <div>Series: <strong style={{ fontFamily: 'var(--font-mono)' }}>{Number(resistanceResult.series.toPrecision(6))} {resistanceResult.seriesUnit}</strong> ({resistanceResult.equationSeries})</div>
+            <div>Parallel: <strong style={{ fontFamily: 'var(--font-mono)' }}>{Number(resistanceResult.parallel.toPrecision(6))} {resistanceResult.parallelUnit}</strong> ({resistanceResult.equationParallel})</div>
+          </div>
+        ) : null}
         <button type="submit" style={{ padding: '9px 12px', border: 0, borderRadius: 'var(--border-radius-md)', background: 'var(--color-text-info)', color: '#fff', fontWeight: 600 }}>Calculate equivalent resistance</button>
       </form>
 

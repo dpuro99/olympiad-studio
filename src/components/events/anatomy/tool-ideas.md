@@ -44,7 +44,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C3–C5. 2027 focus is respir
 - **Content & data:** Manual-listed disorders and processes only.
 - **UI components:** Case prompt, sequence/classification inputs, references.
 - **Scoring & feedback:** Evaluates responses against manual objectives.
-- **Level gating:** liver/pancreas pathways, V(D)J immunology/transplant, and National tumor immunology must be level-tagged.
+- **Level gating:** liver/pancreas pathways (State/National); immunoglobulin constant-region variation, detailed immunoglobulin structure/function, and organ-transplant immunology (State/National); tumor immunology (National) — all level-tagged per the manual.
 - **Persistence:** none.
 
 This document is a planning tool only; it does not invent official scoring.

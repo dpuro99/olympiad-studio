@@ -37,7 +37,7 @@ test('Circuit Lab calculator computes equivalent resistance and Ohm’s law', ()
 
 test('Dynamic Planet and Circuit Lab modules are registered with manual citations', () => {
   assert.match(registrySource, /id: 'freshwater-tools'/);
-  assert.match(registrySource, /Division C Rules Manual, §3\.f, pp\. C24–C25/);
+  assert.match(registrySource, /Division C Rules Manual, §3\.a\.ii, §3\.f\.ii–iii, §3\.h\.ii, pp\. C24–C25/);
   assert.match(registrySource, /id: 'circuit-practice'/);
   assert.match(registrySource, /Division C Rules Manual, pp\. C16–C17/);
 });

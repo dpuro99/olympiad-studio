@@ -125,7 +125,7 @@ export default function FreshwaterTools() {
       </form>
 
       <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
-        Rule source: 2027 Division C Rules Manual §3.f, pp. C24–C25. These are general measurement/calculation aids, not official event scores or a substitute for a specified measurement procedure.
+        Rule source: 2027 Division C Rules Manual §3.a.ii, §3.f.ii–iii, §3.h.ii, pp. C24–C25. These are general measurement/calculation aids, not official event scores or a substitute for a specified measurement procedure.
       </p>
     </div>
   );

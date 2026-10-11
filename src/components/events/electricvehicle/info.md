@@ -27,5 +27,4 @@ The official EV FAQ confirms that program work by a competitor at the same schoo
 
 ## Sources
 - Science Olympiad, 2027 Division C Rules Manual, pp. C26–C31.
-- [Official EV FAQ](https://www.soinc.org/faq/electric-vehicle-div-c) · [Program-development clarification](https://www.soinc.org/what-if-program-ev-developed-partly-member-15-person-team-and-rest-it-developed-competitor-same)
-- [2027 rules](https://www.soinc.org/rules-2027) · [Corrections](https://www.soinc.org/events/rules-clarifications)
+- [Official EV FAQ](https://www.soinc.org/faq/electric-vehicle-div-c) · [2027 rules](https://www.soinc.org/rules-2027) · [Corrections](https://www.soinc.org/events/rules-clarifications)

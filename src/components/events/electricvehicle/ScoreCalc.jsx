@@ -176,7 +176,7 @@ export default function ScoreCalc() {
           </div>
         ) : <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12 }}>Complete at least one run and enter event time to calculate the final score.</p>}
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
-          Rule source: 2027 Division C manual §§5–8 (pp. C28–C31). The calculator applies the manual’s numeric rules only; it cannot judge course measurements, failed-run rulings, or violations.
+          Rule source: 2027 Division C manual §§5–8 (pp. C28–C31). The calculator applies the manual’s numeric rules only; it cannot judge course measurements, failed-run rulings, or violations. Per the manual, a team with only one successful run is assessed a Failed Run for the second run score — mark Run 2 as failed in that case.
         </p>
       </section>
     </div>

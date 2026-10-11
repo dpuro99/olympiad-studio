@@ -173,7 +173,7 @@ export const EVENT_REGISTRY = {
     description: '2027 focus: properties and processes of Earth’s fresh waters.',
     manualReference: 'Division C Rules Manual, pp. C24–C25',
     ruleSummary: [
-      'Exam and/or timed stations; a binder of any size is allowed, but cannot be removed during applicable specimen/display stations.',
+      'Exam and/or timed stations; a binder of any size is allowed. If the event features rotation through material-display stations, nothing may be removed from the binder throughout the event.',
       'Scope covers hydrology, streams/fluvial processes, groundwater/karst, lakes/wetlands and freshwater monitoring.',
       'Human impacts, floods, paleohydrology, maps, stream gauging and hydrographs are also included.'
     ],
@@ -188,7 +188,7 @@ export const EVENT_REGISTRY = {
       component: FreshwaterTools,
       desc: 'Calculate stream discharge and user-entered water-budget balance from your own measurements.',
       eventName: 'Dynamic Planet',
-      manualReference: 'Division C Rules Manual, §3.f, pp. C24–C25',
+      manualReference: 'Division C Rules Manual, §3.a.ii, §3.f.ii–iii, §3.h.ii, pp. C24–C25',
       eventUrl: 'https://www.soinc.org/dynamic-planet-c',
       rulesUrl: 'https://www.soinc.org/rules-2027'
     }],
@@ -206,18 +206,24 @@ export const EVENT_REGISTRY = {
         id: 'arc', ti: 'ti-vector-triangle', label: '2027 Event Overview', cat: 'Event',
         live: true, year: 2027, requiresAuth: false, component: ArcVisualizer,
         desc: 'Verified task, construction constraints, and run procedure from the 2027 manual.',
+        eventName: 'Electric Vehicle',
+        manualReference: 'Division C Rules Manual, pp. C26–C31',
         eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'
       },
       {
         id: 'score', ti: 'ti-trophy', label: 'Score Calculator', cat: 'Testing',
         live: true, year: 2027, requiresAuth: false, component: ScoreCalc,
         desc: 'Calculate two EV run scores and the final score using the 2027 manual formula.',
+        eventName: 'Electric Vehicle',
+        manualReference: 'Division C Rules Manual, pp. C26–C31',
         eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'
       },
       {
         id: 'log', ti: 'ti-file-analytics', label: 'Practice Run Logger', cat: 'Testing',
         live: true, year: 2027, requiresAuth: false, component: RunLogger,
         desc: 'Save measured practice runs locally with the verified 2027 score calculation.',
+        eventName: 'Electric Vehicle',
+        manualReference: 'Division C Rules Manual, pp. C26–C31',
         eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'
       }
     ]
