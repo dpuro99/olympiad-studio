@@ -13,6 +13,7 @@ const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
+const CircuitLabReferenceCompiler = lazy(() => import('./circuitlab/CircuitLabReferenceCompiler'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, additionalModules = [] }) {
   return {
@@ -181,6 +182,20 @@ export const EVENT_REGISTRY = {
       requiresAuth: false,
       component: CircuitLabPractice,
       desc: 'Practice Ohm’s law, series/parallel equivalent resistance, and basic circuit calculations from user-entered measurements.',
+      eventName: 'Circuit Lab',
+      manualReference: 'Division C Rules Manual, pp. C16–C17',
+      eventUrl: 'https://www.soinc.org/circuit-lab-c',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }, {
+      id: 'circuitlab-reference-compiler',
+      ti: 'ti-notes',
+      label: 'Reference & Study Compiler',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: CircuitLabReferenceCompiler,
+      desc: 'Track the manual’s objectives and compile an allowed reference binder; save locally, print, and export JSON.',
       eventName: 'Circuit Lab',
       manualReference: 'Division C Rules Manual, pp. C16–C17',
       eventUrl: 'https://www.soinc.org/circuit-lab-c',

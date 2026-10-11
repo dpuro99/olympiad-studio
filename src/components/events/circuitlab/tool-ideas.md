@@ -49,7 +49,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C16–C17. Separate written-t
 - **Persistence:** none.
 
 ## Tool: Reference & Study Compiler
-- **Status:** Planned
+- **Status:** Live — `src/components/events/circuitlab/CircuitLabReferenceCompiler.jsx` (shared engine `src/components/general/ReferenceCompiler.jsx`)
 - **Category:** Notebook
 - **Goal:** Build the allowed reference binder and track coverage of the manual's topics.
 - **Core interaction loop:** 1) Work the objective checklist transcribed from the manual's topic list and mark each item Not started / Studying / Confident. 2) Author reference blocks (text, tables, diagrams) filed under the matching objective. 3) Export a print-ready, paginated binder with a tab/section index.
