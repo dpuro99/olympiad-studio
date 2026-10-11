@@ -215,3 +215,33 @@ input[type=checkbox] {
   clip: rect(0,0,0,0);
   border: 0;
 }
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  #root,
+  .dashboard-shell,
+  .dashboard-sidebar,
+  .dashboard-content,
+  .reference-print-area {
+    display: none;
+  }
+
+  .reference-print-area {
+    display: block !important;
+    visibility: visible !important;
+    position: static !important;
+    padding: 0.5in;
+    background: #fff;
+    color: #000;
+    font-family: var(--font-mono);
+  }
+
+  .reference-print-area * {
+    color: #000 !important;
+    background: transparent !important;
+  }
+}

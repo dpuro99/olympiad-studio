@@ -17,7 +17,7 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Open questions:** none.
 
 ## Tool: Reference & Study Compiler
-- **Status:** Planned
+- **Status:** Live — `src/components/events/anatomy/AnatomyReferenceCompiler.jsx` (engine in `src/components/general/ReferenceCompiler.jsx` with `referenceCompilerUtils.js`)
 - **Category:** Notebook
 - **Goal:** Build the one allowed double-sided reference sheet and track coverage of the manual's official objectives.
 - **Core interaction loop:** 1) Work the objective checklist transcribed from the manual's topic list and mark each item Not started / Studying / Confident. 2) Author reference blocks (text, small tables, diagrams) filed under the matching objective. 3) Prune: hide Confident items so the sheet holds only what still needs support. 4) Export a print-ready sheet sized to 8.5 × 11 in, both sides.

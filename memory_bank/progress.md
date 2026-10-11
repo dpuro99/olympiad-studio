@@ -29,7 +29,7 @@
 - User preference: focus on Regional/Invitational; do not implement State/National-only material unless specifically requested. Avoid hardcoded quiz questions; prefer student-authored data tools.
 - Build interactive tools from the audited `tool-ideas.md` plans, in this priority order:
   1. Event-specialized compute/simulate tools — Circuit Lab digital-logic workbench, Chemistry Lab stoichiometry/nomenclature generator, Designer Genes molecular-sequence workbench, Dynamic Planet calculator toolbox + generated map/hydrograph practice, Rocks and Minerals mineral identification key + user-authored specimen cards, Anatomy spirometry/process/diagram sims, Write It, Do It timed relay, Boomilever build/test log.
-  2. The shared Reference & Study Compiler (sheet mode first for Anatomy/DG/Chem incl. per-participant Chem; then binder mode for Circuit/DP/R&M), then the build/test logs, compliance checklists, and Objective Tracker scaffold.
+  2. The shared Reference & Study Compiler (sheet mode first: **Anatomy done**, next DG and Chem incl. per-participant Chem; then binder mode for Circuit/DP/R&M), then the build/test logs, compliance checklists, and Objective Tracker scaffold.
   3. Backburner general tools (max 1–3) tracked in `src/components/general/tool-ideas.md`.
 - Continue checking official corrections, FAQ clarifications, and state/tournament-specific updates during the season.
 - Preserve the manuals as ignored local source material; never commit or deploy the rule PDFs.
