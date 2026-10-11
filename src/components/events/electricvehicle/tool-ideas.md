@@ -1,6 +1,6 @@
 # Electric Vehicle C — verified 2027 tool plan
 
-Source: supplied 2027 Division C Rules Manual, pp. C26–C31 + official EV FAQ (checked Oct 8, 2026). The 2027 format is set-time + bottle push + reverse stop; old arc/can geometry and can-bonus assumptions are obsolete.
+Source: supplied 2027 Division C Rules Manual, pp. C26–C31 + official EV FAQ (checked Oct 8, 2026). The 2027 format is set-time + bottle push + reverse stop; old arc/can geometry and can-bonus assumptions are obsolete. EV already has the strongest tool set in the registry (score calculator + run logger), so the remaining planned work is complementary.
 
 ## Tool: Event Overview
 - **Status:** Live — `src/components/events/electricvehicle/ArcVisualizer.jsx`
@@ -45,3 +45,15 @@ Source: supplied 2027 Division C Rules Manual, pp. C26–C31 + official EV FAQ (
 - **Scoring & feedback:** Report-only; must not claim to pre-judge an ES inspection.
 - **Level gating:** none.
 - **Persistence:** none (or localStorage if requested).
+
+## Tool: Run Planning Estimator
+- **Status:** Planned
+- **Category:** Calculator
+- **Goal:** Explore the speed/time tradeoffs of the set-time-then-reverse task.
+- **Core interaction loop:** 1) Enter target time and the vehicle/bottle distances for a practice scenario. 2) Estimate required average speed and turn/reverse behavior under user-supplied assumptions. 3) Compare scenarios.
+- **Content & data:** Manual task format and scoring contract plus explicit user-supplied assumptions; educational only, not a prediction of official results.
+- **UI components:** Input form, estimate card, visible assumptions editor.
+- **Scoring & feedback:** No official score; an educational estimate with assumptions shown.
+- **Level gating:** bottle position by level (2/3/4 m); National event-time bonus noted.
+- **Persistence:** none.
+- **Open questions:** keep this only if the modeled assumptions remain clearly educational and never imply an official prediction.
