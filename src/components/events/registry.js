@@ -9,6 +9,7 @@ const KineticsPractice = lazy(() => import('./chemlab/KineticsPractice'));
 const FreshwaterTools = lazy(() => import('./dynamicplanet/FreshwaterTools'));
 const CircuitLabPractice = lazy(() => import('./circuitlab/CircuitLabPractice'));
 const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'));
+const BoomileverBuildLog = lazy(() => import('./boomilever/BoomileverBuildLog'));
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
@@ -104,6 +105,20 @@ export const EVENT_REGISTRY = {
       requiresAuth: false,
       component: BoomileverEstimator,
       desc: 'Estimate structural efficiency from user-entered load supported and structure mass.',
+      eventName: 'Boomilever',
+      manualReference: 'Division C Rules Manual, pp. C7–C12',
+      eventUrl: 'https://www.soinc.org/boomilever-c',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }, {
+      id: 'boomilever-build-log',
+      ti: 'ti-clipboard-list',
+      label: 'Build/Test Log',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: BoomileverBuildLog,
+      desc: 'Track each prototype\'s build details and test results, compare efficiencies, and export CSV.',
       eventName: 'Boomilever',
       manualReference: 'Division C Rules Manual, pp. C7–C12',
       eventUrl: 'https://www.soinc.org/boomilever-c',

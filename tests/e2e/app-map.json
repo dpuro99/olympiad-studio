@@ -14,7 +14,8 @@
       "label": "Boomilever",
       "modules": [
         { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
-        { "id": "boomilever-estimator", "label": "Efficiency Estimator", "expectText": "Structure efficiency estimator" }
+        { "id": "boomilever-estimator", "label": "Efficiency Estimator", "expectText": "Structure efficiency estimator" },
+        { "id": "boomilever-build-log", "label": "Build/Test Log", "expectText": "Log a build" }
       ]
     },
     {

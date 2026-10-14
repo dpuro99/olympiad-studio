@@ -39,6 +39,6 @@ test('water budget supports net loss and balanced conditions and rejects invalid
 test('Dynamic Planet exposes user-data freshwater tools rather than a fixed quiz', () => {
   assert.match(registrySource, /id: 'freshwater-tools'/);
   assert.match(registrySource, /Division C Rules Manual, §3\.a\.ii, §3\.f\.ii–iii, §3\.h\.ii, pp\. C24–C25/);
-  assert.match(toolSource, /Your own measured values/);
+  assert.match(toolSource, /driven entirely by the values you measure/);
   assert.doesNotMatch(toolSource, /correctOption|answer key|sample dataset/i);
 });

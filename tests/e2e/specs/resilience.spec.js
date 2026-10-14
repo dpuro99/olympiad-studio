@@ -8,6 +8,7 @@ import {
 
 const OTHER_STORAGE_KEYS = [
   { eventId: 'anatomy', moduleId: 'anatomy-notes', key: 'olympiad-studio-anatomy-c-2027-notebook' },
+  { eventId: 'boomilever', moduleId: 'boomilever-build-log', key: 'olympiad-studio.boomilever-c.2027-build-log' },
   { eventId: 'chemlab', moduleId: 'gas-laws', key: 'olympiad-studio-chemlab-gases-v1' },
   { eventId: 'chemlab', moduleId: 'kinetics', key: 'olympiad-studio-chemlab-kinetics-v1' },
   { eventId: 'ev', moduleId: 'log', key: 'olympiad-studio.ev-c.2027-practice-runs' }
@@ -101,6 +102,20 @@ test('cancelling the delete dialog keeps the saved run', async ({ page }) => {
   page.once('dialog', (dialog) => dialog.dismiss());
   await page.getByRole('button', { name: 'Delete' }).click();
   await expect(page.getByText('Saved runs (1)')).toBeVisible();
+});
+
+test('cancelling the build-log clear dialog keeps saved builds', async ({ page }) => {
+  const key = 'olympiad-studio.boomilever-c.2027-build-log';
+  await page.addInitScript((k) => localStorage.setItem(k, JSON.stringify([
+    { label: 'Seeded build', structureMassGrams: '100', baseOption: 'standard', loadSupportedGrams: '9000', holds15Kg: false, tier: 'Tier 1', failureMode: '', changes: '', memberDescription: '' }
+  ])), key);
+  await gotoModule(page, { eventId: 'boomilever', moduleId: 'boomilever-build-log' });
+  await expect(page.getByRole('heading', { name: 'Saved builds (1)' })).toBeVisible();
+  page.once('dialog', (dialog) => dialog.dismiss());
+  await page.getByRole('button', { name: 'Clear log' }).click();
+  await expect(page.getByRole('heading', { name: 'Saved builds (1)' })).toBeVisible();
+  const stored = await page.evaluate((k) => localStorage.getItem(k), key);
+  expect(stored).toContain('Seeded build');
 });
 
 test('reference compiler imports a JSON backup and rehydrates the editor', async ({ page }) => {

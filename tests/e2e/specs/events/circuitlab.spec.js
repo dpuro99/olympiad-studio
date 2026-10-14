@@ -5,7 +5,11 @@ test('circuit practice calculator solves series, parallel and Ohm\u2019s law', a
   const errors = await openModule(page, testInfo, { eventId: 'circuitlab', moduleId: 'circuit-practice' });
   await expect(page.getByRole('heading', { name: 'Circuit Practice Calculator', level: 1 })).toBeVisible();
 
-  await page.getByPlaceholder('e.g. 100, 200, 300').fill('100, 200, 300');
+  await page.getByLabel('Resistance values (Ω) 1').fill('100');
+  await page.getByRole('button', { name: 'Add resistor' }).click();
+  await page.getByLabel('Resistance values (Ω) 2').fill('200');
+  await page.getByRole('button', { name: 'Add resistor' }).click();
+  await page.getByLabel('Resistance values (Ω) 3').fill('300');
   await page.getByRole('button', { name: 'Calculate equivalent resistance' }).click();
   const resistanceStatus = page.locator('[role="status"]').first();
   await expect(resistanceStatus).toContainText('Series:');

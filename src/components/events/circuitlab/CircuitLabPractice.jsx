@@ -1,48 +1,26 @@
 import { useState } from 'react';
 import { calculateSeriesParallel, calculateOhmsLaw } from './circuitUtils';
-
-const cardStyle = {
-  background: 'var(--color-background-secondary)',
-  border: '1px solid var(--color-border-tertiary)',
-  borderRadius: 'var(--border-radius-lg)',
-  padding: 18
-};
-const inputStyle = {
-  width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)',
-  border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)',
-  borderRadius: 6, fontSize: 13, fontFamily: 'var(--font-mono)'
-};
-
-function NumberInput({ label, value, onChange, unit }) {
-  return (
-    <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
-      {label} ({unit})
-      <input type="number" min="0" step="any" value={value} onChange={onChange} style={inputStyle} />
-    </label>
-  );
-}
-
-function ResultBox({ result, error }) {
-  if (error) return <div role="alert" style={{ color: 'var(--color-text-danger)', fontSize: 12 }}>{error}</div>;
-  if (!result) return null;
-  return (
-    <div role="status" aria-live="polite" style={{ padding: 12, border: '1px solid var(--color-border-info)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-info)', fontSize: 12 }}>
-      <strong style={{ fontFamily: 'var(--font-mono)' }}>{Number(result.value.toPrecision(6))} {result.unit}</strong>
-      <div style={{ marginTop: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>{result.equation}</div>
-    </div>
-  );
-}
+import {
+  Button,
+  Card,
+  ListField,
+  NumberField,
+  ResultPanel,
+  SectionHeading,
+  StatusMessage,
+  ToolHeader
+} from '../../general/ui/primitives';
 
 export default function CircuitLabPractice() {
-  const [resistancesText, setResistancesText] = useState('');
+  const [resistanceRows, setResistanceRows] = useState(['']);
   const [resistanceResult, setResistanceResult] = useState(null);
   const [resistanceError, setResistanceError] = useState('');
   const [ohmInputs, setOhmInputs] = useState({ voltage: '', current: '', resistance: '' });
   const [ohmResult, setOhmResult] = useState(null);
   const [ohmError, setOhmError] = useState('');
 
-  const handleResistanceChange = (event) => {
-    setResistancesText(event.target.value);
+  const handleResistanceChange = (rows) => {
+    setResistanceRows(rows);
     setResistanceResult(null);
     setResistanceError('');
   };
@@ -55,7 +33,10 @@ export default function CircuitLabPractice() {
 
   const submitResistance = (event) => {
     event.preventDefault();
-    const values = resistancesText.split(',').map((value) => Number(value.trim())).filter((value) => value !== '');
+    const values = resistanceRows
+      .filter((row) => row !== '')
+      .map((row) => Number(row))
+      .filter((value) => Number.isFinite(value));
     const result = calculateSeriesParallel({ resistances: values });
     if (result.error) {
       setResistanceError(result.error);
@@ -84,49 +65,57 @@ export default function CircuitLabPractice() {
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 760 }}>
-      <section style={{ ...cardStyle, display: 'grid', gap: 8 }}>
-        <div style={{ color: 'var(--color-text-info)', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
-          Circuit Lab C · 2027 · Manual C16–C17
-        </div>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
-          Practice Ohm’s law, series/parallel equivalent resistance, and basic circuit calculations from user-entered measurements. This is a learning calculator, not an official event score or a replacement for hands-on tasks.
-        </p>
-      </section>
+      <ToolHeader
+        eyebrow="Circuit Lab C · 2027 · Manual C16–C17"
+        purpose="A learning calculator for Ohm’s law and series/parallel equivalent resistance, driven entirely by values you enter. It is practice support, not an official event score or a substitute for the hands-on tasks."
+        manualReference="2027 Division C Rules Manual, pp. C16–C17"
+        steps={[
+          'For equivalent resistance, add one row per resistor and enter each resistance in ohms.',
+          'Choose Calculate equivalent resistance to see both the series total and the parallel total.',
+          'For Ohm’s law, enter exactly two of voltage, current, and resistance; the calculator solves for the third.',
+          'Keep units consistent (volts, amps, ohms).'
+        ]}
+      />
 
-      <form onSubmit={submitResistance} style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 15 }}>Equivalent resistance (series and parallel)</h2>
-        <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
-          Resistance values (comma-separated, Ω)
-          <input type="text" value={resistancesText} onChange={handleResistanceChange} placeholder="e.g. 100, 200, 300" style={{ ...inputStyle, fontFamily: 'var(--font-sans)' }} />
-        </label>
-        {resistanceError ? (
-          <div role="alert" style={{ color: 'var(--color-text-danger)', fontSize: 12 }}>{resistanceError}</div>
-        ) : resistanceResult ? (
-          <div role="status" aria-live="polite" style={{ display: 'grid', gap: 6, padding: 12, border: '1px solid var(--color-border-info)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-info)', fontSize: 12 }}>
+      <Card as="form" onSubmit={submitResistance} style={{ display: 'grid', gap: 12 }}>
+        <SectionHeading style={{ fontSize: 15 }}>Equivalent resistance (series and parallel)</SectionHeading>
+        <ListField
+          label="Resistance values"
+          unit="Ω"
+          values={resistanceRows}
+          onChange={handleResistanceChange}
+          addLabel="Add resistor"
+          placeholder="e.g. 100"
+        />
+        {resistanceError && <StatusMessage tone="error">{resistanceError}</StatusMessage>}
+        {resistanceResult && (
+          <ResultPanel style={{ display: 'grid', gap: 6 }}>
             <div>Series: <strong style={{ fontFamily: 'var(--font-mono)' }}>{Number(resistanceResult.series.toPrecision(6))} {resistanceResult.seriesUnit}</strong> ({resistanceResult.equationSeries})</div>
             <div>Parallel: <strong style={{ fontFamily: 'var(--font-mono)' }}>{Number(resistanceResult.parallel.toPrecision(6))} {resistanceResult.parallelUnit}</strong> ({resistanceResult.equationParallel})</div>
-          </div>
-        ) : null}
-        <button type="submit" style={{ padding: '9px 12px', border: 0, borderRadius: 'var(--border-radius-md)', background: 'var(--color-text-info)', color: '#fff', fontWeight: 600 }}>Calculate equivalent resistance</button>
-      </form>
+          </ResultPanel>
+        )}
+        <Button type="submit" variant="primary" style={{ justifySelf: 'start' }}>Calculate equivalent resistance</Button>
+      </Card>
 
-      <form onSubmit={submitOhm} style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 15 }}>Ohm’s law</h2>
+      <Card as="form" onSubmit={submitOhm} style={{ display: 'grid', gap: 12 }}>
+        <SectionHeading style={{ fontSize: 15 }}>Ohm’s law</SectionHeading>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
           Enter exactly two of voltage, current, and resistance. The calculator solves for the remaining value.
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
-          <NumberInput label="Voltage" value={ohmInputs.voltage} onChange={(event) => handleOhmChange('voltage', event.target.value)} unit="V" />
-          <NumberInput label="Current" value={ohmInputs.current} onChange={(event) => handleOhmChange('current', event.target.value)} unit="A" />
-          <NumberInput label="Resistance" value={ohmInputs.resistance} onChange={(event) => handleOhmChange('resistance', event.target.value)} unit="Ω" />
+          <NumberField label="Voltage" unit="V" value={ohmInputs.voltage} onChange={(event) => handleOhmChange('voltage', event.target.value)} />
+          <NumberField label="Current" unit="A" value={ohmInputs.current} onChange={(event) => handleOhmChange('current', event.target.value)} />
+          <NumberField label="Resistance" unit="Ω" value={ohmInputs.resistance} onChange={(event) => handleOhmChange('resistance', event.target.value)} />
         </div>
-        <ResultBox result={ohmResult} error={ohmError} />
-        <button type="submit" style={{ padding: '9px 12px', border: 0, borderRadius: 'var(--border-radius-md)', background: 'var(--color-text-info)', color: '#fff', fontWeight: 600 }}>Calculate unknown</button>
-      </form>
-
-      <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
-        Source: 2027 Division C Rules Manual pp. C16–C17. This is practice, not official event scoring.
-      </p>
+        {ohmError && <StatusMessage tone="error">{ohmError}</StatusMessage>}
+        {ohmResult && (
+          <ResultPanel>
+            <strong style={{ fontFamily: 'var(--font-mono)' }}>{Number(ohmResult.value.toPrecision(6))} {ohmResult.unit}</strong>
+            <div style={{ marginTop: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>{ohmResult.equation}</div>
+          </ResultPanel>
+        )}
+        <Button type="submit" variant="primary" style={{ justifySelf: 'start' }}>Calculate unknown</Button>
+      </Card>
     </div>
   );
 }

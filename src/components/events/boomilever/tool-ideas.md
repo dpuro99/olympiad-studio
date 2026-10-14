@@ -15,7 +15,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C7–C12. Prior checks using 
 - **Open questions:** Any strength/failure simulator requires user-supplied assumptions and must be clearly labeled educational.
 
 ## Tool: Build/Test Log
-- **Status:** Planned
+- **Status:** Live — `src/components/events/boomilever/BoomileverBuildLog.jsx` (logic in `buildLogUtils.js`)
 - **Category:** Notebook
 - **Goal:** Track each prototype's build and test results so designs can be compared across iterations.
 - **Core interaction loop:** 1) Record a build (structure mass, member dimensions/material, base option: 15 cm standard vs 10 cm bonus). 2) Enter the test outcome (load supported, held 15 kg?, failure mode/where it broke, changes made). 3) View each build's efficiency and a side-by-side comparison of all builds; export CSV.

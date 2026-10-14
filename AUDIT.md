@@ -1,16 +1,16 @@
 # Olympiad Studio — Browser Audit Report
 
-**Date:** 2026-10-11 (second pass — "drive the medium" hardening)
-**Scope:** Full sweep. This pass stopped treating observable states (print/PDF, responsive, theme, storage, a11y) as "not verifiable headlessly" and now reproduces each environment in the harness and asserts real output.
-**Audited commit:** `421b35a` (working tree includes the e2e harness + app fixes below, not yet committed)
+**Date:** 2026-10-14 (Boomilever Build/Test Log + shared event-tool UI primitives)
+**Scope:** Full sweep. This pass also re-ran the complete suite after the Boomilever Build/Test Log and the shared UI-primitives refactor landed.
+**Audited commit:** based on `aee83bc` (working tree includes the Boomilever Build/Test Log + shared UI primitives batch below, not yet committed)
 **Tooling:** Playwright + headless Chromium ("chromium-headless-shell" 156), driven by `tests/e2e/`; guest mode only (no OAuth).
 
 ## Summary
 
 | Gate | Result |
 | --- | --- |
-| Playwright E2E (`npm run test:e2e`) | **79 / 79 passed** |
-| Unit tests (`npm test`) | 53 / 53 passed |
+| Playwright E2E (`npm run test:e2e`) | **85 / 85 passed** |
+| Unit tests (`npm test`) | 60 / 60 passed |
 | Lint (`npm run lint`) | clean |
 | Build (`npm run build`) | success |
 | Console errors / failed requests during E2E | none (beyond filtered analytics/Supabase noise) |
@@ -20,7 +20,7 @@ Every registered event workspace and module was opened, visually captured, and c
 ### Coverage
 
 - **Core / navigation:** landing page → guest entry, lobby → event workspace → module click-through, light/dark theme toggle + persistence.
-- **All 9 events, all 23 registered modules** rendered and matched their expected content (`test-results/screenshots/module_*.png` + `.txt` DOM snapshots).
+- **All 9 events, all 24 registered modules** rendered and matched their expected content (`test-results/screenshots/module_*.png` + `.txt` DOM snapshots).
 - **Responsive:** every module rendered at **375 px** with a horizontal-overflow assertion and a screenshot (`mobile_*.png`), plus a **720 px breakpoint** test proving the shell is `row` at 721 px and `column` at 720 px.
 - **Theme actually applies:** computed `body` background differs between light and dark (not just the `data-theme` attribute).
 - **A11y:** every visible heading must have a unique accessible name (duplicate-name guard wired into every module render).
@@ -34,6 +34,7 @@ Every registered event workspace and module was opened, visually captured, and c
   - Circuit practice — series (600 Ω), parallel (54.5455 Ω), Ohm's law (24 Ω).
   - Freshwater workbench — discharge (3 m³/s) and water-budget (net +500 m³).
   - Boomilever estimator — load score, efficiency, bonus/tier text.
+  - Boomilever Build/Test Log — save a tested prototype (bonus + 15 kg), best-efficiency highlight, CSV export.
   - **All 6 Reference & Study Compilers** (anatomy, designer genes, chemistry lab, circuit lab, dynamic planet, rocks & minerals) — mark objective confident, author a block, prune confident objectives, change density preset, save + verify `localStorage`, JSON export (filename verified), clear with confirmation.
 
 ## Findings
@@ -52,7 +53,7 @@ Every module failed the new 375 px overflow assertion: `document.documentElement
 
 - **Root cause:** `src/index.css` mobile media query — brand button missing `width: auto`.
 - **Fix:** `src/index.css` `.dashboard-sidebar .dashboard-brand-button { width: auto; }` inside the `@media (max-width: 720px)` block; the sidebar is now 375 px with no document-level overflow.
-- **Regression guard:** `expectNoHorizontalOverflow(page, 375)` in `tests/e2e/helpers.js`, applied to all 23 modules in `core.spec.js`.
+- **Regression guard:** `expectNoHorizontalOverflow(page, 375)` in `tests/e2e/helpers.js`, applied to all 24 modules in `core.spec.js`.
 
 ### LOW — Duplicate accessible heading names (module label + tool title) — fixed
 
@@ -61,9 +62,11 @@ Every module failed the new 375 px overflow assertion: `document.documentElement
 - **Fix:** removed the redundant in-tool `<h2>` titles (the page `<h1>` already carries them) and promoted the section headings `h3`→`h2` in `ReferenceCompiler.jsx`, `AnatomyPractice.jsx`, and `CircuitLabPractice.jsx`.
 - **Regression guard:** `expectUniqueHeadingNames(page)` in `tests/e2e/helpers.js`, wired into every module render; a duplicate visible heading name now fails the suite.
 
-### LOW — EV run logger's custom validation message is unreachable
+### LOW — EV run logger's custom validation message was unreachable — fixed
 
-`RunLogger.jsx:113` sets the numeric inputs `required`, so the browser's native constraint validation blocks submit before `saveRun` runs. The component's own clearer message (`RunLogger.jsx:75–82`, e.g. "Enter target/run times, both ES-measured distances, and the pusher opening width.") is therefore never shown for a normal run. Impact: users get a less specific native tooltip. Suggest `noValidate` on the form and rely on the existing custom validation (or remove the now-dead branch). Covered by `tests/e2e/specs/events/electricvehicle.spec.js` → "run logger blocks an incomplete run".
+`RunLogger.jsx` set the numeric inputs `required`, so the browser's native constraint validation blocked submit before `saveRun` ran, making the component's own clearer message ("Enter target/run times, both ES-measured distances, and the pusher opening width.") unreachable for a normal run.
+
+- **Fix (this pass):** the shared-primitives refactor switched the form to `noValidate` and dropped the `required` attributes, so the custom `role="alert"` message now shows. Covered by `tests/e2e/specs/events/electricvehicle.spec.js` → "run logger blocks an incomplete run".
 
 ### INFO — No error boundary around lazy tool modules
 

@@ -10,8 +10,10 @@ test('freshwater workbench computes discharge and water-budget balance', async (
   await page.getByRole('button', { name: 'Calculate discharge' }).click();
   await expect(page.getByText('3 m³/s').first()).toBeVisible();
 
-  await page.getByLabel('Inflow amounts (comma-separated)').fill('1200, 300');
-  await page.getByLabel('Outflow amounts (comma-separated)').fill('1000');
+  await page.getByLabel('Inflow amounts 1').fill('1200');
+  await page.getByRole('button', { name: 'Add inflow' }).click();
+  await page.getByLabel('Inflow amounts 2').fill('300');
+  await page.getByLabel('Outflow amounts 1').fill('1000');
   await page.getByRole('button', { name: 'Calculate budget balance' }).click();
   await expect(page.getByRole('status').last()).toContainText('Net budget change: 500 m³');
 
