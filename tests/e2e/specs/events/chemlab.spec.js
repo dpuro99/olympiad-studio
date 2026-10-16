@@ -1,22 +1,22 @@
 import { test, expect } from '@playwright/test';
 import { captureSnapshot, flowReferenceCompiler, openModule } from '../../helpers.js';
 
-test('gas-law unknown solver computes, notebook saves and exports CSV', async ({ page }, testInfo) => {
+test('gas-law unknown solver computes live, notebook saves and exports CSV', async ({ page }, testInfo) => {
   const errors = await openModule(page, testInfo, { eventId: 'chemlab', moduleId: 'gas-laws' });
-  await expect(page.getByRole('heading', { name: 'Gas-law calculation notebook', level: 2 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Gas-law unknown solver', level: 2 })).toBeVisible();
   await expect(page.getByText('Dalton\u2019s law of partial pressures')).toBeVisible();
   await expect(page.getByText('Graham\u2019s law of diffusion and effusion')).toBeVisible();
 
-  const solver = page.locator('form').filter({ hasText: 'Gas law' }).first();
+  const solver = page.locator('section').filter({ has: page.getByRole('heading', { name: 'Gas-law unknown solver' }) });
   const knownInputs = solver.locator('input[type="number"]');
   await expect(knownInputs).toHaveCount(3);
+  await expect(solver.getByRole('img')).toBeVisible();
   const values = [2, 1, 4];
   for (let i = 0; i < values.length; i += 1) {
     await knownInputs.nth(i).fill(String(values[i]));
   }
-  await solver.getByRole('button', { name: 'Calculate unknown' }).click();
-  await expect(solver.locator('[role="status"]')).toBeVisible();
-  const resultText = await solver.locator('[role="status"]').innerText();
+  await expect(solver.getByRole('status')).toContainText('Initial pressure');
+  const resultText = await solver.getByRole('status').innerText();
   expect(resultText.trim().length).toBeGreaterThan(0);
   await captureSnapshot(page, testInfo, 'chemlab_gaslaw_result');
 
@@ -35,9 +35,14 @@ test('gas-law unknown solver computes, notebook saves and exports CSV', async ({
   expect(errors).toEqual([]);
 });
 
-test('kinetics practice renders its experiment notebook', async ({ page }, testInfo) => {
+test('kinetics practice computes rates live and plots them', async ({ page }, testInfo) => {
   const errors = await openModule(page, testInfo, { eventId: 'chemlab', moduleId: 'kinetics' });
-  await expect(page.getByRole('heading', { name: 'Reaction-rate experiment notebook', level: 2 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Experiment setup', level: 2 })).toBeVisible();
+  await page.getByLabel('Initial remaining amount (unit)').first().fill('10');
+  await page.getByLabel('Final remaining amount (unit)').first().fill('4');
+  await page.getByLabel('Elapsed time (s)').first().fill('20');
+  await expect(page.getByText('Average rate:').first()).toBeVisible();
+  await expect(page.getByRole('img', { name: /Measured remaining amount over elapsed time/ })).toBeVisible();
   await captureSnapshot(page, testInfo, 'chemlab_kinetics');
   expect(errors).toEqual([]);
 });

@@ -23,8 +23,8 @@
       "label": "Chemistry Lab",
       "modules": [
         { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
-        { "id": "gas-laws", "label": "Gas-Law Practice", "expectText": "Gas-law calculation notebook" },
-        { "id": "kinetics", "label": "Kinetics Practice", "expectText": "Reaction-rate experiment notebook" },
+        { "id": "gas-laws", "label": "Gas-Law Practice", "expectText": "Gas-law unknown solver" },
+        { "id": "kinetics", "label": "Kinetics Practice", "expectText": "Your measurements and rates" },
         { "id": "chemlab-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
       ]
     },
@@ -51,7 +51,7 @@
       "label": "Dynamic Planet",
       "modules": [
         { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
-        { "id": "freshwater-tools", "label": "Freshwater Measurement Tools", "expectText": "Freshwater measurement workbench" },
+        { "id": "freshwater-tools", "label": "Freshwater Measurement Tools", "expectText": "Stream discharge" },
         { "id": "dynamicplanet-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
       ]
     },

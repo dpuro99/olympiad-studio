@@ -9,7 +9,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C24–C25. This season is fre
 - **Core interaction loop:** 1) Discharge: enter measured cross-sectional area and average velocity; read Q = A × v with SI units. 2) Water budget: enter comma-separated inflow and outflow amounts over the same interval and a shared volume unit; read total inflow, total outflow, and net change.
 - **Content & data:** Manual course content (water budgets §3.a.ii; discharge, velocity, and load §3.f.ii–iii; lake water budgets §3.h.ii, pp. C24–C25); user-supplied values only.
 - **UI components:** Two input forms and result readouts.
-- **Interactivity:** Live (retrofit target): discharge and budget figures derive from the fields as typed; add a river cross-section visualization and budget bars; remove the Calculate gate.
+- **Interactivity:** Live: discharge and budget figures derive from the fields as typed, with a schematic channel cross-section and inflow/outflow budget bars.
 - **Scoring & feedback:** Unit-aware results labeled practice; no invented official score weights.
 - **Level gating:** none.
 - **Persistence:** none.
