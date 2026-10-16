@@ -61,6 +61,7 @@
       "modules": [
         { "id": "arc", "label": "2027 Event Overview", "expectText": "Electric Vehicle C" },
         { "id": "score", "label": "Score Calculator", "expectText": "Electric Vehicle score calculator" },
+        { "id": "course", "label": "Course & Geometry", "expectText": "Required average speed" },
         { "id": "log", "label": "Practice Run Logger", "expectText": "Practice run journal" }
       ]
     },

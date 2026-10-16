@@ -33,6 +33,16 @@ Generic best practices (commit policy, cross-session memory habits, a11y/securit
 - Flexbox/grid with wrapping; tool panels must stack cleanly on narrow screens. Technical values/units use monospace.
 - Match controls to semantics (buttons act, links navigate, checkboxes toggle). Keep hover/focus styling in CSS, not JS mouse handlers.
 
+## Interactivity
+
+Interactive is the Studio's default tool idiom — tools should be live, not a form that only produces text after a button press.
+
+- **Live derivation:** compute displayed values from state during render so they update as the student types or manipulates. Reserve explicit action buttons for side effects (save, export, print, grade, generate), never for recomputing values already in state. References: `boomilever/BoomileverEstimator.jsx`, `electricvehicle/ScoreCalc.jsx`.
+- **Direct manipulation when the domain is spatial/graphical** (geometry, circuits, networks, graphs, spectra, time series): render an interactive visual surface, not only numeric readouts. Reference: `circuitlab/CircuitCanvas.jsx` (SVG overlay + positioned DOM; pointer-drag *and* a keyboard/click-to-connect fallback). Hand-rolled SVG is allowed for tool-internal visualizations.
+- **Accessibility:** every interactive affordance needs a keyboard path and an accessible name; keep hover/focus styling in CSS.
+- **Persistence:** persist meaningful tool state to `localStorage` with corrupt/unavailable handling.
+- **Before building or keeping a non-interactive tool, ask:** (a) would a live/interactive version make sense? (b) if not, is the module itself a good idea, or would a different tool be better? Keep a non-interactive tool only when it is genuinely good as-is, and record a one-line justification in its `tool-ideas.md`. Never force interactivity onto a tool where it doesn't fit, and never keep a poor tool just because it's simple. Intrinsically authoring tools (Reference & Study Compiler, run/build logs, note journals) keep explicit Save but must show live derived feedback (e.g. the budget bar / score preview).
+
 ## Repo gotchas
 
 - Events follow an `info.md` + `tool-ideas.md` spec pattern (`## Tool:` blocks) — use these as the source spec when building tools.

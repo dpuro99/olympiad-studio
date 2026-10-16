@@ -230,6 +230,26 @@ input[type=checkbox] {
   pointer-events: none;
 }
 
+/* Electric Vehicle course diagram: draggable bottle-line handle. */
+.ev-course-handle {
+  fill: var(--color-background-secondary);
+  stroke: var(--color-text-warning);
+  cursor: grab;
+}
+
+.ev-course-handle:hover {
+  fill: var(--color-background-info);
+}
+
+.ev-course-handle:focus-visible {
+  outline: 2px solid var(--color-text-info);
+  outline-offset: 1px;
+}
+
+.ev-course-handle:active {
+  cursor: grabbing;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

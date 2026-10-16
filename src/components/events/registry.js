@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import EventRulesOverview from '../general/EventRulesOverview';
 
 const ArcVisualizer = lazy(() => import('./electricvehicle/ArcVisualizer'));
+const CourseGeometry = lazy(() => import('./electricvehicle/CourseGeometry'));
 const RunLogger = lazy(() => import('./electricvehicle/RunLogger'));
 const ScoreCalc = lazy(() => import('./electricvehicle/ScoreCalc'));
 const GasLawPractice = lazy(() => import('./chemlab/GasLawPractice'));
@@ -321,6 +322,14 @@ export const EVENT_REGISTRY = {
         id: 'score', ti: 'ti-trophy', label: 'Score Calculator', cat: 'Testing',
         live: true, year: 2027, requiresAuth: false, component: ScoreCalc,
         desc: 'Calculate two EV run scores and the final score using the 2027 manual formula.',
+        eventName: 'Electric Vehicle',
+        manualReference: 'Division C Rules Manual, pp. C26–C31',
+        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'
+      },
+      {
+        id: 'course', ti: 'ti-map-2', label: 'Course & Geometry', cat: 'Testing',
+        live: true, year: 2027, requiresAuth: false, component: CourseGeometry,
+        desc: 'Drag the bottle line and explore set-time pacing, sensitivity, and the live 2027 run-score tradeoffs.',
         eventName: 'Electric Vehicle',
         manualReference: 'Division C Rules Manual, pp. C26–C31',
         eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'

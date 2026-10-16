@@ -11,6 +11,7 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Core interaction loop:** 1) Add a note with system/objective tag. 2) Review saved notes by system and objective. 3) Export notes to CSV.
 - **Content & data:** User-authored notes only; no preset questions or simulated content.
 - **UI components:** Note form, filterable list, CSV export.
+- **Interactivity:** Authoring journal; no live computation to derive, so a form + explicit Save is the right model here (an interactive surface would be a different tool). Live feedback limited to the saved list.
 - **Scoring & feedback:** none (notebook); CSV text escaped and formula-injection-safe.
 - **Level gating:** user tags core vs State/National vs National-only.
 - **Persistence:** localStorage, explicit save/restore; CSV export.
@@ -23,6 +24,7 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Core interaction loop:** 1) Work the objective checklist transcribed from the manual's topic list and mark each item Not started / Studying / Confident. 2) Author reference blocks (text, small tables, diagrams) filed under the matching objective. 3) Prune: hide Confident items so the sheet holds only what still needs support. 4) Export a print-ready sheet sized to 8.5 × 11 in, both sides.
 - **Content & data:** Objective outline transcribed from manual pp. C3–C5 (rule-derived, no invented content); user-authored reference content only. Allowed resource: one double-sided 8.5 × 11 in sheet per team; lamination/sheet protector permitted; multiple sheets and affixed labels prohibited.
 - **UI components:** Objective checklist with status + level filter, reference block editor grouped by objective, mastery-prune filter, live space budget, print/export.
+- **Interactivity:** Authoring tool: the live space-budget meter and mastery-prune preview update as you edit; Save/Print/Export are explicit actions.
 - **Scoring & feedback:** none (organizer); space budget warns when content exceeds one double-sided sheet.
 - **Level gating:** objectives tagged Core / State-National / National-only.
 - **Persistence:** localStorage (explicit save/restore); print-to-PDF and JSON export; text escaped.
@@ -35,6 +37,7 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Core interaction loop:** 1) Choose or randomize a case type (normal, obstructive, restrictive). 2) Read the generated flow-volume loop and lung-volume table. 3) Classify the pattern and compute the listed values (e.g., FEV1/FVC). 4) Reveal the case and the manual-cited reasoning.
 - **Content & data:** Values/curves generated from manual-listed respiratory parameters (lung volumes, spirometry, flow-volume loops, gas exchange, oxygen-hemoglobin); no fabricated real-patient measurements.
 - **UI components:** Case picker, SVG flow-volume plot, values table, classification inputs, reference panel.
+- **Interactivity:** Live + direct manipulation: generated case with an interactive SVG flow-volume plot; classification and computed ratios update as entered; a check action grades.
 - **Scoring & feedback:** Checks the classification and computed ratios; practice feedback only; higher-level regulation and extra disorders level-gated.
 - **Level gating:** higher-level regulation and extra disorders gated to State/National.
 - **Persistence:** none.
@@ -47,6 +50,7 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Core interaction loop:** 1) Choose a case. 2) Order/trace the process or classify the response (step ordering / classification controls). 3) Get manual-cited feedback.
 - **Content & data:** Manual-listed disorders and processes only, presented as interactive ordering/classification rather than a fixed question-and-answer bank.
 - **UI components:** Case prompt, sequence/classification inputs, references.
+- **Interactivity:** Live: ordering/classification feedback updates as the student works; explicit reveal of the manual-cited answer.
 - **Scoring & feedback:** Evaluates the ordering/classification against manual objectives; practice only.
 - **Level gating:** liver/pancreas pathways (State/National); immunoglobulin constant-region variation, detailed immunoglobulin structure/function, and organ-transplant immunology (State/National); tumor immunology (National) — all level-tagged per the manual.
 - **Persistence:** none.
@@ -58,6 +62,7 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Core interaction loop:** 1) Choose a system. 2) Label/select structures on a diagram view. 3) Reveal manual-cited names and functions.
 - **Content & data:** Simple schematic diagrams (state-drawn SVG) or user-supplied images; no invented anatomy. Official resources stress identifying structures on diagrams and models.
 - **UI components:** Diagram canvas, label targets, reveal panel.
+- **Interactivity:** Direct manipulation: click-to-label an SVG diagram (with a keyboard path); reveal panel confirms names/functions.
 - **Scoring & feedback:** Identify-against-key; practice only.
 - **Level gating:** level-tagged structures.
 - **Persistence:** none.

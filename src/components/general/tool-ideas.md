@@ -11,6 +11,7 @@ This set is intentionally parked; see `generalToolIdeas.js` for the code placeho
 - **Core interaction loop:** 1) Pick a preset (event, phase, duration) or a custom duration. 2) Start/pause/reset; hear or see phase transitions. 3) Record the elapsed time (e.g., WIDI build-phase time as the tiebreaker).
 - **Content & data:** Preset durations derived from each event's manual; no content.
 - **UI components:** Preset list, countdown display, start/pause/reset, optional sound.
+- **Interactivity:** Live: an always-updating countdown; start/pause/reset are explicit actions.
 - **Scoring & feedback:** none (timer).
 - **Level gating:** none.
 - **Persistence:** none (or localStorage for a custom preset set).
@@ -23,6 +24,7 @@ This set is intentionally parked; see `generalToolIdeas.js` for the code placeho
 - **Core interaction loop:** 1) Author a card (prompt + answer) tagged by event/topic. 2) Drill in quiz mode (flip, self-grade, shuffle). 3) Re-drill missed cards.
 - **Content & data:** User-authored prompts/answers only; no bundled deck. Content is the student's own, which is the differentiator from premade question banks.
 - **UI components:** Card author form, event/topic decks, quiz mode, missed-card review.
+- **Interactivity:** Authoring + drill: user-authored cards; interactive flip, self-grade, and shuffle; Save/CSV are explicit actions.
 - **Scoring & feedback:** Self-graded recall; practice only.
 - **Level gating:** per-card tag.
 - **Persistence:** localStorage; CSV import/export.
@@ -35,6 +37,7 @@ This set is intentionally parked; see `generalToolIdeas.js` for the code placeho
 - **Core interaction loop:** 1) Pick an event. 2) Read a diff of the current manual's event section against the prior season, with changes highlighted. 3) Jump to the relevant citation.
 - **Content & data:** Two seasons of manual text per event (the official manual already bolds year-over-year changes); rule-derived, no invented content.
 - **UI components:** Event selector, side-by-side/annotated diff, citation links.
+- **Interactivity:** Interactive diff viewer: selecting an event swaps the annotated diff live.
 - **Scoring & feedback:** none (reference).
 - **Level gating:** none.
 - **Persistence:** none.

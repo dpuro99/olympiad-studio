@@ -141,6 +141,71 @@ export function CheckboxField({ label, checked, onChange, ...rest }) {
   );
 }
 
+// Slider with a live mono readout. Presentational: the parent owns the value,
+// so readouts update as the slider moves (no Apply button needed).
+export function RangeField({ label, unit, value, onChange, min = 0, max = 100, step = 1, help, format, ...rest }) {
+  const text = unit ? `${label} (${unit})` : label;
+  const shown = typeof format === 'function' ? format(value) : String(value);
+  return (
+    <Field label={label} help={help}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          aria-label={text}
+          onChange={onChange}
+          style={{ flex: 1, accentColor: 'var(--color-text-info)' }}
+          {...rest}
+        />
+        <span style={{
+          minWidth: 56, textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 12,
+          color: 'var(--color-text-primary)'
+        }}>
+          {shown}
+        </span>
+      </div>
+    </Field>
+  );
+}
+
+// Binary toggle rendered as a native checkbox with switch semantics, so it
+// keeps keyboard and screen-reader support without custom ARIA wiring.
+export function ToggleSwitch({ label, checked, onChange, help, ...rest }) {
+  return (
+    <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.5 }}>
+      <input type="checkbox" role="switch" checked={checked} onChange={onChange} style={{ accentColor: 'var(--color-text-info)', width: 16, height: 16, marginTop: 1 }} {...rest} />
+      <span>
+        {label}
+        {help && <span style={{ display: 'block', color: 'var(--color-text-secondary)', fontSize: 10, lineHeight: 1.4 }}>{help}</span>}
+      </span>
+    </label>
+  );
+}
+
+// Segmented control / tab strip. `tabs` is an array of { id, label } and the
+// parent renders the active panel. Mirrors the Digital Logic workbench pattern
+// (tablist + Button role="tab" + aria-selected) so the two stay consistent.
+export function Tabs({ tabs, active, onChange, ariaLabel = 'Sections', style }) {
+  return (
+    <div role="tablist" aria-label={ariaLabel} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', ...style }}>
+      {tabs.map((tab) => (
+        <Button
+          key={tab.id}
+          role="tab"
+          aria-selected={active === tab.id}
+          variant={active === tab.id ? 'primary' : 'secondary'}
+          onClick={() => onChange(tab.id)}
+        >
+          {tab.label}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
 // Add-row numeric list. `values` is an array of strings; `onChange` receives a
 // new array. Replaces fragile comma-separated text inputs.
 export function ListField({ label, unit, values, onChange, help, addLabel = 'Add another', placeholder }) {

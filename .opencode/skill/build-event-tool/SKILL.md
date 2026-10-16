@@ -22,6 +22,7 @@ Use these two files as the single source of truth. Do not import rules or conten
 - **Core interaction loop:** numbered steps the user goes through.
 - **Content & data:** required constants/datasets/shapes and their source (manual section); what the user supplies.
 - **UI components:** controls, panels, and outputs to build.
+- **Interactivity:** the live core — what updates as the student manipulates (live feedback); whether a direct-manipulation/visual surface is warranted (and why/why not); which actions are explicit buttons (save/export/print/grade/generate). If there is no interactive core, state the one-line justification (see step 4a).
 - **Scoring & feedback:** how results are computed/displayed; what is practice vs official.
 - **Level gating:** Regional | State | National constraints from the manual.
 - **Persistence:** localStorage (explicit) | none | notes-export (CSV).
@@ -47,7 +48,13 @@ Use these two files as the single source of truth. Do not import rules or conten
    - `circuitlab/CircuitLabPractice.jsx` / `chemlab/GasLawPractice.jsx` — generated-question or calculator patterns.
    - `dynamicplanet/FreshwaterTools.jsx` — multi-field measurement tools.
    - `anatomy/AnatomyPractice.jsx` + `anatomyNotes.js` — notebook/notes and CSV export with formula-injection protection.
+   - `circuitlab/CircuitCanvas.jsx` (+ `DigitalLogicWorkbench.jsx`) — the reference for a live, direct-manipulation surface (positioned DOM + SVG overlay; pointer-drag *and* a keyboard/click fallback).
    - Always use theme variables, `ti-*` Tabler icons, monospace for technical values, and stacking layouts for narrow screens.
+
+4a. **Choose the right tool (interactivity checkpoint).** Interactive is the default (see the `AGENTS.md` Interactivity section). Before implementing, ask in order:
+   1. Would a live/interactive version make sense (live derivation, and a visual/direct-manipulation surface if the domain is spatial)?
+   2. If not, is this module actually a good idea, or would a different tool be better?
+   Build the interactive version when it fits. Keep a non-interactive tool only when it is genuinely good as-is, and record the one-line justification in the `Interactivity` spec field. Never force interactivity onto a tool where it doesn't fit, and never keep a poor tool just because it is simple. Intrinsically authoring tools (compilers, logs, notebooks) keep explicit Save but must show live derived feedback.
 
 5. **Implement, logic-first.**
    - Put all formulas/parsing/constants in a co-located `*Utils.js` / `*.js` module (no UI logic).
