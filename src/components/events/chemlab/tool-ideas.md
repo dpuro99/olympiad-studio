@@ -27,17 +27,17 @@ Source: supplied 2027 Division C Rules Manual, pp. C14–C15. The event requires
 - **Persistence:** localStorage (explicit save/restore) + CSV export, formula-injection-safe; no upload.
 
 ## Tool: Stoichiometry and Nomenclature Practice
-- **Status:** Planned
+- **Status:** Live — `src/components/events/chemlab/StoichiometryPractice.jsx` (logic in `stoichiometry.js`)
 - **Category:** Practice
-- **Goal:** Generate unlimited practice balancing equations and doing mole/mass/nomenclature conversions.
-- **Core interaction loop:** 1) Choose a mode (balance equation, mole/mass/volume conversion, limiting reagent, percent yield, name ↔ formula). 2) Solve generated problems. 3) Check the step-by-step worked solution.
-- **Content & data:** Manual §3 supporting tools — stoichiometry (mole conversions, percent yield) and formula writing/nomenclature; ion/formula scope from the manual (expanded at State/National). Problems are generated, not a fixed answer bank.
-- **UI components:** Mode selector, generated prompt, answer input, worked-solution panel.
-- **Interactivity:** Generated practice: a fresh problem is generated live; a check action grades the answer and reveals the worked solution.
-- **Scoring & feedback:** Checks numeric/formula answers and shows work; practice only.
-- **Level gating:** required ion knowledge and formula scope expand at State/National; keep core Regional scope front and center.
-- **Persistence:** none (or localStorage if requested).
-- **Open questions:** confirm which ion/formula lists are Regional vs State/National (manual §3.d).
+- **Goal:** Generate unlimited practice balancing equations and doing mole/mass/volume and nomenclature conversions.
+- **Core interaction loop:** 1) Choose a mode (balance equation, mole/mass/particle/gas-volume conversion, limiting reagent, percent yield, name ↔ formula). 2) Solve the generated problem. 3) Check the answer and review the step-by-step worked solution, then generate a new one.
+- **Content & data:** Manual §3.c–d (pp. C14–C15). Ion scope transcribed exactly: Regional = main-group monatomic ions plus acetate, ammonium, bicarbonate, carbonate, cyanide, hydroxide, nitrate, phosphate, sulfate; State/National adds chromate, dichromate, permanganate, peroxide, thiocyanate, transition-metal ions (Cu+/Cu2+, Fe2+/Fe3+, Ag+, Zn2+), and -ite/-ate with hypo-/per- prefixes. Reaction species are a small curated library that an exact balancer solves at runtime; conversions use standard atomic weights. No stored answer key.
+- **UI components:** Mode tabs, a Regional/State ion toggle, generated prompt, mode-specific answer inputs, Check / New problem, worked-solution panel, session score.
+- **Interactivity:** Generated practice: a fresh problem is generated live; Check grades the answer and reveals the worked solution. Session-only (no persistence).
+- **Scoring & feedback:** Checks coefficient ratio (balance), composition (formula), and numeric answers with a relative tolerance; shows step-by-step work. Practice only, never official.
+- **Level gating:** Regional scope front and center; the toggle adds the State/National ions. State/National quantitative kinetics stays with the Kinetics tool.
+- **Persistence:** none (session-only score).
+- **Open questions:** none — the §3.d ion lists are recorded above and encoded in `ions` in `stoichiometry.js`.
 
 ## Tool: Reference & Study Compiler
 - **Status:** Live — `src/components/events/chemlab/ChemistryLabReferenceCompiler.jsx` (shared engine `src/components/general/ReferenceCompiler.jsx`)

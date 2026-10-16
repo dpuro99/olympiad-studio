@@ -25,6 +25,7 @@
         { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
         { "id": "gas-laws", "label": "Gas-Law Practice", "expectText": "Gas-law unknown solver" },
         { "id": "kinetics", "label": "Kinetics Practice", "expectText": "Your measurements and rates" },
+        { "id": "stoichiometry", "label": "Stoichiometry & Nomenclature", "expectText": "Practice score" },
         { "id": "chemlab-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
       ]
     },

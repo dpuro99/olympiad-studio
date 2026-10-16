@@ -7,6 +7,7 @@ const RunLogger = lazy(() => import('./electricvehicle/RunLogger'));
 const ScoreCalc = lazy(() => import('./electricvehicle/ScoreCalc'));
 const GasLawPractice = lazy(() => import('./chemlab/GasLawPractice'));
 const KineticsPractice = lazy(() => import('./chemlab/KineticsPractice'));
+const StoichiometryPractice = lazy(() => import('./chemlab/StoichiometryPractice'));
 const FreshwaterTools = lazy(() => import('./dynamicplanet/FreshwaterTools'));
 const CircuitLabPractice = lazy(() => import('./circuitlab/CircuitLabPractice'));
 const DigitalLogicWorkbench = lazy(() => import('./circuitlab/DigitalLogicWorkbench'));
@@ -163,6 +164,20 @@ export const EVENT_REGISTRY = {
       desc: 'Plan a user-defined reaction-rate experiment and calculate rates from entered measurements (Regional/Invitational scope).',
       eventName: 'Chemistry Lab',
       manualReference: 'Division C Rules Manual, §3.f.i, p. C14',
+      eventUrl: 'https://www.soinc.org/chemistry-lab-c-0',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }, {
+      id: 'stoichiometry',
+      ti: 'ti-atom',
+      label: 'Stoichiometry & Nomenclature',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: StoichiometryPractice,
+      desc: 'Generated practice balancing equations, mole/mass/particle/gas-volume conversions, limiting reagent, percent yield, and ionic name ↔ formula.',
+      eventName: 'Chemistry Lab',
+      manualReference: 'Division C Rules Manual, §3.c–d, pp. C14–C15',
       eventUrl: 'https://www.soinc.org/chemistry-lab-c-0',
       rulesUrl: 'https://www.soinc.org/rules-2027'
     }, {

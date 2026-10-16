@@ -47,6 +47,32 @@ test('kinetics practice computes rates live and plots them', async ({ page }, te
   expect(errors).toEqual([]);
 });
 
+test('stoichiometry practice generates, grades, and reveals worked solutions', async ({ page }, testInfo) => {
+  const errors = await openModule(page, testInfo, { eventId: 'chemlab', moduleId: 'stoichiometry' });
+  await expect(page.getByRole('heading', { name: 'Problem', level: 2 })).toBeVisible();
+  await expect(page.getByText('Practice score: 0 / 0')).toBeVisible();
+
+  const coefficients = page.getByLabel(/Coefficient for /);
+  const coefficientCount = await coefficients.count();
+  expect(coefficientCount).toBeGreaterThan(1);
+  for (let index = 0; index < coefficientCount; index += 1) {
+    await coefficients.nth(index).fill('1');
+  }
+  await page.getByRole('button', { name: 'Check answer' }).click();
+  await expect(page.getByText(/Expected:/)).toBeVisible();
+  await captureSnapshot(page, testInfo, 'chemlab_stoichiometry_balance');
+
+  await page.getByRole('button', { name: 'New problem' }).click();
+  await expect(page.getByText(/Practice score: \d \/ 1/)).toBeVisible();
+
+  await page.getByRole('tab', { name: 'Name ↔ formula' }).click();
+  await expect(page.getByLabel(/Chemical formula|Compound name/)).toBeVisible();
+
+  await page.getByRole('switch', { name: /Include State & National ions/ }).click();
+  await expect(page.getByRole('tab', { name: 'Name ↔ formula' })).toHaveAttribute('aria-selected', 'true');
+  expect(errors).toEqual([]);
+});
+
 test('reference compiler: full author/save/prune/export/clear flow', async ({ page }, testInfo) => {
   await flowReferenceCompiler(page, testInfo, { eventId: 'chemlab' });
 });
