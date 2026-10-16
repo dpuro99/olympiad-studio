@@ -29,15 +29,9 @@
 
 ## Remaining Work
 
-- **Immediate next (resume point, 2026-10-16):** the Chemistry Lab stoichiometry/nomenclature generator is shipped (`stoichiometry.js` + `tests/chemlab-stoichiometry.test.js` + `StoichiometryPractice.jsx`; registry module `stoichiometry`). Next Priority-1 build: the **Designer Genes molecular-sequence workbench** (`designergenes/` pure `.js` + `node:test` + lazy `registry.js` registration + app-map entry), spec in `designergenes/tool-ideas.md`, following `.opencode/skill/build-event-tool/SKILL.md`.
-- User preference: focus on Regional/Invitational; do not implement State/National-only material unless specifically requested. Avoid hardcoded quiz questions; prefer student-authored data tools.
-- Build interactive tools from the audited `tool-ideas.md` plans, in this priority order:
-  1. Event-specialized compute/simulate tools — Chemistry Lab stoichiometry/nomenclature generator (**shipped**), Designer Genes molecular-sequence workbench, Dynamic Planet calculator toolbox + generated map/hydrograph practice, Rocks and Minerals mineral identification key + user-authored specimen cards, Anatomy spirometry/process/diagram sims, Write It, Do It timed relay. (Circuit Lab digital-logic workbench: shipped. Electric Vehicle course & geometry: shipped. Live-updating retrofits shipped for Circuit Lab practice, Chemistry gas laws/kinetics, and Dynamic Planet freshwater.)
-
-  2. The shared Reference & Study Compiler is **shipped for all six study events** (sheet mode: Anatomy, Designer Genes, Chemistry Lab; binder mode: Circuit Lab, Dynamic Planet, Rocks and Minerals), and the Build/Test Log archetype is live for Boomilever (EV's Practice Run Logger is its sibling). Next: compliance checklists (EV kit/programming, Boomilever structure, Circuit, Chem Lab) and the Objective Tracker scaffold.
-  3. Backburner general tools (max 1–3) tracked in `src/components/general/tool-ideas.md`.
-- Continue checking official corrections, FAQ clarifications, and state/tournament-specific updates during the season.
-- Preserve the manuals as ignored local source material; never commit or deploy the rule PDFs.
+- **The full long-term plan lives in `memory_bank/roadmap.md`** (phased milestones, season-boundary architecture, season-rollover process, open decisions). Read it at session start together with this file.
+- **Current position (mirror of roadmap):** Phase 1 (Season Boundary Foundation) not started · next build = Phase 1 or Phase 2 item 1 (Designer Genes Molecular Sequence Workbench; Phase 1 recommended first so new tools land on the right side of the season boundary). The Chemistry Lab stoichiometry generator was the last shipped tool (see Changelog).
+- Standing preferences (also encoded as roadmap invariants): Regional/Invitational focus unless asked; student-authored/generated tools over hardcoded quiz banks; never invent rules — cite the manual; manuals stay ignored in `rules/`, never committed or deployed.
 
 ## Memory System
 
