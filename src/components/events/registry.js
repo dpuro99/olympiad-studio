@@ -8,6 +8,7 @@ const GasLawPractice = lazy(() => import('./chemlab/GasLawPractice'));
 const KineticsPractice = lazy(() => import('./chemlab/KineticsPractice'));
 const FreshwaterTools = lazy(() => import('./dynamicplanet/FreshwaterTools'));
 const CircuitLabPractice = lazy(() => import('./circuitlab/CircuitLabPractice'));
+const DigitalLogicWorkbench = lazy(() => import('./circuitlab/DigitalLogicWorkbench'));
 const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'));
 const BoomileverBuildLog = lazy(() => import('./boomilever/BoomileverBuildLog'));
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
@@ -199,6 +200,20 @@ export const EVENT_REGISTRY = {
       requiresAuth: false,
       component: CircuitLabPractice,
       desc: 'Practice Ohm’s law, series/parallel equivalent resistance, and basic circuit calculations from user-entered measurements.',
+      eventName: 'Circuit Lab',
+      manualReference: 'Division C Rules Manual, pp. C16–C17',
+      eventUrl: 'https://www.soinc.org/circuit-lab-c',
+      rulesUrl: 'https://www.soinc.org/rules-2027'
+    }, {
+      id: 'digital-logic',
+      ti: 'ti-binary',
+      label: 'Digital Logic Workbench',
+      cat: 'Event',
+      live: true,
+      year: 2027,
+      requiresAuth: false,
+      component: DigitalLogicWorkbench,
+      desc: 'Build and check digital logic gates, truth tables, Boolean expressions, De Morgan’s Law equivalences, and combinational circuits such as adders and multiplexers.',
       eventName: 'Circuit Lab',
       manualReference: 'Division C Rules Manual, pp. C16–C17',
       eventUrl: 'https://www.soinc.org/circuit-lab-c',

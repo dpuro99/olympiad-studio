@@ -207,6 +207,29 @@ input[type=checkbox] {
   }
 }
 
+.circuit-wire-hit {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 14;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
+.circuit-wire-hit:focus-visible {
+  outline: none;
+  stroke: var(--color-text-info);
+  stroke-width: 6;
+  stroke-opacity: 0.35;
+}
+
+.circuit-wire-group:hover .circuit-wire-visible {
+  filter: drop-shadow(0 0 4px var(--color-text-info));
+}
+
+.circuit-wire-visible {
+  pointer-events: none;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

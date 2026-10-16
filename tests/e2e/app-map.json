@@ -34,6 +34,7 @@
       "modules": [
         { "id": "main", "label": "2027 Event Overview", "expectText": "2027 overview" },
         { "id": "circuit-practice", "label": "Circuit Practice Calculator", "expectText": "Equivalent resistance" },
+        { "id": "digital-logic", "label": "Digital Logic Workbench", "expectText": "Gate truth tables" },
         { "id": "circuitlab-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
       ]
     },
