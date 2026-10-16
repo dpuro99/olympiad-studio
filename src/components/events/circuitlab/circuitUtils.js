@@ -2,6 +2,20 @@ function isPositiveFinite(value) {
   return Number.isFinite(value) && value > 0;
 }
 
+// Parse the live resistance rows into numbers. Empty rows are ignored so the
+// readouts update as the student types; a filled-but-invalid row is an error.
+export function parseResistanceRows(rows) {
+  const filled = (Array.isArray(rows) ? rows : []).filter((row) => String(row).trim() !== '');
+  if (filled.length === 0) {
+    return { values: [], error: null };
+  }
+  const values = filled.map((row) => Number(row));
+  if (!values.every(isPositiveFinite)) {
+    return { values: [], error: 'Every resistance must be a positive number.' };
+  }
+  return { values, error: null };
+}
+
 export function calculateEquivalentResistance({ resistances }) {
   if (!Array.isArray(resistances) || resistances.length === 0) {
     return { error: 'Provide at least one resistance value.' };

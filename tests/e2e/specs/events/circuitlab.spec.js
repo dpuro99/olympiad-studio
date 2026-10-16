@@ -12,17 +12,16 @@ test('circuit practice calculator solves series, parallel and Ohm\u2019s law', a
   await page.getByLabel('Resistance values (Ω) 2').fill('200');
   await page.getByRole('button', { name: 'Add resistor' }).click();
   await page.getByLabel('Resistance values (Ω) 3').fill('300');
-  await page.getByRole('button', { name: 'Calculate equivalent resistance' }).click();
   const resistanceStatus = page.locator('[role="status"]').first();
   await expect(resistanceStatus).toContainText('Series:');
   await expect(resistanceStatus).toContainText('600');
   await expect(resistanceStatus).toContainText('Parallel:');
   await expect(resistanceStatus).toContainText('54.5455');
+  await expect(page.getByRole('img', { name: /Series and parallel schematic/ })).toBeVisible();
 
   await page.getByLabel('Voltage (V)').fill('12');
   await page.getByLabel('Current (A)').fill('0.5');
-  await page.getByRole('button', { name: 'Calculate unknown' }).click();
-  await expect(page.getByText('24 Ω')).toBeVisible();
+  await expect(page.locator('[role="status"]').nth(1)).toContainText('24 Ω');
 
   await captureSnapshot(page, testInfo, 'circuitlab_practice');
   expect(errors).toEqual([]);

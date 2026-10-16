@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { calculateStreamDischarge, calculateWaterBudgetChange } from '../src/components/events/dynamicplanet/freshwaterCalculators.js';
-import { calculateEquivalentResistance, calculateSeriesParallel, calculateOhmsLaw } from '../src/components/events/circuitlab/circuitUtils.js';
+import { calculateEquivalentResistance, calculateSeriesParallel, calculateOhmsLaw, parseResistanceRows } from '../src/components/events/circuitlab/circuitUtils.js';
 
 const registrySource = readFileSync(new URL('../src/components/events/registry.js', import.meta.url), 'utf8');
 
@@ -33,6 +33,13 @@ test('Circuit Lab calculator computes equivalent resistance and Ohm’s law', ()
   const ohm = calculateOhmsLaw({ voltage: '12', current: '2', resistance: '' });
   assert.equal(ohm.value, 6);
   assert.equal(ohm.unit, 'Ω');
+});
+
+test('Circuit Lab parses live resistance rows, ignoring blanks', () => {
+  assert.deepEqual(parseResistanceRows(['100', '', '200']), { values: [100, 200], error: null });
+  assert.deepEqual(parseResistanceRows([]), { values: [], error: null });
+  assert.match(parseResistanceRows(['100', '0']).error, /positive/i);
+  assert.match(parseResistanceRows(['abc']).error, /positive/i);
 });
 
 test('Dynamic Planet and Circuit Lab modules are registered with manual citations', () => {

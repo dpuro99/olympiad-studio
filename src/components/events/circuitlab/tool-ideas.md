@@ -9,7 +9,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C16–C17. Separate written-t
 - **Core interaction loop:** 1) Ohm's law tab: supply exactly two of voltage, current, resistance; the solver returns the third. 2) Equivalent-resistance tab: enter comma-separated resistances; the solver reports the series sum and the parallel reciprocal-sum result. 3) Power/energy and Kirchhoff (KVL/KCL) practice for a supplied resistor network.
 - **Content & data:** Manual §3 written topics (Ohm's law, power/energy, resistance in series/parallel, Kirchhoff's laws — manual pp. C16–C17); user-entered values only; no preset questions.
 - **UI components:** Input forms, network sketch, result readouts.
-- **Interactivity:** Live (retrofit target): R_eq and Ohm's law derive from the fields as typed, with an interactive schematic; remove the Calculate gate.
+- **Interactivity:** Live: R_eq and Ohm's law derive from the fields as typed, with a live series/parallel schematic and an Ohm's-law triangle; there is no Calculate gate.
 - **Scoring & feedback:** Practice feedback; labeled a learning calculator, not an official event score. State/National-only clock/timing/flip-flop, transistor bias/logic, and ideal op-amp content is excluded at Regional.
 - **Level gating:** exclude capacitance, AC theory, inductance, Thevenin/Norton, oscilloscopes; complex numbers/matrices/calculus are out of scope.
 - **Persistence:** none.
