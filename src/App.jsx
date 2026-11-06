@@ -218,19 +218,20 @@ export default function App() {
       key={id} 
       onClick={customOnClick || (() => handleModuleNavigation(id))}
       style={{
-        display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "7px 8px",
-        background: page === id ? "var(--color-background-info)" : "transparent", border: "none",
-        borderRadius: "var(--border-radius-md)", 
+        display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "9px 10px",
+        background: page === id ? "var(--color-accent-muted)" : "transparent", border: "none",
+        borderRadius: "var(--radius-md)", 
         cursor: "pointer", 
-        color: page === id ? "var(--color-text-info)" : "var(--color-text-secondary)",
-        fontSize: 12, fontFamily: "var(--font-sans)", textAlign: "left", marginBottom: 1, 
-        opacity: live ? 1 : 0.6
+        color: page === id ? "var(--color-accent-primary)" : "var(--color-text-secondary)",
+        fontSize: 13, fontFamily: "var(--font-sans)", fontWeight: page === id ? 600 : 500, textAlign: "left", marginBottom: 2, 
+        opacity: live ? 1 : 0.55,
+        transition: "all var(--transition-fast)"
       }}
     >
-      <i className={`ti ${icon}`} style={{ fontSize: 14, flexShrink: 0 }} aria-hidden="true"></i>
+      <i className={`ti ${icon}`} style={{ fontSize: 15, flexShrink: 0 }} aria-hidden="true"></i>
       <span style={{ flex: 1 }}>{label}</span>
       {live && page !== id && !sub && (
-        <span style={{ width: 5, height: 5, borderRadius: "50%", background: "var(--color-text-success)", flexShrink: 0 }}></span>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--color-text-success)", flexShrink: 0, opacity: 0.8 }}></span>
       )}
     </button>
   );
@@ -238,8 +239,11 @@ export default function App() {
   // App initialization boot strap check
   if (loading) {
     return (
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "var(--color-background-primary)", color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", fontSize: 13 }}>
-        Loading platform assets...
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "var(--color-background-primary)", color: "var(--color-text-secondary)", fontFamily: "var(--font-sans)", fontSize: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--color-accent-primary)", display: "inline-block", animation: "pulse 1.5s ease-in-out infinite" }}></span>
+          Loading Olympiad Studio...
+        </div>
       </div>
     );
   }
@@ -278,76 +282,100 @@ export default function App() {
       const Component = activeModule.component;
       RenderComponent = <Component mod={activeModule} />;
     }
+  } else if (page !== "home") {
+    RenderComponent = (
+      <div style={{ display: "grid", placeItems: "center", minHeight: 260, padding: 24, textAlign: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 48, height: 48, borderRadius: "var(--radius-full)", background: "var(--color-background-tertiary)", border: "1px solid var(--color-border-secondary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <i className="ti ti-alert-circle" style={{ fontSize: 22, color: "var(--color-text-warning)" }} aria-hidden="true"></i>
+          </div>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: "var(--color-text-primary)" }}>Module not found</h2>
+          <p style={{ fontSize: 14, color: "var(--color-text-secondary)", maxWidth: "40ch" }}>
+            The tool "{page}" could not be found in this event's workspace. It may have been removed or renamed.
+          </p>
+          <button type="button" className="breadcrumb-link" style={{ marginTop: 8, padding: "10px 16px", background: "var(--color-accent-primary)", color: "var(--color-text-inverse)", border: "none", borderRadius: "var(--radius-md)", fontWeight: 600 }} onClick={() => setPage("home")}>
+            Back to workspace home
+          </button>
+        </div>
+      </div>
+    );
   }
 
   const dashboardContent = (
-    <div className="dashboard-shell" style={{ display: "flex", minHeight: "100vh", fontFamily: "var(--font-sans)", backgroundColor: "var(--color-background-primary)" }}>
+    <div className="dashboard-shell">
       
       {/* Sidebar Navigation Dashboard Panel */}
-      <div className="dashboard-sidebar" style={{ width: 186, flexShrink: 0, background: "var(--color-background-secondary)", borderRight: "0.5px solid var(--color-border-tertiary)", display: "flex", flexDirection: "column" }}>
+      <div className="dashboard-sidebar" style={{ width: 220, background: "var(--color-background-secondary)", borderRight: "1px solid var(--color-border-tertiary)", display: "flex", flexDirection: "column" }}>
         
         {/* Clickable Header Button: Contextually changes depending on Workspace level */}
         {selectedEventId ? (
-          /* LEVEL 2: Workspace View is active. Click goes back to Level 1 Multi-Event Hub Dashboard */
           <button
             type="button"
             className="dashboard-brand-button"
             onClick={() => { setSelectedEventId(null); setPage("home"); }} 
-            style={{ padding: "14px 12px 10px", borderBottom: "0.5px solid var(--color-border-tertiary)", cursor: "pointer", transition: "opacity 0.2s" }}
+            aria-label="Back to all events"
+            style={{ padding: "16px 14px 12px", borderBottom: "1px solid var(--color-border-tertiary)", textAlign: "left" }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
               <Logo compact />
             </div>
-            <div style={{ fontSize: 11, color: "var(--color-text-info)", fontFamily: "var(--font-mono)", paddingLeft: 24, fontWeight: 600 }}>&larr; Back to Dashboard</div>
+            <div style={{ fontSize: 11, color: "var(--color-accent-primary)", fontFamily: "var(--font-sans)", fontWeight: 700, display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+              <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 12 }}></i> All events
+            </div>
+            {currentEvent && (
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text-primary)", lineHeight: 1.25, letterSpacing: "-0.01em" }}>{currentEvent.name}</div>
+                <div style={{ fontSize: 11, color: "var(--color-text-tertiary)", marginTop: 2 }}>Division {currentEvent.division} · {currentEvent.code}</div>
+              </div>
+            )}
           </button>
         ) : (
-          /* LEVEL 1: Lobby View is active. Click returns user to public-facing Landing Page */
           <button
             type="button"
             className="dashboard-brand-button"
             onClick={() => setCurrentView("landing")} 
-            style={{ padding: "14px 12px 10px", borderBottom: "0.5px solid var(--color-border-tertiary)", cursor: "pointer", transition: "opacity 0.2s" }}
+            style={{ padding: "16px 14px 12px", borderBottom: "1px solid var(--color-border-tertiary)" }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
               <Logo compact />
             </div>
-            <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", paddingLeft: 24 }}>&larr; Back to Home</div>
+            <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-sans)", fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}>
+              <span>&larr;</span> Home
+            </div>
           </button>
         )}
         
         {/* Dynamic Navigation Sidebar Menu */}
-        <nav style={{ padding: "6px", flex: 1, overflowY: "auto" }}>
+        <nav style={{ padding: "10px 8px", flex: 1, overflowY: "auto" }}>
           {selectedEventId ? (
-            /* Inside Workspace: Show tools belonging specifically to active event workspace */
             <>
               {navBtn("home", "ti-home", "Workspace Home", true, true, openWorkspaceHome)}
               {CATS.map(cat => {
                 const mods = MODS.filter(m => m.cat === cat);
                 if (mods.length === 0) return null;
                 return (
-                  <div key={cat} style={{ marginTop: 10 }}>
-                    <div style={{ fontSize: 10, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", padding: "0 8px", marginBottom: 3, fontFamily: "var(--font-mono)" }}>{cat}</div>
+                  <div key={cat} style={{ marginTop: 14 }}>
+                    <div style={{ fontSize: 10, color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.1em", padding: "0 10px", marginBottom: 6, fontFamily: "var(--font-sans)", fontWeight: 700 }}>{cat}</div>
                     {mods.map(m => navBtn(m.id, m.ti, m.label, m.live, false))}
                   </div>
                 );
               })}
             </>
           ) : (
-            /* Lobby Level: Show selection list of all active Science Olympiad Event Packs */
             <div style={{ marginTop: 4 }}>
-              <div style={{ fontSize: 10, color: "var(--color-text-secondary)", textTransform: "uppercase", letterSpacing: "0.06em", padding: "0 8px", marginBottom: 6, fontFamily: "var(--font-mono)" }}>Workspaces</div>
+              <div style={{ fontSize: 10, color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.1em", padding: "0 10px", marginBottom: 8, fontFamily: "var(--font-sans)", fontWeight: 700 }}>Workspaces</div>
               {Object.keys(EVENT_REGISTRY).map(key => (
                 <button 
                   key={key} 
                   onClick={() => handleEventSwitch(key)}
                   style={{
-                    display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "8px",
-                    background: "transparent", border: "none", borderRadius: "var(--border-radius-md)", cursor: "pointer",
-                    color: "var(--color-text-secondary)", fontSize: 12, textAlign: "left", marginBottom: 4,
-                    transition: "color 0.2s"
+                    display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "10px",
+                    background: "transparent", border: "none", borderRadius: "var(--radius-md)", cursor: "pointer",
+                    color: "var(--color-text-secondary)", fontSize: 13, fontWeight: 500, textAlign: "left", marginBottom: 2,
+                    transition: "all var(--transition-fast)"
                   }}
                 >
-                  <i className="ti ti-folder" style={{ fontSize: 14 }}></i>
+                  <i className="ti ti-folder" style={{ fontSize: 16, color: "var(--color-text-tertiary)" }}></i>
                   <span>{EVENT_REGISTRY[key].name}</span>
                 </button>
               ))}
@@ -359,17 +387,16 @@ export default function App() {
       </div>
 
       {/* Main Content Pane */}
-      <div ref={dashboardContentRef} style={{ flex: 1, overflowY: "auto" }}>
-        <header style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, padding: "14px 28px", borderBottom: "0.5px solid var(--color-border-tertiary)", background: "var(--color-background-secondary)" }}>
-          <button type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "50%" }}>
-            <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true"></i>
+      <div ref={dashboardContentRef} style={{ flex: 1, overflowY: "auto", background: "var(--color-background-primary)" }}>
+        <header style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 10, padding: "12px 24px", borderBottom: "1px solid var(--color-border-tertiary)", background: "var(--color-background-secondary)", position: "sticky", top: 0, zIndex: 10 }}>
+          <button type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "var(--color-background-tertiary)", border: "1px solid var(--color-border-secondary)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "var(--radius-md)", cursor: "pointer" }}>
+            <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true" style={{ fontSize: 16 }}></i>
           </button>
           {isGuest ? (
             <button type="button" aria-label="Sign in with Google" onClick={handleGoogleLogin} disabled={authLoading} style={{
-              padding: "8px 16px", background: "var(--color-background-secondary)", color: "var(--color-text-primary)",
-              border: "1px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-md)", fontWeight: 500,
+              padding: "8px 14px", background: "var(--color-background-tertiary)", color: "var(--color-text-primary)",
+              border: "1px solid var(--color-border-secondary)", borderRadius: "var(--radius-md)", fontWeight: 500,
               display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13,
-              boxShadow: "0 2px 4px rgba(0,0,0,0.05)"
             }}>
               <svg width="14" height="14" viewBox="0 0 18 18">
                 <path d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.79 2.7v2.24h2.9c1.69-1.55 2.69-3.84 2.69-6.57z" fill="#4285F4"/>
@@ -377,46 +404,49 @@ export default function App() {
                 <path d="M3.95 10.74c-.18-.54-.28-1.12-.28-1.74s.1-1.2.28-1.74V4.94H.96A8.977 8.977 0 0 0 0 9c0 1.48.36 2.9 1 4.14l2.95-2.4z" fill="#FBBC05"/>
                 <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.8 11.42 0 9 0 5.47 0 2.44 2.91.96 5.34l2.95 2.32C4.66 5.16 6.65 3.58 9 3.58z" fill="#EA4335"/>
               </svg>
-              {authLoading ? "Connecting..." : "Sign In with Google"}
+              {authLoading ? "Connecting..." : "Sign in"}
             </button>
           ) : (
             <>
-              <span style={{ maxWidth: 240, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--color-text-info)" }} title={currentUser?.email}>
+              <span style={{ maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--color-text-secondary)" }} title={currentUser?.email}>
                 {currentUser?.email}
               </span>
-              <button type="button" aria-label="Log out" onClick={handleLogout} style={{ background: "none", border: "0.5px solid var(--color-text-danger)", color: "var(--color-text-danger)", padding: "7px 12px", borderRadius: "var(--border-radius-md)", fontSize: 12, }}>
-                Log Out
+              <button type="button" aria-label="Log out" onClick={handleLogout} style={{ background: "transparent", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-secondary)", padding: "7px 12px", borderRadius: "var(--radius-md)", fontSize: 12, cursor: "pointer" }}>
+                Log out
               </button>
             </>
           )}
         </header>
-        <div className="dashboard-content" style={{ padding: "24px 28px", maxWidth: 860 }}>
-          {/* Breadcrumbs Section */}
-          {page !== "home" && (
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--color-text-secondary)" }}>
-              <button onClick={() => { setSelectedEventId(null); setPage("home"); }} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--color-text-secondary)" }}>Dashboard</button>
+        <div className="dashboard-content" style={{ padding: "0 24px 32px" }}>
+          {/* Breadcrumbs / location context */}
+          {(selectedEventId || page !== "home") && (
+            <nav aria-label="Breadcrumb" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 18, fontSize: 12, fontFamily: "var(--font-sans)", color: "var(--color-text-tertiary)", flexWrap: "wrap" }}>
+              <button type="button" className="breadcrumb-link" onClick={() => { setSelectedEventId(null); setPage("home"); }}>Events</button>
               {currentEvent && (
                 <>
-                  <span>&rsaquo;</span>
-                  <button onClick={() => setPage("home")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--color-text-secondary)" }}>{currentEvent.name}</button>
+                  <span style={{ opacity: 0.45 }} aria-hidden="true">/</span>
+                  <button type="button" className="breadcrumb-link" onClick={() => setPage("home")}>{currentEvent.name}</button>
                 </>
               )}
               {activeModule && (
                 <>
-                  <span>&rsaquo;</span><span>{activeModule.cat}</span><span>&rsaquo;</span>
-                  <span style={{ color: "var(--color-text-primary)" }}>{activeModule.label}</span>
+                  <span style={{ opacity: 0.45 }} aria-hidden="true">/</span>
+                  <span style={{ color: "var(--color-text-secondary)", fontWeight: 600 }} aria-current="page">{activeModule.label}</span>
                 </>
               )}
-            </div>
+            </nav>
           )}
           
-          {page !== "home" && activeModule && <h1 style={{ fontSize: 20, fontWeight: 500, marginBottom: 20, color: "var(--color-text-primary)" }}>{activeModule.label}</h1>}
+          {page !== "home" && activeModule && <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 18, color: "var(--color-text-primary)", letterSpacing: "-0.025em", lineHeight: 1.15 }}>{activeModule.label}</h1>}
           
           <AnimatePresence mode="wait" initial={false}>
             <PageTransition key={`${selectedEventId || "lobby"}-${page}`}>
               <Suspense fallback={
-                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: 220, color: "var(--color-text-secondary)", fontFamily: "var(--font-mono)", fontSize: 13 }}>
-                  Loading tool…
+                <div style={{ display: "grid", placeItems: "center", minHeight: 260, padding: 24, color: "var(--color-text-tertiary)", fontFamily: "var(--font-sans)" }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14, textAlign: "center" }}>
+                    <div style={{ width: 40, height: 40, borderRadius: "50%", border: "3px solid var(--color-border-tertiary)", borderTopColor: "var(--color-accent-primary)", animation: "spin 1s linear infinite" }} aria-hidden="true"></div>
+                    <span style={{ fontSize: 14, color: "var(--color-text-secondary)" }}>Loading {activeModule?.label || "tool"}…</span>
+                  </div>
                 </div>
               }>
                 {RenderComponent}

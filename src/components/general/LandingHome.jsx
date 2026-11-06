@@ -1,53 +1,88 @@
 import Logo from './Logo';
+import { ACTIVE_SEASON } from '../../seasons/manifest.js';
+
+const cardStyle = {
+  background: 'var(--color-background-secondary)',
+  border: '1px solid var(--color-border-tertiary)',
+  borderRadius: 'var(--radius-lg)',
+  padding: 24,
+  boxShadow: 'var(--shadow-sm)'
+};
 
 export default function LandingHome({ currentUser, onGoToDashboard, onGuestAccess, theme, toggleTheme }) {
-  const features = [
-    { icon: "ti-vector-triangle", title: "Event Tools", desc: "Support a wide range of preparation needs from modeling and scoring to concept review and test planning." },
-    { icon: "ti-cpu", title: "Competition Prep", desc: "Build a consistent workflow for practice, analysis, and readiness across multiple events." },
-    { icon: "ti-file-analytics", title: "Progress Tracking", desc: "Keep notes, results, and milestones in one place so your team can improve over time." }
-  ];
+  const cta = () => (currentUser ? onGoToDashboard() : onGuestAccess());
+  const ctaLabel = currentUser ? 'Open Dashboard' : 'Get Started';
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "var(--color-background-primary)", color: "var(--color-text-primary)", fontFamily: "var(--font-sans)" }}>
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 40px", borderBottom: "0.5px solid var(--color-border-tertiary)", backgroundColor: "var(--color-background-secondary)", position: "sticky", top: 0, zIndex: 100 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--color-background-primary)', color: 'var(--color-text-primary)', fontFamily: 'var(--font-sans)' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, padding: '16px 24px', borderBottom: '1px solid var(--color-border-tertiary)', background: 'color-mix(in srgb, var(--color-background-secondary) 94%, transparent)', position: 'sticky', top: 0, zIndex: 100, backdropFilter: 'blur(10px)' }}>
         <Logo />
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "transparent", border: "none", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "50%" }}>
-            <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true"></i>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: 'var(--color-background-tertiary)', border: '1px solid var(--color-border-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-secondary)', padding: 8, borderRadius: 'var(--radius-md)', cursor: 'pointer' }}>
+            <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true" style={{ fontSize: 16 }}></i>
           </button>
-          <button type="button" aria-label={currentUser ? 'Open dashboard' : 'Continue as guest'} onClick={currentUser ? onGoToDashboard : onGuestAccess} style={{ padding: "8px 16px", background: "var(--color-background-info)", color: "var(--color-text-info)", border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500, fontSize: 13 }}>Open Dashboard &rarr;</button>
+          <button type="button" aria-label={currentUser ? 'Open dashboard' : 'Continue as guest'} onClick={cta} style={{ padding: '10px 18px', background: 'var(--color-accent-primary)', color: 'var(--color-text-inverse)', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>
+            {ctaLabel}
+          </button>
         </div>
       </header>
 
-      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "80px 40px" }}>
-        <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto 80px" }}>
-          <div style={{ display: "inline-flex", padding: "6px 12px", background: "var(--color-background-info)", borderRadius: 20, color: "var(--color-text-info)", fontSize: 11, fontWeight: 500, fontFamily: "var(--font-mono)", marginBottom: 24, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Science Olympiad Prep Platform
-          </div>
-          <h1 style={{ fontSize: 48, fontWeight: 700, lineHeight: 1.1, marginBottom: 18 }}>
-            A competition toolkit for every Science Olympiad event.
-          </h1>
-          <p style={{ fontSize: 16, color: "var(--color-text-secondary)", lineHeight: 1.6, marginBottom: 32 }}>
-            Olympiad Studio supports the wide range of preparation styles across Science Olympiad, from analytical study and scoring to design, modeling, and event-specific workflows.
-          </p>
-          <button type="button" aria-label={currentUser ? 'Open workspace' : 'Get started'} onClick={currentUser ? onGoToDashboard : onGuestAccess} style={{ padding: "12px 28px", background: "var(--color-text-info)", color: "var(--color-background-primary)", border: "none", borderRadius: "var(--border-radius-md)", fontWeight: 500, fontSize: 14 }}>
-            {currentUser ? "Open Workspace" : "Get Started"}
+      <main style={{ maxWidth: 720, margin: '0 auto', padding: '60px 24px 80px', textAlign: 'center' }}>
+        <div style={{ marginBottom: 24 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 14px', borderRadius: 'var(--radius-full)', background: 'var(--color-accent-muted)', border: '1px solid var(--color-border-warning)', color: 'var(--color-accent-primary)', fontSize: 13, fontWeight: 600 }}>
+            <i className="ti ti-flask" style={{ fontSize: 14 }} aria-hidden="true"></i>
+            Science Olympiad {ACTIVE_SEASON.year}
+          </span>
+        </div>
+
+        <h1 style={{ margin: '0 0 16px', fontSize: 'clamp(40px, 6vw, 72px)', lineHeight: 1.05, letterSpacing: '-0.03em', fontWeight: 800, maxWidth: '14ch', marginLeft: 'auto', marginRight: 'auto' }}>
+          Prep tools that actually fit the event.
+        </h1>
+
+        <p style={{ margin: '0 0 32px', fontSize: 18, lineHeight: 1.6, color: 'var(--color-text-secondary)', maxWidth: '55ch', marginLeft: 'auto', marginRight: 'auto' }}>
+          Calculators, practice logs, drills, and study aids — organized by event, grounded in the official rules.
+        </p>
+
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 48 }}>
+          <button type="button" aria-label={currentUser ? 'Open workspace' : 'Get started'} onClick={cta} style={{ padding: '16px 28px', background: 'var(--color-accent-primary)', color: 'var(--color-text-inverse)', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 800, fontSize: 16, cursor: 'pointer', boxShadow: 'var(--shadow-md)' }}>
+            {currentUser ? 'Open workspace' : 'Start exploring'}
           </button>
+          <span style={{ display: 'flex', alignItems: 'center', fontSize: 14, color: 'var(--color-text-tertiary)' }}>No setup required · Data stays in your browser</span>
         </div>
 
-        <hr style={{ border: "none", height: "0.5px", background: "var(--color-border-tertiary)", marginBottom: 80 }} />
-
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 24 }}>
-          {features.map((feature) => (
-            <div key={feature.title} style={{ background: "var(--color-background-secondary)", border: "0.5px solid var(--color-border-tertiary)", borderRadius: "var(--border-radius-lg)", padding: 24 }}>
-              <div style={{ width: 40, height: 40, borderRadius: "var(--border-radius-md)", background: "var(--color-background-tertiary)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
-                <i className={`ti ${feature.icon}`} style={{ color: "var(--color-text-info)", fontSize: 18 }} aria-hidden="true"></i>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, textAlign: 'left', marginTop: 16 }}>
+          <article style={{ ...cardStyle }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+              <i className="ti ti-calculator" style={{ color: 'var(--color-accent-primary)', fontSize: 22, flexShrink: 0, marginTop: 2 }} aria-hidden="true"></i>
+              <div>
+                <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700 }}>Rule-grounded calculators</h3>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>Scores, geometry, circuits, chemistry, freshwater — every formula cites the manual.</p>
               </div>
-              <h3 style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>{feature.title}</h3>
-              <p style={{ fontSize: 12, color: "var(--color-text-secondary)", lineHeight: 1.5 }}>{feature.desc}</p>
             </div>
-          ))}
+          </article>
+          <article style={{ ...cardStyle }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+              <i className="ti ti-notebook" style={{ color: 'var(--color-accent-primary)', fontSize: 22, flexShrink: 0, marginTop: 2 }} aria-hidden="true"></i>
+              <div>
+                <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700 }}>Practice & build logs</h3>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>Track runs, prototypes, and study work locally. Export CSV anytime.</p>
+              </div>
+            </div>
+          </article>
+          <article style={{ ...cardStyle }}>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+              <i className="ti ti-cards" style={{ color: 'var(--color-accent-primary)', fontSize: 22, flexShrink: 0, marginTop: 2 }} aria-hidden="true"></i>
+              <div>
+                <h3 style={{ margin: '0 0 6px', fontSize: 16, fontWeight: 700 }}>Drills & reference compilers</h3>
+                <p style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)', lineHeight: 1.5 }}>ID keys, generated practice, and allowed-reference-sheet builders for study events.</p>
+              </div>
+            </div>
+          </article>
         </div>
+
+        <p style={{ margin: '48px 0 0', fontSize: 13, color: 'var(--color-text-tertiary)', lineHeight: 1.6 }}>
+          <strong>Accuracy first.</strong> Tools cite the official manual. Always verify against current rules for your tournament.
+        </p>
       </main>
     </div>
   );

@@ -1,20 +1,24 @@
 import { Card, SectionHeading } from './ui/primitives';
+import { ACTIVE_SEASON } from '../../seasons/manifest.js';
 
 export default function EventRulesOverview({ mod }) {
+  const year = mod.year ?? ACTIVE_SEASON.year;
+  const rulesUrl = mod.rulesUrl ?? ACTIVE_SEASON.rulesUrl;
   return (
     <Card style={{ display: 'grid', gap: 14, maxWidth: 760, padding: 20 }}>
       <div>
         <div style={{
           color: 'var(--color-text-info)',
           fontSize: 11,
-          fontFamily: 'var(--font-mono)',
-          letterSpacing: '.06em',
+          fontFamily: 'var(--font-sans)',
+          fontWeight: 700,
+          letterSpacing: '.08em',
           textTransform: 'uppercase',
           marginBottom: 8
         }}>
-          Verified against 2027 official rules
+          Verified against {year} official rules
         </div>
-        <SectionHeading style={{ margin: '0 0 8px', fontSize: 20 }}>{mod.eventName} — 2027 overview</SectionHeading>
+        <SectionHeading style={{ margin: '0 0 8px', fontSize: 20 }}>{mod.eventName} — {year} overview</SectionHeading>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 13, lineHeight: 1.6 }}>
           {mod.description}
         </p>
@@ -32,7 +36,7 @@ export default function EventRulesOverview({ mod }) {
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, fontSize: 12 }}>
         {mod.eventUrl && <a href={mod.eventUrl} target="_blank" rel="noreferrer">Official event page</a>}
-        <a href="https://www.soinc.org/rules-2027" target="_blank" rel="noreferrer">2027 rules</a>
+        <a href={rulesUrl} target="_blank" rel="noreferrer">{year} rules</a>
         <a href="https://www.soinc.org/events/rules-clarifications" target="_blank" rel="noreferrer">Corrections</a>
         <a href="https://www.soinc.org/frequently_asked_questions" target="_blank" rel="noreferrer">Clarifications</a>
       </div>
