@@ -1,4 +1,5 @@
 import { ToolHeader } from '../../general/ui/primitives';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
 const requirements = [
   'The vehicle travels for a set time, pushes a water bottle past a line, then reverses to stop near the Target Point.',
@@ -11,10 +12,10 @@ const requirements = [
 export default function ArcVisualizer() {
   return (
     <ToolHeader
-      eyebrow="Verified 2027 event overview"
+      eyebrow={`Verified ${ACTIVE_SEASON.year} event overview`}
       title="Electric Vehicle C"
-      purpose="Teams design and build an electrically propelled vehicle that pushes a water bottle past a line, then moves backward and stops close to a Target Point. The summary below is verified against the 2027 manual."
-      manualReference="2027 Division C Rules Manual, pp. C26–C31"
+      purpose={`Teams design and build an electrically propelled vehicle that pushes a water bottle past a line, then moves backward and stops close to a Target Point. The summary below is verified against the ${ACTIVE_SEASON.manualLabel}.`}
+      manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual, pp. C26–C31`}
       style={{ maxWidth: 760, padding: 20 }}
     >
       <ul style={{ display: 'grid', gap: 10, paddingLeft: 22, margin: 0 }}>
@@ -25,7 +26,7 @@ export default function ArcVisualizer() {
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, fontSize: 12 }}>
         <a href="https://www.soinc.org/electric-vehicle-c" target="_blank" rel="noreferrer">Official EV event page</a>
-        <a href="https://www.soinc.org/rules-2027" target="_blank" rel="noreferrer">2027 rules</a>
+        <a href={ACTIVE_SEASON.rulesUrl} target="_blank" rel="noreferrer">{ACTIVE_SEASON.year} rules</a>
         <a href="https://www.soinc.org/events/rules-clarifications" target="_blank" rel="noreferrer">Rule corrections</a>
         <a href="https://www.soinc.org/faq/electric-vehicle-div-c" target="_blank" rel="noreferrer">EV clarifications</a>
       </div>

@@ -1,13 +1,12 @@
 import { calculateBoomileverScore } from './boomileverScore.js';
+import { storageKey } from '../../../seasons/storageKeys.js';
+import { ACTIVE_DATA } from '../../../seasons/active.js';
 
-export const STORAGE_KEY = 'olympiad-studio.boomilever-c.2027-build-log';
+export const STORAGE_KEY = storageKey('boomilever', 'build-log');
 
-export const BASE_OPTIONS = [
-  { id: 'standard', label: '15 cm standard boundary' },
-  { id: 'bonus', label: '10 cm bonus boundary' }
-];
+export const BASE_OPTIONS = ACTIVE_DATA.boomilever.baseOptions;
 
-export const TIERS = ['Tier 1', 'Tier 2', 'Tier 3 (participation only)'];
+export const TIERS = ACTIVE_DATA.boomilever.tiers;
 
 export function createEmptyEntry() {
   return {

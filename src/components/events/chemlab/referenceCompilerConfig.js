@@ -1,5 +1,7 @@
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
+import { fileStem, storageKey } from '../../../seasons/storageKeys.js';
 // Chemistry Lab C — Reference & Study Compiler config (sheet mode, per-participant).
-// Objectives transcribed from the verified 2027 overview in ./info.md,
+// Objectives transcribed from the verified season overview in ./info.md,
 // which cites Division C Rules Manual pp. C14–C15.
 
 export const chemistryLabReferenceCompilerConfig = {
@@ -7,8 +9,9 @@ export const chemistryLabReferenceCompilerConfig = {
   eventName: 'Chemistry Lab',
   division: 'C',
   mode: 'sheet',
-  storageKey: 'olympiad-studio.chemlab-c.2027-reference-sheet',
-  fileStem: 'chemlab-c-2027-reference-sheet',
+  season: ACTIVE_SEASON,
+  storageKey: storageKey('chemlab', 'reference-sheet'),
+  fileStem: fileStem('chemlab', 'reference-sheet'),
   manualReference: 'Division C Rules Manual, pp. C14–C15',
   resource: {
     title: 'One double-sided 8.5 × 11 in sheet per participant',

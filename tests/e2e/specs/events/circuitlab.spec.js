@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { captureSnapshot, flowReferenceCompiler, openModule } from '../../helpers.js';
+import { storageKey } from '../../../../src/seasons/storageKeys.js';
 
-const CANVAS_KEY = 'olympiad-studio.circuitlab-c.2027-logic-canvas';
+const CANVAS_KEY = storageKey('circuitlab', 'logic-canvas');
 
 test('circuit practice calculator solves series, parallel and Ohm\u2019s law', async ({ page }, testInfo) => {
   const errors = await openModule(page, testInfo, { eventId: 'circuitlab', moduleId: 'circuit-practice' });

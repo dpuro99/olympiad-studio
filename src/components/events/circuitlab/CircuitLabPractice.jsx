@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { calculateSeriesParallel, calculateOhmsLaw, parseResistanceRows } from './circuitUtils';
 import { Card, HelpText, ListField, NumberField, ResultPanel, SectionHeading, StatusMessage, ToolHeader } from '../../general/ui/primitives';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
-const SOURCE = '2027 Division C Rules Manual, pp. C16–C17';
+const SOURCE = `${ACTIVE_SEASON.year} Division C Rules Manual, pp. C16–C17`;
 
 function formatNumber(value) {
   if (!Number.isFinite(value)) return '—';
@@ -140,7 +141,7 @@ export default function CircuitLabPractice() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 760 }}>
       <ToolHeader
-        eyebrow="Circuit Lab C · 2027 · Manual C16–C17"
+        eyebrow={`Circuit Lab C · ${ACTIVE_SEASON.year} · Manual C16–C17`}
         purpose="A live learning calculator for Ohm’s law and series/parallel equivalent resistance. Readouts and the schematic update as you type; it is practice support, not an official event score or a substitute for the hands-on tasks."
         manualReference={SOURCE}
         steps={[

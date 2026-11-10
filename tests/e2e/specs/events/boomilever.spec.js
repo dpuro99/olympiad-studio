@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { captureSnapshot, openModule } from '../../helpers.js';
+import { SEASON_YEAR, captureSnapshot, openModule } from '../../helpers.js';
 
 test('efficiency estimator scores a sample load and mass', async ({ page }, testInfo) => {
   const errors = await openModule(page, testInfo, { eventId: 'boomilever', moduleId: 'boomilever-estimator' });
@@ -39,7 +39,7 @@ test('build/test log records a tested prototype and exports CSV', async ({ page 
 
   const downloadPromise = page.waitForEvent('download', { timeout: 15_000 });
   await page.getByRole('button', { name: 'Export CSV' }).click();
-  expect((await downloadPromise).suggestedFilename()).toBe('boomilever-c-2027-build-log.csv');
+  expect((await downloadPromise).suggestedFilename()).toBe(`boomilever-c-${SEASON_YEAR}-build-log.csv`);
 
   await captureSnapshot(page, testInfo, 'boomilever_build_log');
   expect(errors).toEqual([]);

@@ -26,8 +26,9 @@ import {
   TextField,
   ToolHeader
 } from '../../general/ui/primitives';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
-const MANUAL_REFERENCE = '2027 Division C Rules Manual, §3.c.viii & §3.e.iv, pp. C16–C17';
+const MANUAL_REFERENCE = `${ACTIVE_SEASON.year} Division C Rules Manual, §3.c.viii & §3.e.iv, pp. C16–C17`;
 
 const MODES = [
   { id: 'gates', label: 'Gate truth tables' },
@@ -82,7 +83,7 @@ export default function DigitalLogicWorkbench() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 860 }}>
       <ToolHeader
-        eyebrow="Circuit Lab C · 2027 · Manual C16–C17"
+        eyebrow={`Circuit Lab C · ${ACTIVE_SEASON.year} · Manual C16–C17`}
         purpose="Build and check digital logic gates, Boolean expressions, De Morgan's Law equivalences, Karnaugh maps, and combinational circuits such as adders and multiplexers. Everything is generated from what you enter — there are no preset questions."
         manualReference={MANUAL_REFERENCE}
         steps={[

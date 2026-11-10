@@ -12,8 +12,10 @@ import {
   TextField,
   ToolHeader
 } from '../../general/ui/primitives';
+import { LEGACY_STORAGE_KEYS, readStorageWithLegacy, storageKey } from '../../../seasons/storageKeys.js';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
-const STORAGE_KEY = 'olympiad-studio.ev-c.2027-practice-runs';
+const STORAGE_KEY = storageKey('electricvehicle', 'practice-runs');
 const emptyForm = () => ({
   label: '',
   targetTimeSec: '',
@@ -59,7 +61,7 @@ export default function RunLogger() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       try {
-        const stored = window.localStorage.getItem(STORAGE_KEY);
+        const stored = readStorageWithLegacy(STORAGE_KEY, LEGACY_STORAGE_KEYS.evPracticeRuns);
         if (stored) setRuns(JSON.parse(stored));
       } catch {
         setError('Saved practice data could not be read from this browser.');
@@ -121,10 +123,10 @@ export default function RunLogger() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 960 }}>
       <ToolHeader
-        eyebrow="Electric Vehicle C · 2027 · saved only in this browser"
+        eyebrow={`Electric Vehicle C · ${ACTIVE_SEASON.year} · saved only in this browser`}
         title="Practice run journal"
         purpose="Log each practice run with the Event Supervisor's measurements and rulings, and keep a comparable history of scores as you tune the vehicle."
-        manualReference="2027 Division C Rules Manual, EV sections 5–8 (pp. C28–C31)"
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual, EV sections 5–8 (pp. C28–C31)`}
         steps={[
           'Give the run a short session label (for example, "gearing adjustment").',
           'Enter the measured times and distances the Event Supervisor recorded.',
@@ -133,7 +135,7 @@ export default function RunLogger() {
         ]}
       >
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
-          Records stay in this browser and are not synced to Supabase. The displayed score follows the verified 2027 run formula; it cannot determine rule compliance.
+          `Records stay in this browser and are not synced to Supabase. The displayed score follows the verified ${ACTIVE_SEASON.year} run formula; it cannot determine rule compliance.`
         </p>
       </ToolHeader>
 

@@ -13,6 +13,8 @@ import {
 } from '../../general/ui/primitives';
 import { LineChart } from '../../general/ui/charts';
 import { clamp } from '../../general/ui/chartUtils';
+import { storageKey } from '../../../seasons/storageKeys.js';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 import {
   LEVELS,
   MAX_VEHICLE_LENGTH_CM,
@@ -23,7 +25,7 @@ import {
   summarizeCourse
 } from './courseUtils';
 
-const STORAGE_KEY = 'olympiad-studio.electricvehicle-c.2027-course-geometry';
+const STORAGE_KEY = storageKey('electricvehicle', 'course-geometry');
 
 const DEFAULT_SCENARIO = {
   levelId: 'regional',
@@ -195,10 +197,10 @@ export default function CourseGeometry() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 780 }}>
       <ToolHeader
-        eyebrow="Electric Vehicle C · 2027"
+        eyebrow={`Electric Vehicle C · ${ACTIVE_SEASON.year}`}
         title="Course pacing explorer"
-        purpose="Explore the set-time then reverse course: drag the bottle line, change the target and run times, and watch the required speed and the 2027 run score respond in real time."
-        manualReference="2027 Division C Rules Manual, pp. C26–C31"
+        purpose={`Explore the set-time then reverse course: drag the bottle line, change the target and run times, and watch the required speed and the ${ACTIVE_SEASON.year} run score respond in real time.`}
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual, pp. C26–C31`}
         steps={[
           'Choose your competition level — the bottle line defaults to 2 m (Regional/Invitational), 3 m (State), or 4 m (National).',
           'Drag the bottle-line handle on the course diagram (or use the slider / arrow keys) to try a practice layout.',
@@ -208,7 +210,7 @@ export default function CourseGeometry() {
         ]}
       >
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
-          This is an educational geometry and pacing tool. It uses the verified 2027 scoring formula, but it is not an official prediction or an Event Supervisor ruling.
+          `This is an educational geometry and pacing tool. It uses the verified ${ACTIVE_SEASON.year} scoring formula, but it is not an official prediction or an Event Supervisor ruling.`
         </p>
       </ToolHeader>
 

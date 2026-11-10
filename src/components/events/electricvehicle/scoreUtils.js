@@ -1,3 +1,5 @@
+import { ACTIVE_DATA } from '../../../seasons/active.js';
+
 const isNonNegativeNumber = (value) => Number.isFinite(value) && value >= 0;
 
 export function calculateRunScore({
@@ -12,7 +14,8 @@ export function calculateRunScore({
   movingBottleRequirementsMet = true,
   competitionViolation = false,
   constructionViolation = false,
-  nonModificationPenalty = false
+  nonModificationPenalty = false,
+  constants = ACTIVE_DATA.electricvehicle
 }) {
   if (!isNonNegativeNumber(targetTimeSec) || !isNonNegativeNumber(pusherOpeningWidthCm)) {
     return null;
@@ -28,24 +31,24 @@ export function calculateRunScore({
 
   const actualRunTime = failedRun ? 0 : runTimeSec;
   const distanceScore = failedRun
-    ? 2500
-    : 2 * vehicleDistanceCm + (
+    ? constants.failedRunDistanceScore
+    : constants.distanceVehicleMultiplier * vehicleDistanceCm + (
       !bottlePastTarget || !movingBottleRequirementsMet
-        ? 400
+        ? constants.bottleDistanceFallbackCm
         : bottleDistanceCm
     );
-  const timeScore = Math.abs(targetTimeSec - actualRunTime) * 0.5;
-  const bottleBonus = bottleFullyPastLine ? -20 : 0;
-  const pusherBonus = (pusherOpeningWidthCm - 35) * 1.5;
-  const competitionViolationPenalty = competitionViolation ? 150 : 0;
-  const constructionViolationPenalty = constructionViolation ? 300 : 0;
-  const nonModificationPenaltyPoints = nonModificationPenalty ? 50 : 0;
-  const unroundedScore = 100 + distanceScore + timeScore + bottleBonus + pusherBonus +
+  const timeScore = Math.abs(targetTimeSec - actualRunTime) * constants.timeErrorRatePtPerSec;
+  const bottleBonus = bottleFullyPastLine ? -constants.bottleFullyPastLineBonus : 0;
+  const pusherBonus = (pusherOpeningWidthCm - constants.pusherReferenceOpeningCm) * constants.pusherBonusRatePtPerCm;
+  const competitionViolationPenalty = competitionViolation ? constants.competitionViolationPenalty : 0;
+  const constructionViolationPenalty = constructionViolation ? constants.constructionViolationPenalty : 0;
+  const nonModificationPenaltyPoints = nonModificationPenalty ? constants.nonModificationPenaltyPoints : 0;
+  const unroundedScore = constants.baseScore + distanceScore + timeScore + bottleBonus + pusherBonus +
     competitionViolationPenalty + constructionViolationPenalty + nonModificationPenaltyPoints;
   const totalScore = Math.round((unroundedScore + 1e-9) * 100) / 100;
 
   return {
-    baseScore: 100,
+    baseScore: constants.baseScore,
     distanceScore,
     timeScore,
     bottleBonus,
@@ -57,15 +60,28 @@ export function calculateRunScore({
   };
 }
 
-export function calculateFinalScore({ runScores, eventTimeUsedSec = 480, nationalTournament = false, vehicleNotImpounded = false }) {
+export function calculateFinalScore({
+  runScores,
+  eventTimeUsedSec = ACTIVE_DATA.electricvehicle.maxEventTimeSec,
+  nationalTournament = false,
+  vehicleNotImpounded = false,
+  constants = ACTIVE_DATA.electricvehicle
+}) {
   if (!Array.isArray(runScores) || runScores.length !== 2 || !runScores.every(Number.isFinite)) {
     return null;
   }
-  if (nationalTournament && (!isNonNegativeNumber(eventTimeUsedSec) || eventTimeUsedSec > 480)) return null;
+  if (
+    nationalTournament &&
+    (!isNonNegativeNumber(eventTimeUsedSec) || eventTimeUsedSec > constants.maxEventTimeSec)
+  ) {
+    return null;
+  }
 
   const bestRunScore = Math.min(...runScores);
-  const eventTimeBonus = nationalTournament ? (eventTimeUsedSec - 480) / 30 : 0;
-  const notImpoundedPenalty = vehicleNotImpounded ? 5000 : 0;
+  const eventTimeBonus = nationalTournament
+    ? (eventTimeUsedSec - constants.maxEventTimeSec) / constants.nationalEventTimeBonusDivisor
+    : 0;
+  const notImpoundedPenalty = vehicleNotImpounded ? constants.notImpoundedPenalty : 0;
 
   return {
     bestRunScore,

@@ -15,6 +15,8 @@ import {
 import {
   Button, Card, ResultPanel, SectionHeading, StatusMessage, TextAreaField, ToolHeader
 } from '../../general/ui/primitives';
+import { LEGACY_STORAGE_KEYS, readStorageWithLegacy } from '../../../seasons/storageKeys.js';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
 const STORAGE_WARNING = 'Save explicitly to this browser profile; changes are not auto-saved or uploaded and may be visible to others sharing this profile. CSV export downloads only entered data and calculated results.';
 
@@ -81,7 +83,7 @@ export default function GasLawPractice() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       try {
-        const stored = window.localStorage.getItem(GAS_NOTEBOOK_STORAGE_KEY);
+        const stored = readStorageWithLegacy(GAS_NOTEBOOK_STORAGE_KEY, LEGACY_STORAGE_KEYS.chemlabGases);
         if (stored) {
           const parsed = parseGasNotebook(stored);
           if (parsed.error) {
@@ -197,6 +199,7 @@ export default function GasLawPractice() {
     if (!window.confirm('Clear the gas-law notebook and its locally saved copy?')) return;
     try {
       window.localStorage.removeItem(GAS_NOTEBOOK_STORAGE_KEY);
+      window.localStorage.removeItem(LEGACY_STORAGE_KEYS.chemlabGases);
       setNotebook(createEmptyGasNotebook());
       setMessage('Gas-law notebook cleared.');
       setMessageIsError(false);
@@ -209,9 +212,9 @@ export default function GasLawPractice() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 760 }}>
       <ToolHeader
-        eyebrow="Chemistry Lab C · 2027 · Manual C14"
+        eyebrow={`Chemistry Lab C · ${ACTIVE_SEASON.year} · Manual C14`}
         purpose="Enter your own values and read gas-law results as you type. Keep units consistent; temperatures must be absolute (Kelvin). This is a learning calculator, not an official competition score."
-        manualReference="2027 Division C Rules Manual §3.e, p. C14"
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual §3.e, p. C14`}
         steps={[
           'Pick a gas law, choose which quantity to solve for, and enter the known values — the answer updates as you type.',
           'The piston diagram scales the gas volumes so you can compare the before and after states.',

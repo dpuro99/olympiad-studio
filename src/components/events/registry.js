@@ -1,5 +1,7 @@
 import { lazy } from 'react';
 import EventRulesOverview from '../general/EventRulesOverview';
+import { ACTIVE_DATA } from '../../seasons/active.js';
+import { ACTIVE_SEASON } from '../../seasons/manifest.js';
 
 const ArcVisualizer = lazy(() => import('./electricvehicle/ArcVisualizer'));
 const CourseGeometry = lazy(() => import('./electricvehicle/CourseGeometry'));
@@ -9,6 +11,8 @@ const GasLawPractice = lazy(() => import('./chemlab/GasLawPractice'));
 const KineticsPractice = lazy(() => import('./chemlab/KineticsPractice'));
 const StoichiometryPractice = lazy(() => import('./chemlab/StoichiometryPractice'));
 const FreshwaterTools = lazy(() => import('./dynamicplanet/FreshwaterTools'));
+const FreshwaterToolbox = lazy(() => import('./dynamicplanet/FreshwaterToolbox'));
+const MapPractice = lazy(() => import('./dynamicplanet/MapPractice'));
 const CircuitLabPractice = lazy(() => import('./circuitlab/CircuitLabPractice'));
 const DigitalLogicWorkbench = lazy(() => import('./circuitlab/DigitalLogicWorkbench'));
 const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'));
@@ -16,14 +20,17 @@ const BoomileverBuildLog = lazy(() => import('./boomilever/BoomileverBuildLog'))
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
+const MolecularSequenceWorkbench = lazy(() => import('./designergenes/MolecularSequenceWorkbench'));
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
 const CircuitLabReferenceCompiler = lazy(() => import('./circuitlab/CircuitLabReferenceCompiler'));
 const DynamicPlanetReferenceCompiler = lazy(() => import('./dynamicplanet/DynamicPlanetReferenceCompiler'));
 const RocksAndMineralsReferenceCompiler = lazy(() => import('./rocksandminerals/RocksAndMineralsReferenceCompiler'));
+const MineralIdKey = lazy(() => import('./rocksandminerals/MineralIdKey'));
+const SpecimenPractice = lazy(() => import('./rocksandminerals/SpecimenPractice'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, additionalModules = [] }) {
   return {
-    year: 2027,
+    year: ACTIVE_SEASON.year,
     name,
     code,
     division,
@@ -32,26 +39,27 @@ function overview({ name, code, division, description, eventUrl, manualReference
     modules: [{
       id: 'main',
       ti: 'ti-clipboard',
-      label: '2027 Event Overview',
+      label: `${ACTIVE_SEASON.year} Event Overview`,
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       component: EventRulesOverview,
-      desc: 'Read a concise summary verified against the 2027 Rules Manual.',
+      desc: `Read a concise summary verified against the ${ACTIVE_SEASON.manualLabel}.`,
       eventName: name,
       manualReference,
       ruleSummary,
       eventUrl,
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, ...additionalModules]
   };
 }
 
-// Current season entries are limited to events on Science Olympiad's official 2027 B/C slate.
+
+// Current season entries are limited to events on Science Olympiad's official current-season B/C slate.
 export const EVENT_REGISTRY = {
   anatomy: overview({
     name: 'Anatomy and Physiology', code: 'ANAT', division: 'C',
-    description: '2027 focus: respiratory, digestive, and immune systems.',
+    description: `Focus for ${ACTIVE_SEASON.year}: respiratory, digestive, and immune systems.`,
     manualReference: 'Division C Rules Manual, pp. C3–C5',
     ruleSummary: [
       'Written test or lab-practical stations; up to two participants, about 50 minutes, Class II calculator.',
@@ -64,28 +72,28 @@ export const EVENT_REGISTRY = {
       label: 'Practice Notes',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: AnatomyPractice,
       desc: 'Record study observations for respiratory, digestive, and immune systems; save locally and export as CSV.',
       eventName: 'Anatomy and Physiology',
       manualReference: 'Division C Rules Manual, pp. C3–C5',
       eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'anatomy-reference-compiler',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: AnatomyReferenceCompiler,
       desc: 'Track the manual’s objectives and compile the one allowed double-sided reference sheet; save locally, print, and export JSON.',
       eventName: 'Anatomy and Physiology',
       manualReference: 'Division C Rules Manual, pp. C3–C5',
       eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }],
     eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c'
   }),
@@ -104,34 +112,34 @@ export const EVENT_REGISTRY = {
       label: 'Efficiency Estimator',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: BoomileverEstimator,
       desc: 'Estimate structural efficiency from user-entered load supported and structure mass.',
       eventName: 'Boomilever',
       manualReference: 'Division C Rules Manual, pp. C7–C12',
       eventUrl: 'https://www.soinc.org/boomilever-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'boomilever-build-log',
       ti: 'ti-clipboard-list',
       label: 'Build/Test Log',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: BoomileverBuildLog,
       desc: 'Track each prototype\'s build details and test results, compare efficiencies, and export CSV.',
       eventName: 'Boomilever',
       manualReference: 'Division C Rules Manual, pp. C7–C12',
       eventUrl: 'https://www.soinc.org/boomilever-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }],
     eventUrl: 'https://www.soinc.org/boomilever-c'
   }),
   chemlab: overview({
     name: 'Chemistry Lab', code: 'CHEM', division: 'C',
-    description: '2027 chemistry tasks and questions focus on kinetics and gases.',
+    description: `${ACTIVE_SEASON.year} chemistry tasks and questions focus on kinetics and gases.`,
     manualReference: 'Division C Rules Manual, pp. C14–C15',
     ruleSummary: [
       'At least two activities are required: one on gases and one on kinetics; time is not scored or a tiebreaker.',
@@ -144,56 +152,56 @@ export const EVENT_REGISTRY = {
       label: 'Gas-Law Practice',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: GasLawPractice,
-      desc: 'Practice the gas laws listed in the 2027 manual with unit-aware unknown solving.',
+      desc: `Practice the gas laws listed in the ${ACTIVE_SEASON.year} manual with unit-aware unknown solving.`,
       eventName: 'Chemistry Lab',
       manualReference: 'Division C Rules Manual, §3.e, p. C14',
       eventUrl: 'https://www.soinc.org/chemistry-lab-c-0',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'kinetics',
       ti: 'ti-activity',
       label: 'Kinetics Practice',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: KineticsPractice,
       desc: 'Plan a user-defined reaction-rate experiment and calculate rates from entered measurements (Regional/Invitational scope).',
       eventName: 'Chemistry Lab',
       manualReference: 'Division C Rules Manual, §3.f.i, p. C14',
       eventUrl: 'https://www.soinc.org/chemistry-lab-c-0',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'stoichiometry',
       ti: 'ti-atom',
       label: 'Stoichiometry & Nomenclature',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: StoichiometryPractice,
       desc: 'Generated practice balancing equations, mole/mass/particle/gas-volume conversions, limiting reagent, percent yield, and ionic name ↔ formula.',
       eventName: 'Chemistry Lab',
       manualReference: 'Division C Rules Manual, §3.c–d, pp. C14–C15',
       eventUrl: 'https://www.soinc.org/chemistry-lab-c-0',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'chemlab-reference-compiler',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: ChemistryLabReferenceCompiler,
       desc: 'Track the manual’s objectives and compile each participant’s allowed double-sided reference sheet; save locally, print, and export JSON.',
       eventName: 'Chemistry Lab',
       manualReference: 'Division C Rules Manual, pp. C14–C15',
       eventUrl: 'https://www.soinc.org/chemistry-lab-c-0',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }],
     eventUrl: 'https://www.soinc.org/chemistry-lab-c-0'
   }),
@@ -203,7 +211,7 @@ export const EVENT_REGISTRY = {
     manualReference: 'Division C Rules Manual, pp. C16–C17',
     ruleSummary: [
       'Open paper reference materials are allowed; ES supplies hands-on materials. At least one hands-on task is required.',
-      '2027 written topics include digital logic, PN-junction devices, circuit analysis and listed State/National extensions.',
+      `${ACTIVE_SEASON.year} written topics include digital logic, PN-junction devices, circuit analysis and listed State/National extensions.`,
       'Capacitance, inductance, AC circuit theory, oscilloscopes, Thevenin/Norton and other stated topics are excluded.'
     ],
     additionalModules: [{
@@ -212,42 +220,42 @@ export const EVENT_REGISTRY = {
       label: 'Circuit Practice Calculator',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: CircuitLabPractice,
       desc: 'Practice Ohm’s law, series/parallel equivalent resistance, and basic circuit calculations from user-entered measurements.',
       eventName: 'Circuit Lab',
       manualReference: 'Division C Rules Manual, pp. C16–C17',
       eventUrl: 'https://www.soinc.org/circuit-lab-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'digital-logic',
       ti: 'ti-binary',
       label: 'Digital Logic Workbench',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: DigitalLogicWorkbench,
       desc: 'Build and check digital logic gates, truth tables, Boolean expressions, De Morgan’s Law equivalences, and combinational circuits such as adders and multiplexers.',
       eventName: 'Circuit Lab',
       manualReference: 'Division C Rules Manual, pp. C16–C17',
       eventUrl: 'https://www.soinc.org/circuit-lab-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'circuitlab-reference-compiler',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: CircuitLabReferenceCompiler,
       desc: 'Track the manual’s objectives and compile an allowed reference binder; save locally, print, and export JSON.',
       eventName: 'Circuit Lab',
       manualReference: 'Division C Rules Manual, pp. C16–C17',
       eventUrl: 'https://www.soinc.org/circuit-lab-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }],
     eventUrl: 'https://www.soinc.org/circuit-lab-c'
   }),
@@ -258,28 +266,42 @@ export const EVENT_REGISTRY = {
     ruleSummary: [
       'Written test, possibly at stations; one two-sided notes sheet and two Class II calculators are allowed.',
       'Exhaustive scope emphasizes quantitative reasoning, data interpretation and evidence-based conclusions.',
-      '2027 molecular-expression scope is eukaryotic; specified tournament levels add gene mapping, heritability and techniques.'
+      `${ACTIVE_SEASON.year} molecular-expression scope is eukaryotic; specified tournament levels add gene mapping, heritability and techniques.`
     ],
     additionalModules: [{
+      id: 'molecular-sequences',
+      ti: 'ti-dna',
+      label: 'Molecular Sequence Workbench',
+      cat: 'Practice',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: MolecularSequenceWorkbench,
+      desc: `Transcribe, translate, read frames, classify mutations, and map restriction sites live; ${ACTIVE_SEASON.year} scope with user-entered or generated sequences.`,
+      eventName: 'Designer Genes',
+      manualReference: ACTIVE_DATA.designergenes.manualReference,
+      eventUrl: 'https://www.soinc.org/designer-genes-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
       id: 'designergenes-reference-compiler',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: DesignerGenesReferenceCompiler,
       desc: 'Track the manual’s objectives and compile the one allowed double-sided reference sheet; save locally, print, and export JSON.',
       eventName: 'Designer Genes',
       manualReference: 'Division C Rules Manual, pp. C20–C21',
       eventUrl: 'https://www.soinc.org/designer-genes-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }],
     eventUrl: 'https://www.soinc.org/designer-genes-c'
   }),
   dynamicplanet: overview({
     name: 'Dynamic Planet', code: 'DYN', division: 'C',
-    description: '2027 focus: properties and processes of Earth’s fresh waters.',
+    description: `${ACTIVE_SEASON.year} focus: properties and processes of Earth’s fresh waters.`,
     manualReference: 'Division C Rules Manual, pp. C24–C25',
     ruleSummary: [
       'Exam and/or timed stations; a binder of any size is allowed. If the event features rotation through material-display stations, nothing may be removed from the binder throughout the event.',
@@ -292,33 +314,61 @@ export const EVENT_REGISTRY = {
       label: 'Freshwater Measurement Tools',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: FreshwaterTools,
       desc: 'Calculate stream discharge and user-entered water-budget balance from your own measurements.',
       eventName: 'Dynamic Planet',
       manualReference: 'Division C Rules Manual, §3.a.ii, §3.f.ii–iii, §3.h.ii, pp. C24–C25',
       eventUrl: 'https://www.soinc.org/dynamic-planet-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
+      id: 'freshwater-toolbox',
+      ti: 'ti-calculator',
+      label: 'Freshwater Calculator Toolbox',
+      cat: 'Event',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: FreshwaterToolbox,
+      desc: 'Unit-aware live calculators for sinuosity, hydraulic gradient, Darcy groundwater flow, residence time, flood recurrence, and Manning open-channel flow, each tied to its manual section.',
+      eventName: 'Dynamic Planet',
+      manualReference: 'Division C Rules Manual, §3.a.ii, §3.d.i, §3.f.iii–iv, §3.g.iii, pp. C24–C25',
+      eventUrl: 'https://www.soinc.org/dynamic-planet-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
+      id: 'map-practice',
+      ti: 'ti-map-2',
+      label: 'Map & Hydrograph Practice',
+      cat: 'Practice',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: MapPractice,
+      desc: 'Generated topographic, stream-network, water-table and storm-hydrograph cases: read the map, answer, then check the worked reasoning.',
+      eventName: 'Dynamic Planet',
+      manualReference: 'Division C Rules Manual, §3.c.ii, §3.k.i–iii, pp. C24–C25',
+      eventUrl: 'https://www.soinc.org/dynamic-planet-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'dynamicplanet-reference-compiler',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: DynamicPlanetReferenceCompiler,
       desc: 'Track the manual’s course content and compile an allowed binder; save locally, print, and export JSON.',
       eventName: 'Dynamic Planet',
       manualReference: 'Division C Rules Manual, pp. C24–C25',
       eventUrl: 'https://www.soinc.org/dynamic-planet-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }],
     eventUrl: 'https://www.soinc.org/dynamic-planet-c'
   }),
   ev: {
-    year: 2027,
+    year: ACTIVE_SEASON.year,
     name: 'Electric Vehicle',
     code: 'EV',
     division: 'C',
@@ -326,36 +376,36 @@ export const EVENT_REGISTRY = {
     categories: ['Event', 'Testing'],
     modules: [
       {
-        id: 'arc', ti: 'ti-vector-triangle', label: '2027 Event Overview', cat: 'Event',
-        live: true, year: 2027, requiresAuth: false, component: ArcVisualizer,
-        desc: 'Verified task, construction constraints, and run procedure from the 2027 manual.',
+        id: 'arc', ti: 'ti-vector-triangle', label: `${ACTIVE_SEASON.year} Event Overview`, cat: 'Event',
+        live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: ArcVisualizer,
+        desc: `Verified task, construction constraints, and run procedure from the ${ACTIVE_SEASON.manualLabel}.`,
         eventName: 'Electric Vehicle',
         manualReference: 'Division C Rules Manual, pp. C26–C31',
-        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'
+        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: ACTIVE_SEASON.rulesUrl
       },
       {
         id: 'score', ti: 'ti-trophy', label: 'Score Calculator', cat: 'Testing',
-        live: true, year: 2027, requiresAuth: false, component: ScoreCalc,
-        desc: 'Calculate two EV run scores and the final score using the 2027 manual formula.',
+        live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: ScoreCalc,
+        desc: `Calculate two EV run scores and the final score using the ${ACTIVE_SEASON.year} manual formula.`,
         eventName: 'Electric Vehicle',
         manualReference: 'Division C Rules Manual, pp. C26–C31',
-        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'
+        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: ACTIVE_SEASON.rulesUrl
       },
       {
         id: 'course', ti: 'ti-map-2', label: 'Course & Geometry', cat: 'Testing',
-        live: true, year: 2027, requiresAuth: false, component: CourseGeometry,
-        desc: 'Drag the bottle line and explore set-time pacing, sensitivity, and the live 2027 run-score tradeoffs.',
+        live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: CourseGeometry,
+        desc: `Drag the bottle line and explore set-time pacing, sensitivity, and the live ${ACTIVE_SEASON.year} run-score tradeoffs.`,
         eventName: 'Electric Vehicle',
         manualReference: 'Division C Rules Manual, pp. C26–C31',
-        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'
+        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: ACTIVE_SEASON.rulesUrl
       },
       {
         id: 'log', ti: 'ti-file-analytics', label: 'Practice Run Logger', cat: 'Testing',
-        live: true, year: 2027, requiresAuth: false, component: RunLogger,
-        desc: 'Save measured practice runs locally with the verified 2027 score calculation.',
+        live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: RunLogger,
+        desc: `Save measured practice runs locally with the verified ${ACTIVE_SEASON.year} score calculation.`,
         eventName: 'Electric Vehicle',
         manualReference: 'Division C Rules Manual, pp. C26–C31',
-        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: 'https://www.soinc.org/rules-2027'
+        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: ACTIVE_SEASON.rulesUrl
       }
     ]
   },
@@ -364,24 +414,52 @@ export const EVENT_REGISTRY = {
     description: 'Identify and classify rocks and minerals and connect them to geologic processes, Earth history, resources, and society.',
     manualReference: 'Division C Rules Manual, pp. C52–C56',
     ruleSummary: [
-      'Identification is 30–50% of points; rock and mineral topics are balanced. Teams may bring the 2027 list, binder and field guide.',
+      `Identification is 30–50% of points; rock and mineral topics are balanced. Teams may bring the ${ACTIVE_SEASON.year} list, binder and field guide.`,
       'Scope includes properties, identification, composition, formation, igneous/sedimentary/metamorphic processes and economic uses.',
-      'State/National include specified thin-section photomicrograph skills; consult the official 2027 specimen list and its footnotes.'
+      `State/National include specified thin-section photomicrograph skills; consult the official ${ACTIVE_SEASON.year} specimen list and its footnotes.`
     ],
     additionalModules: [{
+      id: 'mineral-id-key',
+      ti: 'ti-diamond',
+      label: 'Mineral ID Key',
+      cat: 'Practice',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: MineralIdKey,
+      desc: 'Narrow the official mineral list from the properties you observe; record properties, fill in the CSV, and see exactly why each mineral is ruled out.',
+      eventName: 'Rocks and Minerals',
+      manualReference: 'Division C Rules Manual, pp. C55–C56 (official mineral list)',
+      eventUrl: 'https://www.soinc.org/rocks-and-minerals-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
+      id: 'specimen-practice',
+      ti: 'ti-cards',
+      label: 'Specimen Practice',
+      cat: 'Practice',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: SpecimenPractice,
+      desc: 'Drill the official mineral list with generated multiple-choice or self-graded flashcards; configure the deck scope and class, review missed cards, and quick-record properties inline.',
+      eventName: 'Rocks and Minerals',
+      manualReference: 'Division C Rules Manual, pp. C55–C56 (official mineral list)',
+      eventUrl: 'https://www.soinc.org/rocks-and-minerals-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
       id: 'rocksandminerals-reference-compiler',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
       live: true,
-      year: 2027,
+      year: ACTIVE_SEASON.year,
       requiresAuth: false,
       component: RocksAndMineralsReferenceCompiler,
       desc: 'Track the manual’s topics and specimen list and compile the allowed binder; save locally, print, and export JSON.',
       eventName: 'Rocks and Minerals',
       manualReference: 'Division C Rules Manual, pp. C52–C56',
       eventUrl: 'https://www.soinc.org/rocks-and-minerals-c',
-      rulesUrl: 'https://www.soinc.org/rules-2027'
+      rulesUrl: ACTIVE_SEASON.rulesUrl
     }],
     eventUrl: 'https://www.soinc.org/rocks-and-minerals-c'
   }),

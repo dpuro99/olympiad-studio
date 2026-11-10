@@ -37,8 +37,8 @@ export const DENSITY_PRESETS = [
 
 export const DEFAULT_DENSITY = 'standard';
 
-export function createEmptyState() {
-  return { objectiveStatus: {}, blocks: [], density: DEFAULT_DENSITY };
+export function createEmptyState(seasonYear = null) {
+  return { objectiveStatus: {}, blocks: [], density: DEFAULT_DENSITY, season: seasonYear };
 }
 
 export function normalizeStatus(status) {
@@ -95,6 +95,11 @@ export function computeBudget(charCount, charsPerSide, sides = 2) {
   const ratio = capacity > 0 ? charCount / capacity : 0;
   const overBy = Math.max(0, charCount - capacity);
   return { charCount, capacity, ratio, overBy, over: charCount > capacity };
+}
+
+export function countOrphanedBlocks(config, blocks) {
+  const known = indexObjectives(config);
+  return (blocks || []).filter((block) => !known.has(block.objectiveId)).length;
 }
 
 export function indexObjectives(config) {
@@ -167,7 +172,8 @@ export function safeParseState(serialized) {
           ? data.objectiveStatus
           : {},
         blocks: Array.isArray(data.blocks) ? data.blocks.filter(isValidBlock) : [],
-        density
+        density,
+        season: Number.isInteger(data.season) ? data.season : null
       }
     };
   } catch {

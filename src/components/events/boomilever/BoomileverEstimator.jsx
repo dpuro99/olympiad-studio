@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { calculateBoomileverScore } from './boomileverScore';
+import { ACTIVE_DATA } from '../../../seasons/active.js';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 import {
   Card,
   CheckboxField,
@@ -16,6 +18,7 @@ export default function BoomileverEstimator() {
   const [tier, setTier] = useState('Tier 1');
   const [estimatedLoad, setEstimatedLoad] = useState('');
 
+  const rules = ACTIVE_DATA.boomilever;
   const massValue = structureMass === '' ? null : Number(structureMass);
   const hasMass = massValue !== null && Number.isFinite(massValue) && massValue > 0;
   const scoreResult = hasMass
@@ -35,13 +38,13 @@ export default function BoomileverEstimator() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 720 }}>
       <ToolHeader
-        eyebrow="Boomilever C · 2027"
+        eyebrow={`Boomilever C · ${ACTIVE_SEASON.year}`}
         title="Structure efficiency estimator"
         purpose="Enter a structure's mass and the load it held to see its structural efficiency. The estimate updates as you type."
-        manualReference="2027 Division C Rules Manual, pp. C7–C12"
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual, pp. C7–C12`}
         steps={[
           'Enter the structure mass and the load it supported, in grams.',
-          'Tick the bonus boundary and 15 kg conditions if they applied to your test.',
+          `Tick the bonus boundary and ${rules.bonusHoldsKg} kg conditions if they applied to your test.`,
           'Choose the tier the Event Supervisor assigned.',
           'Read the estimated Load Scored and efficiency below. Lower scores win? No — efficiency is Load Scored ÷ mass, so higher is better.'
         ]}
@@ -56,7 +59,7 @@ export default function BoomileverEstimator() {
           <NumberField label="Load supported" unit="g" value={loadSupported} onChange={(event) => setLoadSupported(event.target.value)} />
           <NumberField label="Structure mass" unit="g" value={structureMass} onChange={(event) => setStructureMass(event.target.value)} help="Required to calculate." />
           <CheckboxField label="Structure meets 10 cm wall-contact boundary for bonus eligibility" checked={meetsBonus} onChange={(event) => setMeetsBonus(event.target.checked)} />
-          <CheckboxField label="Structure holds 15 kg (required for the 7,500 g bonus)" checked={holds15Kg} onChange={(event) => setHolds15Kg(event.target.checked)} />
+          <CheckboxField label={`Structure holds ${rules.bonusHoldsKg} kg (required for the ${rules.loadScoredBonusGrams.toLocaleString('en-US')} g bonus)`} checked={holds15Kg} onChange={(event) => setHolds15Kg(event.target.checked)} />
         </div>
 
         <SelectField label="Tier" value={tier} onChange={(event) => setTier(event.target.value)} style={{ maxWidth: 320 }}>
@@ -84,7 +87,7 @@ export default function BoomileverEstimator() {
               Score: <span style={{ fontFamily: 'var(--font-mono)' }}>{Number(result.score.toFixed(4))}</span>
             </div>
             <div style={{ fontSize: 11, color: 'var(--color-text-secondary)', marginTop: 6 }}>
-              Tier: {result.tier} · Bonus applied: {result.loadScoredBonus > 0 ? 'Yes (7,500 g)' : 'No'} · Load supported capped at 15,000 g
+              Tier: {result.tier} · Bonus applied: {result.loadScoredBonus > 0 ? `Yes (${rules.loadScoredBonusGrams.toLocaleString('en-US')} g)` : 'No'} · Load supported capped at {rules.loadSupportedCapGrams.toLocaleString('en-US')} g
             </div>
             {result.estimatedLoadSupportedGrams !== null && (
               <div style={{ fontSize: 11, color: 'var(--color-text-secondary)', marginTop: 4 }}>

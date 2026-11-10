@@ -15,7 +15,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C26–C31 + official EV FAQ (
 - **Persistence:** none.
 
 ## Tool: Course & Geometry
-- **Status:** Planned — `src/components/events/electricvehicle/CourseGeometry.jsx` (logic in `courseUtils.js`)
+- **Status:** Live — `src/components/events/electricvehicle/CourseGeometry.jsx` (logic in `courseUtils.js`)
 - **Category:** Calculator
 - **Goal:** Explore the set-time + bottle push + reverse-stop course geometry interactively: course distance (by level), target time, average speed, and pusher/stop accuracy.
 - **Core interaction loop:** 1) Drag sliders / enter values for course distance (2 m Regional-Invitational, 3 m State, 4 m National), target time, and pusher opening. 2) Watch required average speed, per-segment pacing, and the scoring tradeoffs update live on an interactive course diagram. 3) Read the manual-cited formulas beside the diagram.

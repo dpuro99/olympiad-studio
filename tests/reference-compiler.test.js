@@ -7,6 +7,7 @@ import {
   COMPILER_STATUS,
   computeBudget,
   countCharacters,
+  countOrphanedBlocks,
   createEmptyState,
   progressSummary,
   removeBlock,
@@ -114,6 +115,21 @@ test('compiler save parser rejects corrupt data and restores valid blocks', () =
   assert.equal(restored.value.density, 'large');
   assert.equal(restored.value.objectiveStatus['imm-organs'], COMPILER_STATUS.CONFIDENT);
   assert.equal(safeParseState(JSON.stringify({ density: 'bogus' })).value.density, 'standard');
+});
+
+test('compiler tracks the season a saved sheet belongs to and counts orphaned blocks', () => {
+  const state = createEmptyState(2027);
+  const serialized = JSON.stringify(state);
+  assert.equal(safeParseState(serialized).value.season, 2027);
+  assert.equal(safeParseState(JSON.stringify({ blocks: [] })).value.season, null);
+  assert.equal(safeParseState(JSON.stringify({ season: 'soon', blocks: [] })).value.season, null);
+
+  const blocks = [
+    { id: 'a', objectiveId: 'imm-organs', title: 'Lymph', body: 'nodes' },
+    { id: 'b', objectiveId: 'retired-objective', title: 'Old', body: 'block' }
+  ];
+  assert.equal(countOrphanedBlocks(config, blocks), 1);
+  assert.equal(countOrphanedBlocks(config, []), 0);
 });
 
 test('anatomy registry exposes the reference and study compiler module', () => {

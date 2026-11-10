@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { buildNotesCsv, safeParseNotes, STORAGE_KEY, SYSTEMS } from './anatomyNotes';
+import { LEGACY_STORAGE_KEYS, readStorageWithLegacy } from '../../../seasons/storageKeys.js';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 import {
   Button,
   Card,
@@ -25,7 +27,7 @@ export default function AnatomyPractice() {
     let cancelled = false;
     const timer = window.setTimeout(() => {
       try {
-        const stored = window.localStorage.getItem(STORAGE_KEY);
+        const stored = readStorageWithLegacy(STORAGE_KEY, LEGACY_STORAGE_KEYS.anatomyNotebook);
         if (stored) {
           const parsed = safeParseNotes(stored);
           if (parsed.error) {
@@ -78,7 +80,7 @@ export default function AnatomyPractice() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'anatomy-c-2027-notes.csv';
+    link.download = `anatomy-c-${ACTIVE_SEASON.year}-notes.csv`;
     link.click();
     URL.revokeObjectURL(url);
     setMessage('Notes exported as CSV. The file contains only your entered notes.');
@@ -89,6 +91,7 @@ export default function AnatomyPractice() {
     if (!window.confirm('Clear all saved anatomy notes in this browser?')) return;
     try {
       window.localStorage.removeItem(STORAGE_KEY);
+      window.localStorage.removeItem(LEGACY_STORAGE_KEYS.anatomyNotebook);
       setSavedNotes([]);
       setMessage('Notes cleared.');
       setMessageIsError(false);
@@ -101,12 +104,12 @@ export default function AnatomyPractice() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 720 }}>
       <ToolHeader
-        eyebrow="Anatomy and Physiology C · 2027 · Manual C3–C5"
-        purpose="A user-authored study journal for the 2027 respiratory, digestive, and immune systems. It does not contain preset quiz questions or simulated exam data — save only what you verify."
-        manualReference="2027 Division C Rules Manual, pp. C3–C5"
+        eyebrow={`Anatomy and Physiology C · ${ACTIVE_SEASON.year} · Manual C3–C5`}
+        purpose={`A user-authored study journal for the ${ACTIVE_SEASON.year} respiratory, digestive, and immune systems. It does not contain preset quiz questions or simulated exam data — save only what you verify.`}
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual, pp. C3–C5`}
         steps={[
           'Choose the system, then add a note label and a focus/topic.',
-          'Record observations, questions, or verified facts from the 2027 manual.',
+          `Record observations, questions, or verified facts from the ${ACTIVE_SEASON.year} manual.`,
           'Save in this browser profile (notes are stored locally, not uploaded). Export as CSV when needed.'
         ]}
       />
@@ -118,7 +121,7 @@ export default function AnatomyPractice() {
         </SelectField>
         <TextField label="Note label" value={label} onChange={(event) => { setLabel(event.target.value); setMessage(''); }} placeholder="e.g. respiratory disorders" />
         <TextField label="Focus / topic" value={focus} onChange={(event) => { setFocus(event.target.value); setMessage(''); }} placeholder="e.g. asthma mechanism" />
-        <TextAreaField label="Notes" rows={4} value={notesText} onChange={(event) => { setNotesText(event.target.value); setMessage(''); }} placeholder="Record observations, questions, or verified facts from the 2027 manual." />
+        <TextAreaField label="Notes" rows={4} value={notesText} onChange={(event) => { setNotesText(event.target.value); setMessage(''); }} placeholder={`Record observations, questions, or verified facts from the ${ACTIVE_SEASON.year} manual.`} />
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <Button type="submit" variant="primary" disabled={!loaded} style={{ padding: '9px 12px' }}>{loaded ? 'Save in this browser' : 'Loading saved notes…'}</Button>
           <Button type="button" onClick={exportCsv} style={{ padding: '9px 12px' }}>Export CSV</Button>

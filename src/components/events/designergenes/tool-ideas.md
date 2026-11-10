@@ -16,7 +16,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C20–C21. 2027 focus is gene
 - **Open questions:** Students may use scratch paper at some sites; decide whether work should be auto-saved.
 
 ## Tool: Molecular Sequence Workbench
-- **Status:** Planned
+- **Status:** Live — `src/components/events/designergenes/MolecularSequenceWorkbench.jsx` (logic in `sequenceUtils.js`)
 - **Category:** Practice
 - **Goal:** Manipulate and interpret DNA/RNA/protein sequences with standard molecular-biology operations.
 - **Core interaction loop:** 1) Enter or generate a DNA/RNA sequence. 2) Run a tool: complement / reverse-complement, transcription, translation (codon table), reading frames, and mutation consequence (silent / missense / nonsense / frameshift). 3) Review the annotated result against the matching manual §3 topic.
@@ -25,7 +25,8 @@ Source: supplied 2027 Division C Rules Manual, pp. C20–C21. 2027 focus is gene
 - **Interactivity:** Live: the annotated output updates as the sequence or tool changes; Generate is an explicit action for a random sequence.
 - **Scoring & feedback:** Verifies transformations against the standard genetic code; practice only.
 - **Level gating:** advanced techniques (restriction/PCR/CRISPR) gated to State/National.
-- **Persistence:** none (or localStorage if requested).
+- **Persistence:** none — the workbench is a live scratchpad like the digital-logic drill; sequences are not saved.
+- **Implementation notes:** the standard genetic code (64 codons, three stops) and the 14 screened restriction-enzyme recognition sites live in `sequenceUtils.js` because they are invariant facts, not Science Olympiad rules; season scope/citations come from `src/seasons/2027/designergenes.js`. Restriction mapping sits behind the State/National switch per that season file. Mutation mode classifies silent / missense / nonsense / stop-loss / frameshift / in-frame indel from the reference-vs-variant comparison, and the generator never emits an internal stop so the peptide stays readable.
 
 ## Tool: Karyotype and Meiosis Drill
 - **Status:** Planned

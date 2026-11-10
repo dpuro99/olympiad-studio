@@ -1,5 +1,7 @@
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
+import { fileStem, storageKey } from '../../../seasons/storageKeys.js';
 // Circuit Lab C — Reference & Study Compiler config (binder mode).
-// Objectives transcribed from the verified 2027 overview in ./info.md,
+// Objectives transcribed from the verified season overview in ./info.md,
 // which cites Division C Rules Manual pp. C16–C17. Binder mode allows
 // a paper binder of any size (tabs/removable pages permitted).
 
@@ -8,8 +10,9 @@ export const circuitLabReferenceCompilerConfig = {
   eventName: 'Circuit Lab',
   division: 'C',
   mode: 'binder',
-  storageKey: 'olympiad-studio.circuitlab-c.2027-reference-binder',
-  fileStem: 'circuitlab-c-2027-reference-binder',
+  season: ACTIVE_SEASON,
+  storageKey: storageKey('circuitlab', 'reference-binder'),
+  fileStem: fileStem('circuitlab', 'reference-binder'),
   manualReference: 'Division C Rules Manual, pp. C16–C17',
   resource: {
     title: 'Binder of any size with paper notes/resources',

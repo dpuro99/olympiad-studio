@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { captureSnapshot, openModule } from '../../helpers.js';
+import { storageKey } from '../../../../src/seasons/storageKeys.js';
 
-const RUNS_KEY = 'olympiad-studio.ev-c.2027-practice-runs';
+const RUNS_KEY = storageKey('electricvehicle', 'practice-runs');
 
 test('score calculator reproduces the manual example run (118.17)', async ({ page }, testInfo) => {
   const errors = await openModule(page, testInfo, { eventId: 'ev', moduleId: 'score' });

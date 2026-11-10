@@ -1,5 +1,7 @@
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
+import { fileStem, storageKey } from '../../../seasons/storageKeys.js';
 // Dynamic Planet C — Reference & Study Compiler config (binder mode).
-// Objectives transcribed from the verified 2027 overview in ./info.md,
+// Objectives transcribed from the verified season overview in ./info.md,
 // which cites Division C Rules Manual pp. C24–C25. Binder mode with
 // no-removal reminder for specimen/display stations.
 
@@ -8,8 +10,9 @@ export const dynamicPlanetReferenceCompilerConfig = {
   eventName: 'Dynamic Planet',
   division: 'C',
   mode: 'binder',
-  storageKey: 'olympiad-studio.dynamicplanet-c.2027-reference-binder',
-  fileStem: 'dynamicplanet-c-2027-reference-binder',
+  season: ACTIVE_SEASON,
+  storageKey: storageKey('dynamicplanet', 'reference-binder'),
+  fileStem: fileStem('dynamicplanet', 'reference-binder'),
   manualReference: 'Division C Rules Manual, pp. C24–C25',
   resource: {
     title: 'One binder of any size/content/source per team',
@@ -20,7 +23,7 @@ export const dynamicPlanetReferenceCompilerConfig = {
       'Any content/source allowed per team.'
     ]
   },
-  objectivesNote: 'Topic outline transcribed from the manual summary (freshwater-focused for 2027).',
+  objectivesNote: `Topic outline transcribed from the manual summary (freshwater-focused for ${ACTIVE_SEASON.year}).`,
   objectiveGroups: [
     {
       id: 'hydrology',

@@ -1,10 +1,9 @@
-export const STORAGE_KEY = 'olympiad-studio-anatomy-c-2027-notebook';
+import { storageKey } from '../../../seasons/storageKeys.js';
+import { ACTIVE_DATA } from '../../../seasons/active.js';
 
-export const SYSTEMS = [
-  { id: 'respiratory', label: 'Respiratory system' },
-  { id: 'digestive', label: 'Digestive system' },
-  { id: 'immune', label: 'Immune system' }
-];
+export const STORAGE_KEY = storageKey('anatomy', 'notebook');
+
+export const SYSTEMS = ACTIVE_DATA.anatomy.systems;
 
 export function createEmptyNote() {
   return { systemId: 'respiratory', label: '', focus: '', notes: '' };

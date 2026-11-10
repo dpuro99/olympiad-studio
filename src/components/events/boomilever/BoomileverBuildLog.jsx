@@ -1,4 +1,7 @@
 import { useEffect, useState } from 'react';
+import { ACTIVE_DATA } from '../../../seasons/active.js';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
+import { fileStem } from '../../../seasons/storageKeys.js';
 import {
   BASE_OPTIONS,
   STORAGE_KEY,
@@ -119,7 +122,7 @@ export default function BoomileverBuildLog() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'boomilever-c-2027-build-log.csv';
+    link.download = `${fileStem('boomilever', 'build-log')}.csv`;
     link.click();
     URL.revokeObjectURL(url);
     setMessage('Build log exported as CSV. The file contains only your entered measurements.');
@@ -146,10 +149,10 @@ export default function BoomileverBuildLog() {
     <div style={{ display: 'grid', gap: 16, maxWidth: 960 }}>
       <section style={{ ...cardStyle, display: 'grid', gap: 8 }}>
         <div style={{ color: 'var(--color-text-info)', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
-          Boomilever C · 2027 · Manual C7–C12
+          Boomilever C · {ACTIVE_SEASON.year} · Manual C7–C12
         </div>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
-          Log each prototype you build and test so designs can be compared across iterations. Records stay in this browser and are not uploaded. Efficiency follows the verified formula (Load Scored ÷ Structure Mass with the optional 7,500 g bonus); it is a practice record, not an Event Supervisor ruling.
+          {`Log each prototype you build and test so designs can be compared across iterations. Records stay in this browser and are not uploaded. Efficiency follows the verified formula (Load Scored ÷ Structure Mass with the optional ${ACTIVE_DATA.boomilever.loadScoredBonusGrams.toLocaleString('en-US')} g bonus); it is a practice record, not an Event Supervisor ruling.`}
         </p>
       </section>
 
@@ -185,7 +188,7 @@ export default function BoomileverBuildLog() {
         </div>
         <label style={checkStyle}>
           <input name="holds15Kg" type="checkbox" checked={form.holds15Kg} onChange={update} />
-          <span>Structure held 15 kg (required for the 7,500 g bonus)</span>
+          <span>Structure held {ACTIVE_DATA.boomilever.bonusHoldsKg} kg (required for the {ACTIVE_DATA.boomilever.loadScoredBonusGrams.toLocaleString('en-US')} g bonus)</span>
         </label>
         <label style={fieldStyle}>Failure mode / where it broke
           <input name="failureMode" value={form.failureMode} onChange={update} placeholder="e.g. tension member snapped above the bolt" style={{ ...inputStyle, fontFamily: 'var(--font-sans)' }} />
@@ -228,7 +231,7 @@ export default function BoomileverBuildLog() {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8, color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
                 <span>mass {entry.structureMassGrams || '—'} g</span>
                 <span>load {summary.tested ? `${entry.loadSupportedGrams} g` : '—'}</span>
-                <span>15 kg {summary.tested ? (entry.holds15Kg ? 'held' : 'no') : '—'}</span>
+                <span>{ACTIVE_DATA.boomilever.bonusHoldsKg} kg {summary.tested ? (entry.holds15Kg ? 'held' : 'no') : '—'}</span>
                 <span>{summary.tested ? entry.tier : 'untested'}</span>
               </div>
               {entry.memberDescription && <div style={{ marginTop: 6, fontSize: 12, color: 'var(--color-text-secondary)' }}>Members: {entry.memberDescription}</div>}
@@ -243,7 +246,7 @@ export default function BoomileverBuildLog() {
       </section>
 
       <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
-        Source: 2027 Division C Rules Manual pp. C7–C12. This is a build/test notebook, not an official score or a compliance checker. Confirm measurements, tier conditions, and bonus eligibility with the Event Supervisor.
+        Source: {ACTIVE_SEASON.year} Division C Rules Manual pp. C7–C12. This is a build/test notebook, not an official score or a compliance checker. Confirm measurements, tier conditions, and bonus eligibility with the Event Supervisor.
       </p>
     </div>
   );

@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { calculateFinalScore, calculateRunScore } from './scoreUtils';
+import { ACTIVE_DATA } from '../../../seasons/active.js';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 import {
   Card,
   CheckboxField,
@@ -72,10 +74,10 @@ export default function ScoreCalc() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 1000 }}>
       <ToolHeader
-        eyebrow="Electric Vehicle C · 2027"
+        eyebrow={`Electric Vehicle C · ${ACTIVE_SEASON.year}`}
         title="Electric Vehicle score calculator"
         purpose="Enter each run's measured distances and times to see the run score, then combine them into the final score. Lower scores win."
-        manualReference="2027 Division C Rules Manual, EV sections 5–8 (pp. C28–C31)"
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual, EV sections 5–8 (pp. C28–C31)`}
         steps={[
           'Measure distances in centimeters and times in seconds and enter them for Run 1 (and Run 2 if the team runs twice).',
           'Tick any rulings the Event Supervisor recorded (failed run, violations, bottle line, moving-bottle requirements).',
@@ -104,7 +106,7 @@ export default function ScoreCalc() {
                 <NumberField label="Pusher foremost opening width measured by ES" unit="cm" step="0.1" value={run.pusherOpeningWidthCm} onChange={setNumber('pusherOpeningWidthCm')} help="Width of the pusher's foremost opening, measured by the Event Supervisor." />
               </div>
               <div style={{ display: 'grid', gap: 7 }}>
-                <CheckboxField label="Failed run (manual assigns 2500 distance points and 0.00 s run time)" checked={run.failedRun} onChange={setCheck('failedRun')} />
+                <CheckboxField label={`Failed run (manual assigns ${ACTIVE_DATA.electricvehicle.failedRunDistanceScore} distance points and 0.00 s run time)`} checked={run.failedRun} onChange={setCheck('failedRun')} />
                 <CheckboxField label="Bottle fully beyond the Bottle Line (−20 points)" checked={run.bottleFullyPastLine} onChange={setCheck('bottleFullyPastLine')} />
                 <CheckboxField label="Bottle reached/passed the Target Point" checked={run.bottlePastTarget} onChange={setCheck('bottlePastTarget')} />
                 <CheckboxField label="Moving Water Bottle Requirements were followed" checked={run.movingBottleRequirementsMet} onChange={setCheck('movingBottleRequirementsMet')} />
@@ -135,7 +137,7 @@ export default function ScoreCalc() {
       <Card style={{ display: 'grid', gap: 12 }}>
         <SectionHeading as="h3" style={{ fontSize: 15 }}>Final score</SectionHeading>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
-          <NumberField label="Event time used" unit="s" step="1" max="480" value={eventTimeUsedSec} onChange={(event) => setEventTimeUsedSec(event.target.value)} />
+          <NumberField label="Event time used" unit="s" step="1" max={String(ACTIVE_DATA.electricvehicle.maxEventTimeSec)} value={eventTimeUsedSec} onChange={(event) => setEventTimeUsedSec(event.target.value)} />
           <CheckboxField label="National Tournament (apply event-time bonus)" checked={nationalTournament} onChange={(event) => setNationalTournament(event.target.checked)} />
           <CheckboxField label="Vehicle was not impounded (+5000 final penalty)" checked={vehicleNotImpounded} onChange={(event) => setVehicleNotImpounded(event.target.checked)} />
         </div>

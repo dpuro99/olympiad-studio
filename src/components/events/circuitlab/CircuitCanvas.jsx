@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { compileSchematic, evaluateSchematic, schematicTruthTable, layoutSchematic, GATE_ARITY, GATE_IDS } from './booleanLogic';
 import TruthTable from './TruthTable';
 import { Button, Card, HelpText, SectionHeading, StatusMessage } from '../../general/ui/primitives';
+import { storageKey } from '../../../seasons/storageKeys.js';
 
 const NODE_W = 132;
 const HEADER = 30;
 const PORT_TOP = 44;
 const PORT_GAP = 24;
-const STORAGE_KEY = 'olympiad-studio.circuitlab-c.2027-logic-canvas';
+const STORAGE_KEY = storageKey('circuitlab', 'logic-canvas');
 
 const letters = (count) => Array.from({ length: count }, (_, index) => String.fromCharCode(65 + index));
 const arityOf = (type) => (type === 'OUT' ? 1 : GATE_ARITY[type] || 0);

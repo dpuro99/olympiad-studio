@@ -1,17 +1,22 @@
 import { test, expect } from '@playwright/test';
 import {
   BASE_PATH,
+  COMPILER_FILE_STEMS,
   COMPILER_STORAGE_KEYS,
+  SEASON_YEAR,
   seedNavigation,
   trackConsoleIssues
 } from '../helpers.js';
+import { LEGACY_STORAGE_KEYS, storageKey } from '../../../src/seasons/storageKeys.js';
 
 const OTHER_STORAGE_KEYS = [
-  { eventId: 'anatomy', moduleId: 'anatomy-notes', key: 'olympiad-studio-anatomy-c-2027-notebook' },
-  { eventId: 'boomilever', moduleId: 'boomilever-build-log', key: 'olympiad-studio.boomilever-c.2027-build-log' },
-  { eventId: 'chemlab', moduleId: 'gas-laws', key: 'olympiad-studio-chemlab-gases-v1' },
-  { eventId: 'chemlab', moduleId: 'kinetics', key: 'olympiad-studio-chemlab-kinetics-v1' },
-  { eventId: 'ev', moduleId: 'log', key: 'olympiad-studio.ev-c.2027-practice-runs' }
+  // Legacy anatomy key still has to be readable after the key migration.
+  { eventId: 'anatomy', moduleId: 'anatomy-notes', key: LEGACY_STORAGE_KEYS.anatomyNotebook },
+  { eventId: 'boomilever', moduleId: 'boomilever-build-log', key: storageKey('boomilever', 'build-log') },
+  { eventId: 'chemlab', moduleId: 'gas-laws', key: storageKey('chemlab', 'gases') },
+  { eventId: 'chemlab', moduleId: 'kinetics', key: storageKey('chemlab', 'kinetics') },
+  { eventId: 'ev', moduleId: 'log', key: storageKey('electricvehicle', 'practice-runs') },
+  { eventId: 'rocksandminerals', moduleId: 'mineral-id-key', key: storageKey('rocksandminerals', 'specimen-cards') }
 ];
 
 async function gotoModule(page, { eventId, moduleId }) {
@@ -45,7 +50,7 @@ test('reference compiler survives disabled localStorage and still exports', asyn
   await expect(page.getByText('Local storage unavailable; you can still print or export a JSON backup.')).toBeVisible();
   const downloadPromise = page.waitForEvent('download', { timeout: 15_000 });
   await page.getByRole('button', { name: 'Export JSON backup' }).click();
-  expect((await downloadPromise).suggestedFilename()).toBe('anatomy-c-2027-reference-sheet.json');
+  expect((await downloadPromise).suggestedFilename()).toBe(`${COMPILER_FILE_STEMS.anatomy}.json`);
   expect(errors).toEqual([]);
 });
 
@@ -67,6 +72,20 @@ for (const { eventId, moduleId, key } of OTHER_STORAGE_KEYS) {
     expect(errors).toEqual([]);
   });
 }
+
+test('reference compiler announces a sheet saved under another manual', async ({ page }) => {
+  const errors = trackConsoleIssues(page);
+  await page.addInitScript(({ key, priorYear }) => localStorage.setItem(key, JSON.stringify({
+    objectiveStatus: {},
+    blocks: [{ id: 'blk-old', objectiveId: 'retired-objective', title: 'Retired', body: 'block' }],
+    density: 'standard',
+    season: priorYear
+  })), { key: COMPILER_STORAGE_KEYS.anatomy, priorYear: SEASON_YEAR - 1 });
+  await gotoModule(page, { eventId: 'anatomy', moduleId: 'anatomy-reference-compiler' });
+  await expect(page.getByText(new RegExp(`saved under the ${SEASON_YEAR - 1} manual`))).toBeVisible();
+  await expect(page.getByText(/target objectives that are not in this manual/)).toBeVisible();
+  expect(errors).toEqual([]);
+});
 
 test('a corrupt navigation payload falls back to the landing view', async ({ page }) => {
   const errors = trackConsoleIssues(page);
@@ -93,7 +112,7 @@ test('cancelling the clear dialog keeps authored reference blocks', async ({ pag
 });
 
 test('cancelling the delete dialog keeps the saved run', async ({ page }) => {
-  const key = 'olympiad-studio.ev-c.2027-practice-runs';
+  const key = storageKey('electricvehicle', 'practice-runs');
   await page.addInitScript((k) => localStorage.setItem(k, JSON.stringify([
     { label: 'Seeded run', failedRun: false, runTimeSec: 5, vehicleDistanceCm: 10, bottleDistanceCm: 10, notes: '', score: { totalScore: 100 } }
   ])), key);
@@ -105,7 +124,7 @@ test('cancelling the delete dialog keeps the saved run', async ({ page }) => {
 });
 
 test('cancelling the build-log clear dialog keeps saved builds', async ({ page }) => {
-  const key = 'olympiad-studio.boomilever-c.2027-build-log';
+  const key = storageKey('boomilever', 'build-log');
   await page.addInitScript((k) => localStorage.setItem(k, JSON.stringify([
     { label: 'Seeded build', structureMassGrams: '100', baseOption: 'standard', loadSupportedGrams: '9000', holds15Kg: false, tier: 'Tier 1', failureMode: '', changes: '', memberDescription: '' }
   ])), key);

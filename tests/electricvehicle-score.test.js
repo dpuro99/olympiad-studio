@@ -2,16 +2,19 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { calculateFinalScore, calculateRunScore } from '../src/components/events/electricvehicle/scoreUtils.js';
+import { ACTIVE_SEASON } from '../src/seasons/manifest.js';
 
 const registrySource = readFileSync(new URL('../src/components/events/registry.js', import.meta.url), 'utf8');
 const evOverviewSource = readFileSync(new URL('../src/components/events/electricvehicle/ArcVisualizer.jsx', import.meta.url), 'utf8');
 
 test('registry is limited to current-season project events', () => {
-  assert.match(registrySource, /year: 2027/);
+  assert.match(registrySource, /year: ACTIVE_SEASON\.year/);
+  assert.doesNotMatch(registrySource, /year: \d{4}/);
+  assert.equal(typeof ACTIVE_SEASON.year, 'number');
   assert.doesNotMatch(registrySource, /entomology|machines|metricmastery/i);
 });
 
-test('EV scoring matches the two 2027 manual example runs', () => {
+test("EV scoring matches the manual's two example runs", () => {
   const run1 = calculateRunScore({
     targetTimeSec: 14,
     runTimeSec: 12.27,
@@ -48,7 +51,7 @@ test('failed EV runs receive fixed distance score and use zero run time', () => 
   assert.equal(score.totalScore, 2607);
 });
 
-test('bottle-distance fallback and run penalties follow the 2027 manual', () => {
+test('bottle-distance fallback and run penalties follow the manual', () => {
   const score = calculateRunScore({
     targetTimeSec: 14,
     runTimeSec: 14,
@@ -81,7 +84,7 @@ test('National event-time bonus and missed-impound final penalty are applied onl
   assert.equal(calculateFinalScore({ runScores: [100, 110], eventTimeUsedSec: 481, nationalTournament: true }), null);
 });
 
-test('EV overview contains verified 2027 constraints and points to the official FAQ', () => {
+test('EV overview contains verified constraints and points to the official FAQ', () => {
   assert.match(evOverviewSource, /pushes a water bottle past a line/i);
   assert.match(evOverviewSource, /eight AA batteries/i);
   assert.match(evOverviewSource, /80\.0 cm/i);

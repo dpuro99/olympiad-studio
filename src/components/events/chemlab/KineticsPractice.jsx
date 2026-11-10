@@ -12,6 +12,8 @@ import {
   SelectField, StatusMessage, TextAreaField, TextField, ToolHeader
 } from '../../general/ui/primitives';
 import { LineChart } from '../../general/ui/charts';
+import { LEGACY_STORAGE_KEYS, readStorageWithLegacy } from '../../../seasons/storageKeys.js';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
 function getTrialRate(trial, measurementType) {
   if (trial.initialValue === '' || trial.finalValue === '' || trial.elapsedTime === '') return null;
@@ -48,7 +50,7 @@ export default function KineticsPractice() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       try {
-        const stored = window.localStorage.getItem(EXPERIMENT_STORAGE_KEY);
+        const stored = readStorageWithLegacy(EXPERIMENT_STORAGE_KEY, LEGACY_STORAGE_KEYS.chemlabKinetics);
         if (stored) {
           const parsed = parseSavedExperiment(stored);
           if (parsed.error) {
@@ -123,6 +125,7 @@ export default function KineticsPractice() {
     if (!window.confirm('Clear this experiment notebook and its saved copy in this browser?')) return;
     try {
       window.localStorage.removeItem(EXPERIMENT_STORAGE_KEY);
+      window.localStorage.removeItem(LEGACY_STORAGE_KEYS.chemlabKinetics);
       setExperiment(createEmptyExperiment());
       setMessage('Experiment notebook cleared.');
       setMessageIsError(false);
@@ -139,9 +142,9 @@ export default function KineticsPractice() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 960 }}>
       <ToolHeader
-        eyebrow="Chemistry Lab C · 2027 · Manual C14"
+        eyebrow={`Chemistry Lab C · ${ACTIVE_SEASON.year} · Manual C14`}
         purpose="Design your own reaction-rate investigation and record the measurements you take. Enter initial and final amounts over an elapsed time and the average rate updates as you type."
-        manualReference="2027 Division C Rules Manual §3.f, p. C14"
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual §3.f, p. C14`}
         steps={[
           'Choose the factor you are varying and set the units you will record in.',
           'Add a trial for each run and enter the measured amounts and elapsed time — the average rate appears immediately.',

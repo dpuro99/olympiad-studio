@@ -3,29 +3,29 @@
 Source: supplied 2027 Division C Rules Manual, pp. C52–C56 (main event C52–C54 plus the official 2027 rock/mineral list C55–C56). Scope is rocks, minerals, and rock-forming processes, balanced across igneous, sedimentary, and metamorphic coverage. Identification is 30–50% of points; the rest is on topics and processes. Teams may bring the official specimen list, a binder of any size, and a field guide. Identification tools should be student-authored or generator-based, not a hardcoded answer bank. Because a binder plus external allowed items are permitted, the Reference & Study Compiler runs in binder mode with pinned external resources.
 
 ## Tool: Official-List Specimen Practice
-- **Status:** Planned
+- **Status:** Live — `src/components/events/rocksandminerals/SpecimenPractice.jsx` (engines `specimenDrillUtils.js` + `specimenCardsUtils.js`, shared editor `PropertyForm.jsx`)
 - **Category:** Practice
 - **Goal:** Practice identifying 2027 official-list specimens across minerals, rocks, and rock-forming processes.
-- **Core interaction loop:** 1) Author a specimen card (name, class, key physical properties, distinguishing notes, level) seeded from the official list. 2) Drill a chosen set or a random draw. 3) Reveal the answer and card details.
-- **Content & data:** User-authored cards seeded from the official 2027 Division C specimen list (manual pp. C55–C56) grouped as mineral / rock / rock-forming process; hard-to-distinguish pairs flagged. Cards, not a bundled answer key. Lead with properties rather than a single image — memorizing one photo is a known failure mode of ID flashcard tools.
-- **UI components:** Card author form, specimen chooser / random drill, flashcard prompt, reveal panel.
-- **Interactivity:** Authoring + drill: user-authored cards; interactive flip, self-grade, and random draw; Save/CSV are explicit actions.
-- **Scoring & feedback:** Practice-only; identification is 30–50% of event points, but this tool does not simulate official point breakdowns.
-- **Level gating:** starred State/National specimens from the list footnotes tagged per card.
-- **Persistence:** localStorage (explicit save/restore); CSV import/export.
-- **Open questions:** whether to ship a seeded starter set or require the full dataset to be entered via the management screen.
+- **Core interaction loop:** 1) Configure the deck: Regional or State/National scope, an optional chemical class, and whether to draw only cards with recorded properties. 2) Answer a generated multiple-choice question from the recorded properties (name hidden), or use Flashcard mode and self-grade after revealing. 3) Review the session scoreboard and missed list, drill the missed minerals again, and record missing properties inline.
+- **Content & data:** User-authored cards seeded from the official 2027 Division C specimen list (manual pp. C55–C56); every property value is student-authored, as in the Mineral ID Key, because the manual prints none. Distractors are generated at runtime and exclude any mineral whose recorded properties are identical to the answer's. Cards, not a bundled answer key.
+- **UI components:** Deck scope card with stage-by-stage counts, Graded/Flashcard tabs, generated choice buttons, reveal/card-details panel, session scoreboard, missed list, inline `PropertyForm`.
+- **Interactivity:** Drill: every readout derives from state; the name is hidden until answered or revealed, and self-grading is an explicit action because it records a result.
+- **Scoring & feedback:** Session-only scoreboard (asked / correct / missed / accuracy) and a de-duplicated missed list. Practice-only; identification is 30–50% of event points, but this tool does not simulate official point breakdowns.
+- **Level gating:** Regional by default; starred State/National specimens only when the scope toggle is on.
+- **Persistence:** The shared `specimen-cards` store (`olympiad-studio.rocksandminerals-c.<year>-specimen-cards`) is the only persistence: the drill session is session-only and the deck reshuffles only when its membership changes.
+- **Open questions:** none for minerals. Rock and rock-forming-process cards remain out of scope until the list supplies them (the 2027 official list is minerals only); see Process and Diagram Practice for the non-mineral half.
 
 ## Tool: Mineral Identification Key
-- **Status:** Planned
+- **Status:** Live — `src/components/events/rocksandminerals/MineralIdKey.jsx` (engine `specimenCardsUtils.js`, season list `src/seasons/2027/rocksandminerals.js`)
 - **Category:** Practice
-- **Goal:** Narrow candidate minerals from observed properties using a dichotomous/filter key.
-- **Core interaction loop:** 1) Select observed properties (luster, hardness, cleavage/fracture, streak, acid reaction, color/other). 2) The tool narrows the candidate list. 3) Compare remaining candidates and read the diagnostic reasoning.
-- **Content & data:** Manual-listed physical/other properties, limited habits, and formula/property relationships; a property filter over a user-authored specimen card set. No invented diagnostic criteria beyond manual/published sources.
-- **UI components:** Property selectors, live candidate list, reasoning panel.
-- **Interactivity:** Direct manipulation: property selections filter a live candidate list as they change.
-- **Scoring & feedback:** Practice feedback; does not simulate official scoring.
-- **Level gating:** none (list is year-specific).
-- **Persistence:** none (operates on authored cards if present).
+- **Goal:** Narrow candidate minerals from observed properties using a filter key over the official list.
+- **Core interaction loop:** 1) Record a mineral's properties (luster, hardness range, cleavage/fracture, streak, acid reaction, magnetism, notes) — inline or by exporting the list as CSV, filling it in a spreadsheet, and importing it back. 2) Select the properties you observed; the candidate list re-ranks live while each remaining mineral keeps its own record. 3) Compare the surviving candidates, read the reason each ruled-out mineral failed, and see which properties are still unrecorded for the unjudged ones.
+- **Content & data:** The official 2027 list (81 minerals, names + chemical-class grouping + State/National asterisks, pp. C55–C56) is transcribed into season data as a **skeleton**. **Every property value is student-authored** — the manual prints none (footnote 1: identification material is provided at the tournament), so no answer key is shipped. Shared with Official-List Specimen Practice through one `specimen-cards` store.
+- **UI components:** Scope card (State/National toggle, coverage count, judging legend), property filters, candidate / unjudged / ruled-out lists, inline property editor, CSV import/export, confirmed clear.
+- **Interactivity:** Direct manipulation: every property selection re-ranks the candidate list during render. Recording and import are explicit actions (authoring), and the live candidate list is the immediate feedback.
+- **Scoring & feedback:** Practice feedback; does not simulate official scoring. `match` / `needs properties recorded` / `ruled out` (+ the conflict) — an unrecorded property is never treated as a guess.
+- **Level gating:** Regional by default; starred State/National minerals appear only when the scope toggle is on.
+- **Persistence:** `localStorage` key `olympiad-studio.rocksandminerals-c.<year>-specimen-cards`; CSV import/export; corrupt or unavailable storage surfaces a recoverable alert.
 
 ## Tool: Process and Diagram Practice
 - **Status:** Planned

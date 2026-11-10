@@ -1,24 +1,22 @@
 // Geometry and pacing helpers for the Electric Vehicle Course & Geometry tool.
 //
-// Manual basis: 2027 Division C Rules Manual, pp. C26–C31 (+ official EV FAQ).
+// Manual basis: the Division C Rules Manual, pp. C26–C31 (+ official EV FAQ);
+// the season-bound constants live in src/seasons/2027/electricvehicle.js.
 // Run scoring is delegated to the verified scoreUtils.calculateRunScore so this
 // tool and the Score Calculator can never drift apart. Anything that depends on
 // a uniform-speed assumption rather than a manual rule is returned separately
 // and must be labelled as an assumption in the UI.
 
 import { calculateRunScore } from './scoreUtils.js';
+import { ACTIVE_DATA } from '../../../seasons/active.js';
 
 // Bottle-line distances announced by level (manual pp. C26–C31).
-export const LEVELS = [
-  { id: 'regional', label: 'Regional / Invitational', bottleLineM: 2 },
-  { id: 'state', label: 'State', bottleLineM: 3 },
-  { id: 'national', label: 'National', bottleLineM: 4 }
-];
+export const LEVELS = ACTIVE_DATA.electricvehicle.levels;
 
 // Construction limits (manual pp. C26–C31).
-export const MAX_VEHICLE_LENGTH_CM = 80.0;
-export const MAX_VEHICLE_WIDTH_CM = 35.0;
-export const PUSHER_BONUS_RATE_PT_PER_CM = 1.5;
+export const MAX_VEHICLE_LENGTH_CM = ACTIVE_DATA.electricvehicle.maxVehicleLengthCm;
+export const MAX_VEHICLE_WIDTH_CM = ACTIVE_DATA.electricvehicle.maxVehicleWidthCm;
+export const PUSHER_BONUS_RATE_PT_PER_CM = ACTIVE_DATA.electricvehicle.pusherBonusRatePtPerCm;
 
 export function levelById(levelId) {
   return LEVELS.find((level) => level.id === levelId) || LEVELS[0];

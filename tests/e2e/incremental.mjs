@@ -75,15 +75,16 @@ function changedFiles(baseline) {
 }
 
 function mapFilesToSpecs(changed, allSpecs) {
-  if (changed.some((file) => file.startsWith('src/components/events/'))) {
-    const touched = new Set(
-      changed
-        .filter((file) => file.startsWith('src/components/events/'))
-        .map((file) => file.split('/')[3])
-    );
+  // Narrow only when every changed path is event-local. One shared file in the
+  // same change set (season data, primitives, helpers) has to widen the scope,
+  // otherwise those edits go unaudited.
+  if (changed.every((file) => file.startsWith('src/components/events/'))) {
+    const touched = new Set(changed.map((file) => file.split('/')[3]));
     const targets = new Set(['core.spec.js']);
     for (const code of touched) {
-      const spec = allSpecs.find((s) => s.endsWith(`/events/${code}.spec.js`));
+      // allSpecs are specs-dir-relative (e.g. 'events/anatomy.spec.js'), so the
+      // match must not anchor on a leading slash.
+      const spec = allSpecs.find((s) => s.split(path.sep).join('/') === `events/${code}.spec.js`);
       if (spec) targets.add(spec);
     }
     return [...targets].sort();
@@ -93,9 +94,6 @@ function mapFilesToSpecs(changed, allSpecs) {
 }
 
 const fullSpecs = collectSpecs(specsDir);
-const eventCodes = fullSpecs
-  .filter((spec) => spec.includes('/events/'))
-  .map((spec) => path.basename(spec, '.spec.js'));
 
 const wantFull = process.argv.includes('full') || process.argv.includes('--full');
 const baselineFile = baselinePath();
@@ -117,7 +115,7 @@ if (wantFull || !baseline) {
     console.log('incremental: nothing changed since the last audit — nothing to test.');
     process.exit(0);
   }
-  selected = mapFilesToSpecs(changed, fullSpecs, eventCodes);
+  selected = mapFilesToSpecs(changed, fullSpecs);
   console.log(`incremental: ${changed.length} changed path(s) -> ${selected.length} spec file(s)`);
   for (const file of changed) console.log(`  changed: ${file}`);
 }

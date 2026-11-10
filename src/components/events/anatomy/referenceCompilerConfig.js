@@ -1,5 +1,7 @@
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
+import { fileStem, storageKey } from '../../../seasons/storageKeys.js';
 // Anatomy and Physiology C — Reference & Study Compiler config (sheet mode).
-// Objectives are transcribed from the verified 2027 overview in ./info.md,
+// Objectives are transcribed from the verified season overview in ./info.md,
 // which cites Division C Rules Manual pp. C3–C5. Specific required disease
 // lists live only in the manual; they are not reproduced here.
 
@@ -8,8 +10,9 @@ export const anatomyReferenceCompilerConfig = {
   eventName: 'Anatomy and Physiology',
   division: 'C',
   mode: 'sheet',
-  storageKey: 'olympiad-studio.anatomy-c.2027-reference-sheet',
-  fileStem: 'anatomy-c-2027-reference-sheet',
+  season: ACTIVE_SEASON,
+  storageKey: storageKey('anatomy', 'reference-sheet'),
+  fileStem: fileStem('anatomy', 'reference-sheet'),
   manualReference: 'Division C Rules Manual, pp. C3–C5',
   resource: {
     title: 'One double-sided 8.5 × 11 in sheet per team',

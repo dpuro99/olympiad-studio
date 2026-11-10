@@ -1,6 +1,8 @@
 import { calculateObservedRate, RATE_FACTORS } from './kinetics.js';
 
-export const EXPERIMENT_STORAGE_KEY = 'olympiad-studio-chemlab-kinetics-v1';
+import { storageKey } from '../../../seasons/storageKeys.js';
+
+export const EXPERIMENT_STORAGE_KEY = storageKey('chemlab', 'kinetics');
 
 export function createEmptyExperiment() {
   return {

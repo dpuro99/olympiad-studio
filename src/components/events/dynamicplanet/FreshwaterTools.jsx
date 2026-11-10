@@ -14,6 +14,7 @@ import {
   TextField,
   ToolHeader
 } from '../../general/ui/primitives';
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
 const toMeasurements = (rows) => rows
   .filter((row) => row !== '')
@@ -70,9 +71,9 @@ export default function FreshwaterTools() {
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 760 }}>
       <ToolHeader
-        eyebrow="Dynamic Planet C · 2027 · Manual C24–C25"
+        eyebrow={`Dynamic Planet C · ${ACTIVE_SEASON.year} · Manual C24–C25`}
         purpose="Enter your own measurements: read stream discharge as you type, then total an inflow/outflow set to see the net water-budget change. Every result is driven entirely by the values you measure; the tool contains no preset scenarios or fabricated data."
-        manualReference="2027 Division C Rules Manual §3.a.ii, §3.f.ii–iii, and §3.h.ii (pp. C24–C25)"
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual §3.a.ii, §3.f.ii–iii, and §3.h.ii (pp. C24–C25)`}
         steps={[
           'Discharge: enter cross-sectional area and average velocity; Q = A × v updates immediately.',
           'Add as many inflow and outflow amounts as your system needs and choose the shared volume unit.',

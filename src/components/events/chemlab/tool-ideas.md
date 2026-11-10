@@ -3,7 +3,7 @@
 Source: supplied 2027 Division C Rules Manual, pp. C14–C15. The event requires at least one activity in each of gases and kinetics; time is not scored or a tiebreaker. Nomenclature and stoichiometry are supporting tools that may appear — and are a strong generator target. Each participant may bring one double-sided 8.5 × 11 in sheet, so the Reference & Study Compiler runs in per-participant mode.
 
 ## Tool: Gas-Law Practice
-- **Status:** Live — `src/components/events/chemlab/GasLawPractice.jsx` (logic in `gasLaws.js`)
+- **Status:** Live — `src/components/events/chemlab/GasLawPractice.jsx` (logic in `gasLaws.js`; notebook shape/parse in `gasLawNotebook.js`)
 - **Category:** Calculator
 - **Goal:** Practice 2027 gas laws with unit-aware unknown solving.
 - **Core interaction loop:** 1) Choose a law (Boyle, Charles, Gay-Lussac, Avogadro, combined, ideal, Dalton partial-pressure remainder, Graham's rate ratio). 2) Enter known values with units. 3) Solve for the unknown and review step/unit conventions.
@@ -15,7 +15,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C14–C15. The event requires
 - **Persistence:** localStorage (explicit) + CSV export, formula-injection-safe.
 
 ## Tool: Reaction-Rate Experiment Notebook
-- **Status:** Live — `src/components/events/chemlab/KineticsPractice.jsx` (logic in `kinetics.js`)
+- **Status:** Live — `src/components/events/chemlab/KineticsPractice.jsx` (logic in `kinetics.js`; notebook shape/parse in `experimentNotebook.js`)
 - **Category:** Notebook
 - **Goal:** Run a user-authored reaction-rate experiment and compare measured average rates (Regional/Invitational scope).
 - **Core interaction loop:** 1) Select one manual-listed factor (temperature, concentration, particle size, catalyst). 2) Read the inline experimental-design guidance (change one variable at a time, control the rest) and mark items applied. 3) Write each trial's condition. 4) Enter own initial/final measurement and elapsed time. 5) Compare calculated average rates; record controls and write a conclusion.

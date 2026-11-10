@@ -5,6 +5,7 @@ import {
   COMPILER_STATUS,
   computeBudget,
   countCharacters,
+  countOrphanedBlocks,
   createEmptyState,
   DENSITY_PRESETS,
   indexObjectives,
@@ -23,33 +24,70 @@ import {
 const cardStyle = {
   background: 'var(--color-background-secondary)',
   border: '1px solid var(--color-border-tertiary)',
-  borderRadius: 'var(--border-radius-lg)',
-  padding: 18
+  borderRadius: 'var(--radius-lg)',
+  padding: 20,
+  boxShadow: 'var(--shadow-sm)'
+};
+const cardStyleMuted = {
+  background: 'var(--color-background-primary)',
+  border: '1px solid var(--color-border-secondary)',
+  borderRadius: 'var(--radius-md)',
+  padding: 12
 };
 const inputStyle = {
-  width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)',
+  width: '100%', padding: '10px 12px', background: 'var(--color-background-tertiary)',
   border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)',
-  borderRadius: 6, fontSize: 13, fontFamily: 'var(--font-mono)'
+  borderRadius: 'var(--radius-md)', fontSize: 13, fontFamily: 'var(--font-sans)'
 };
 const secondaryButton = {
   padding: '9px 12px', border: '1px solid var(--color-border-secondary)',
-  borderRadius: 'var(--border-radius-md)', color: 'var(--color-text-primary)',
-  background: 'transparent', fontSize: 12
+  borderRadius: 'var(--radius-md)', color: 'var(--color-text-primary)',
+  background: 'transparent', fontSize: 12, fontWeight: 600, cursor: 'pointer'
 };
 const primaryButton = {
-  padding: '9px 12px', border: 0, borderRadius: 'var(--border-radius-md)',
-  background: 'var(--color-text-info)', color: '#fff', fontWeight: 600, fontSize: 12
+  padding: '9px 12px', border: 0, borderRadius: 'var(--radius-md)',
+  background: 'var(--color-accent-primary)', color: 'var(--color-text-inverse)', fontWeight: 700, fontSize: 12, cursor: 'pointer'
 };
-
-const levelBadgeStyle = (level) => ({
-  fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '.04em', textTransform: 'uppercase',
-  color: level === 'national-only' ? 'var(--color-text-danger)' : level === 'state-national' ? 'var(--color-text-warning)' : 'var(--color-text-info)',
-  border: '1px solid var(--color-border-secondary)', borderRadius: 4, padding: '1px 5px', whiteSpace: 'nowrap'
+const statusChip = (active, accentColor) => ({
+  padding: '5px 10px', fontSize: 11, borderRadius: 'var(--radius-full)',
+  border: active ? '1px solid' + accentColor : '1px solid var(--color-border-secondary)',
+  background: active ? `color-mix(in srgb, ${accentColor} 15%, transparent)` : 'transparent',
+  color: active ? accentColor : 'var(--color-text-secondary)',
+  fontWeight: active ? 700 : 500, cursor: 'pointer',
+  transition: 'all var(--transition-fast)'
 });
 
+const levelBadgeStyle = (level) => {
+  const colors = {
+    'national-only': 'var(--color-text-danger)',
+    'state-national': 'var(--color-text-warning)',
+    'core': 'var(--color-text-info)'
+  };
+  const color = colors[level] || 'var(--color-text-info)';
+  return {
+    fontSize: 10, fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase',
+    color, border: `1px solid ${color}40`, borderRadius: 'var(--radius-full)', padding: '2px 8px', whiteSpace: 'nowrap'
+  };
+};
+
+// Explains what happened when a saved sheet came from a different manual or
+// references objectives the active manual no longer lists.
+function seasonNotice(config, restored) {
+  const parts = [];
+  if (Number.isInteger(restored.season) && restored.season !== config.season.year) {
+    parts.push(`This organizer was saved under the ${restored.season} manual and is now open in the ${config.season.year} one.`);
+  }
+  const orphaned = countOrphanedBlocks(config, restored.blocks);
+  if (orphaned > 0) {
+    parts.push(`${orphaned} block${orphaned === 1 ? '' : 's'} target objectives that are not in this manual; they stay saved but are hidden from the sheet.`);
+  }
+  return parts.join(' ');
+}
+
 export default function ReferenceCompiler({ config }) {
-  const [state, setState] = useState(createEmptyState);
-  const [savedSnapshot, setSavedSnapshot] = useState(() => serializeState(createEmptyState()));
+  const seasonYear = config.season.year;
+  const [state, setState] = useState(() => createEmptyState(seasonYear));
+  const [savedSnapshot, setSavedSnapshot] = useState(() => serializeState(createEmptyState(seasonYear)));
   const [loaded, setLoaded] = useState(false);
   const [message, setMessage] = useState('');
   const [messageIsError, setMessageIsError] = useState(false);
@@ -70,9 +108,14 @@ export default function ReferenceCompiler({ config }) {
             setMessage(parsed.error);
             setMessageIsError(true);
           } else {
-            setState(parsed.value);
-            setSavedSnapshot(serializeState(parsed.value));
-            setMessage('Saved reference sheet loaded from this browser.');
+            const restored = { ...parsed.value, season: seasonYear };
+            setState(restored);
+            setSavedSnapshot(serializeState(restored));
+            const notice = seasonNotice(config, parsed.value);
+            setMessage(notice
+              ? `Saved reference sheet loaded from this browser. ${notice}`
+              : 'Saved reference sheet loaded from this browser.');
+            setMessageIsError(false);
           }
         }
       } catch {
@@ -83,7 +126,7 @@ export default function ReferenceCompiler({ config }) {
       }
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [config.storageKey]);
+  }, [config, seasonYear]);
 
   const firstObjectiveId = (config.objectiveGroups[0]?.objectives[0]?.id) || '';
   const selectedObjectiveId = form.objectiveId || firstObjectiveId;
@@ -134,7 +177,7 @@ export default function ReferenceCompiler({ config }) {
   };
 
   const exportJson = () => {
-    const payload = { event: config.eventId, kind: 'reference-compiler', version: 1, state };
+    const payload = { event: config.eventId, kind: 'reference-compiler', version: 1, season: seasonYear, state };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -158,8 +201,10 @@ export default function ReferenceCompiler({ config }) {
         setMessageIsError(true);
         return;
       }
-      setState(parsed.value);
-      setMessage('Backup loaded into the editor. Save it to keep it in this browser.');
+      const restored = { ...parsed.value, season: seasonYear };
+      setState(restored);
+      const notice = seasonNotice(config, parsed.value);
+      setMessage(`Backup loaded into the editor.${notice ? ` ${notice}` : ''} Save it to keep it in this browser.`);
       setMessageIsError(false);
     };
     reader.onerror = () => {
@@ -176,7 +221,7 @@ export default function ReferenceCompiler({ config }) {
     } catch {
       // Ignore: we still reset the in-memory editor below.
     }
-    const empty = createEmptyState();
+    const empty = createEmptyState(seasonYear);
     setState(empty);
     setSavedSnapshot(serializeState(empty));
     setForm({ editingId: null, objectiveId: firstObjectiveId, title: '', body: '' });
@@ -196,26 +241,33 @@ export default function ReferenceCompiler({ config }) {
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 960 }}>
-      <section style={{ ...cardStyle, display: 'grid', gap: 8 }}>
-        <div style={{ color: 'var(--color-text-info)', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
-          {config.eventName} {config.division} · 2027 · {config.manualReference}
+      {/* Header / Context */}
+      <section style={{ ...cardStyle, display: 'grid', gap: 10 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+          <span style={{ color: 'var(--color-text-info)', fontSize: 11, fontFamily: 'var(--font-sans)', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase' }}>
+            {config.eventName} {config.division} · {seasonYear}
+          </span>
+          <span style={{ color: 'var(--color-text-tertiary)', fontSize: 11, fontWeight: 500 }}>{config.manualReference}</span>
         </div>
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
           Track the manual&rsquo;s objectives and compile the one allowed reference sheet. Content is authored by you and stored only in this browser; nothing is uploaded. This organizer does not replace the official Rules Manual.
         </p>
-        <div style={{ padding: '10px 12px', border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
-          <strong style={{ fontSize: 12 }}>Allowed resource: {config.resource.title}</strong>
-          <div style={{ color: 'var(--color-text-secondary)', fontSize: 12, marginTop: 4 }}>{config.resource.summary}</div>
+        <div style={{ padding: '12px 14px', border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--radius-md)', background: 'var(--color-background-primary)' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
+            <strong style={{ fontSize: 12 }}>Allowed resource: {config.resource.title}</strong>
+            <span style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>{config.resource.summary}</span>
+          </div>
           <ul style={{ margin: '6px 0 0', paddingLeft: 18, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.6 }}>
             {config.resource.constraints.map((line) => <li key={line}>{line}</li>)}
           </ul>
         </div>
       </section>
 
+      {/* Study Progress */}
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
           <h2 style={{ margin: 0, fontSize: 15 }}>Study progress</h2>
-          <span style={{ color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
+          <span style={{ color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
             {progress.confident}/{progress.total} confident · {progress.studying} studying
           </span>
         </div>
@@ -236,26 +288,27 @@ export default function ReferenceCompiler({ config }) {
         </div>
         {groupsForDisplay.map(({ group, objectives: objectivesForGroup }) => (
           <div key={group.id} style={{ display: 'grid', gap: 6 }}>
-            <div style={{ fontSize: 12, fontWeight: 600 }}>{group.label}</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-secondary)' }}>{group.label}</div>
             {objectivesForGroup.map((objective) => (
-              <div key={objective.id} style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center', padding: '6px 0', borderTop: '1px solid var(--color-border-tertiary)' }}>
+              <div key={objective.id} style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center', padding: '8px 0', borderTop: '1px solid var(--color-border-tertiary)' }}>
                 <span style={{ flex: '1 1 220px', fontSize: 12, lineHeight: 1.5 }}>{objective.label}</span>
                 <span style={levelBadgeStyle(objective.level)}>{LEVEL_LABELS[objective.level] || objective.level}</span>
                 <span style={{ display: 'inline-flex', gap: 4 }} role="group" aria-label={`Status for ${objective.label}`}>
                   {STATUS_ORDER.map((status) => {
                     const active = (state.objectiveStatus[objective.id] || COMPILER_STATUS.NOT_STARTED) === status;
+                    const statusColors = {
+                      [COMPILER_STATUS.NOT_STARTED]: 'var(--color-text-tertiary)',
+                      [COMPILER_STATUS.STUDYING]: 'var(--color-text-info)',
+                      [COMPILER_STATUS.CONFIDENT]: 'var(--color-text-success)'
+                    };
+                    const accentColor = statusColors[status] || 'var(--color-text-secondary)';
                     return (
                       <button
                         key={status}
                         type="button"
                         aria-pressed={active}
                         onClick={() => mutate((current) => setObjectiveStatus(current, objective.id, status))}
-                        style={{
-                          padding: '5px 8px', fontSize: 11, borderRadius: 'var(--border-radius-md)',
-                          border: `1px solid ${active ? 'var(--color-text-info)' : 'var(--color-border-secondary)'}`,
-                          background: active ? 'var(--color-background-info)' : 'transparent',
-                          color: active ? 'var(--color-text-info)' : 'var(--color-text-secondary)'
-                        }}
+                        style={statusChip(active, accentColor)}
                       >{STATUS_LABELS[status]}</button>
                     );
                   })}
@@ -266,6 +319,7 @@ export default function ReferenceCompiler({ config }) {
         ))}
       </section>
 
+      {/* Add/Edit Reference Block */}
       <section style={{ ...cardStyle, display: 'grid', gap: 14 }}>
         <h2 style={{ margin: 0, fontSize: 15 }}>{form.editingId ? 'Edit reference block' : 'Add reference block'}</h2>
         <form onSubmit={submitBlock} style={{ display: 'grid', gap: 12 }}>
@@ -294,34 +348,47 @@ export default function ReferenceCompiler({ config }) {
         </form>
       </section>
 
+      {/* Compiled Blocks */}
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 15 }}>Compiled blocks ({state.blocks.length})</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+          <h2 style={{ margin: 0, fontSize: 15 }}>Compiled blocks ({state.blocks.length})</h2>
+          {state.blocks.length > 0 && (
+            <span style={{ fontSize: 11, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
+              {state.blocks.filter(b => state.objectiveStatus[b.objectiveId] === COMPILER_STATUS.CONFIDENT).length} confident
+            </span>
+          )}
+        </div>
         {state.blocks.length === 0
-          ? <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12 }}>No reference blocks yet. Add one above.</p>
+          ? <div style={{ padding: '24px 12px', textAlign: 'center', color: 'var(--color-text-tertiary)' }}>
+              <i className="ti ti-file-text" style={{ fontSize: 24, marginBottom: 8, display: 'block', color: 'var(--color-text-tertiary)' }} aria-hidden="true"></i>
+              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>No reference blocks yet</div>
+              <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>Add your first block above to start building your reference sheet.</div>
+            </div>
           : config.objectiveGroups.map((group) => {
-            const rows = group.objectives.flatMap((objective) => blocksForObjective(objective.id).map((block) => ({ objective, block })));
-            if (rows.length === 0) return null;
-            return (
-              <div key={group.id} style={{ display: 'grid', gap: 8 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-secondary)' }}>{group.label}</div>
-                {rows.map(({ objective, block }) => (
-                  <article key={block.id} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
-                      <strong style={{ fontSize: 13 }}>{block.title || 'Reference block'}</strong>
-                      <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>{objective.label}</span>
-                    </div>
-                    {block.body && <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap' }}>{block.body}</p>}
-                    <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                      <button type="button" style={{ ...secondaryButton, padding: '4px 8px' }} onClick={() => editBlock(block)}>Edit</button>
-                      <button type="button" style={{ ...secondaryButton, padding: '4px 8px', color: 'var(--color-text-danger)' }} onClick={() => mutate((current) => removeBlock(current, block.id))}>Delete</button>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            );
-          })}
+              const rows = group.objectives.flatMap((objective) => blocksForObjective(objective.id).map((block) => ({ objective, block })));
+              if (rows.length === 0) return null;
+              return (
+                <div key={group.id} style={{ display: 'grid', gap: 8 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-secondary)', paddingBottom: 4, borderBottom: '1px solid var(--color-border-tertiary)' }}>{group.label}</div>
+                  {rows.map(({ objective, block }) => (
+                    <article key={block.id} style={{ ...cardStyleMuted, display: 'grid', gap: 8 }}>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
+                        <strong style={{ fontSize: 13 }}>{block.title || 'Reference block'}</strong>
+                        <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>{objective.label}</span>
+                      </div>
+                      {block.body && <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>{block.body}</p>}
+                      <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                        <button type="button" style={secondaryButton} onClick={() => editBlock(block)}>Edit</button>
+                        <button type="button" style={{ ...secondaryButton, color: 'var(--color-text-danger)' }} onClick={() => mutate((current) => removeBlock(current, block.id))}>Delete</button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              );
+            })}
       </section>
 
+      {/* Sheet Space Budget */}
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
         <h2 style={{ margin: 0, fontSize: 15 }}>Sheet space budget</h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'end' }}>
@@ -330,34 +397,58 @@ export default function ReferenceCompiler({ config }) {
               {DENSITY_PRESETS.map((preset) => <option key={preset.id} value={preset.id}>{preset.label} · {preset.hint}</option>)}
             </select>
           </label>
-          <span style={{ color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
+          <span style={{ color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-sans)', fontWeight: 600 }}>
             {budget.charCount} / {budget.capacity} characters
           </span>
         </div>
-        <div aria-hidden="true" style={{ height: 8, borderRadius: 4, background: 'var(--color-background-tertiary)', overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${Math.min(100, Math.round(budget.ratio * 100))}%`, background: budget.over ? 'var(--color-text-danger)' : 'var(--color-text-info)' }} />
+        <div aria-hidden="true" style={{ height: 10, borderRadius: 'var(--radius-full)', background: 'var(--color-background-tertiary)', overflow: 'hidden', position: 'relative' }}>
+          <div style={{ height: '100%', width: `${Math.min(100, Math.round(budget.ratio * 100))}%`, background: budget.over ? 'var(--color-text-danger)' : 'var(--color-accent-primary)', borderRadius: 'var(--radius-full)', transition: 'width 0.3s ease, background 0.2s ease' }} />
+          <div style={{ position: 'absolute', top: '50%', left: `${Math.min(100, Math.round(budget.ratio * 100))}%`, transform: 'translate(-50%, -50%)', width: 12, height: 12, borderRadius: '50%', background: budget.over ? 'var(--color-text-danger)' : 'var(--color-accent-primary)', border: '2px solid var(--color-background-secondary)', boxShadow: 'var(--shadow-sm)', pointerEvents: 'none' }} aria-hidden="true"></div>
         </div>
-        {budget.over
-          ? <div role="alert" style={{ color: 'var(--color-text-danger)', fontSize: 12 }}>About {budget.overBy} characters over one double-sided sheet at this density. Trim content or increase density.</div>
-          : <div style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>Approximate remaining room: {budget.capacity - budget.charCount} characters. Estimates are guidance, not a rule.</div>}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', fontSize: 11 }}>
+          {budget.over
+            ? <div role="alert" style={{ color: 'var(--color-text-danger)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <i className="ti ti-alert-circle" style={{ fontSize: 13 }} aria-hidden="true"></i>
+                About {budget.overBy} characters over at this density. Trim content or increase density.
+              </div>
+            : <div style={{ color: 'var(--color-text-secondary)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <i className="ti ti-check-circle" style={{ fontSize: 13, color: 'var(--color-text-success)' }} aria-hidden="true"></i>
+                Approximate remaining room: {budget.capacity - budget.charCount} characters. Estimates are guidance, not a rule.
+              </div>}
+        </div>
       </section>
 
       <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
           <h2 style={{ margin: 0, fontSize: 15 }}>Save, print &amp; export</h2>
           {dirty
-            ? <span style={{ color: 'var(--color-text-warning)', fontSize: 11 }}>Unsaved changes</span>
-            : <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>All changes saved</span>}
+            ? <span style={{ color: 'var(--color-text-warning)', fontSize: 11, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <i className="ti ti-alert-circle" style={{ fontSize: 12 }} aria-hidden="true"></i> Unsaved changes
+              </span>
+            : <span style={{ color: 'var(--color-text-secondary)', fontSize: 11, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <i className="ti ti-check-circle" style={{ fontSize: 12, color: 'var(--color-text-success)' }} aria-hidden="true"></i> All changes saved
+              </span>}
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button type="button" style={primaryButton} disabled={!loaded || !dirty} onClick={save}>{dirty ? 'Save in this browser' : 'Saved'}</button>
-          <button type="button" style={secondaryButton} onClick={() => window.print()}><i className="ti ti-printer" aria-hidden="true" /> Print sheet</button>
-          <button type="button" style={secondaryButton} onClick={exportJson}>Export JSON backup</button>
-          <button type="button" style={secondaryButton} onClick={() => importRef.current?.click()}>Import JSON</button>
+          <button type="button" style={secondaryButton} onClick={() => window.print()}>
+            <i className="ti ti-printer" aria-hidden="true" style={{ marginRight: 4 }}></i> Print sheet
+          </button>
+          <button type="button" style={secondaryButton} onClick={exportJson}>
+            <i className="ti ti-download" aria-hidden="true" style={{ marginRight: 4 }}></i> Export JSON backup
+          </button>
+          <button type="button" style={secondaryButton} onClick={() => importRef.current?.click()}>
+            <i className="ti ti-upload" aria-hidden="true" style={{ marginRight: 4 }}></i> Import JSON
+          </button>
           <input ref={importRef} type="file" accept="application/json,.json" onChange={importJson} style={{ display: 'none' }} />
-          <button type="button" style={{ ...secondaryButton, color: 'var(--color-text-danger)' }} onClick={clearAll}>Clear sheet</button>
+          <button type="button" style={{ ...secondaryButton, color: 'var(--color-text-danger)' }} onClick={clearAll}>
+            <i className="ti ti-trash" aria-hidden="true" style={{ marginRight: 4 }}></i> Clear sheet
+          </button>
         </div>
-        {message && <div role={messageIsError ? 'alert' : 'status'} style={{ color: messageIsError ? 'var(--color-text-danger)' : 'var(--color-text-secondary)', fontSize: 11 }}>{message}</div>}
+        {message && <div role={messageIsError ? 'alert' : 'status'} style={{ color: messageIsError ? 'var(--color-text-danger)' : 'var(--color-text-secondary)', fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}>
+          {messageIsError ? <i className="ti ti-alert-circle" style={{ fontSize: 13 }} aria-hidden="true"></i> : <i className="ti ti-info-circle" style={{ fontSize: 13 }} aria-hidden="true"></i>}
+          {message}
+        </div>}
       </section>
 
       <div className="reference-print-area" aria-hidden="true">

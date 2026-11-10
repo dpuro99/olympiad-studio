@@ -1,5 +1,7 @@
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
+import { fileStem, storageKey } from '../../../seasons/storageKeys.js';
 // Designer Genes C — Reference & Study Compiler config (sheet mode).
-// Objectives transcribed from the verified 2027 overview in ./info.md,
+// Objectives transcribed from the verified season overview in ./info.md,
 // which cites Division C Rules Manual pp. C20–C21.
 
 export const designerGenesReferenceCompilerConfig = {
@@ -7,8 +9,9 @@ export const designerGenesReferenceCompilerConfig = {
   eventName: 'Designer Genes',
   division: 'C',
   mode: 'sheet',
-  storageKey: 'olympiad-studio.designergenes-c.2027-reference-sheet',
-  fileStem: 'designergenes-c-2027-reference-sheet',
+  season: ACTIVE_SEASON,
+  storageKey: storageKey('designergenes', 'reference-sheet'),
+  fileStem: fileStem('designergenes', 'reference-sheet'),
   manualReference: 'Division C Rules Manual, pp. C20–C21',
   resource: {
     title: 'One double-sided 8.5 × 11 in sheet per team',

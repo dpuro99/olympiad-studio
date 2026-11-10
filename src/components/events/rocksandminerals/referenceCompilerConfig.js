@@ -1,5 +1,7 @@
+import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
+import { fileStem, storageKey } from '../../../seasons/storageKeys.js';
 // Rocks and Minerals C — Reference & Study Compiler config (binder mode + pinned external items).
-// Objectives transcribed from the verified 2027 overview in ./info.md,
+// Objectives transcribed from the verified season overview in ./info.md,
 // which cites Division C Rules Manual pp. C52–C56. Binder plus external items allowed.
 
 export const rocksAndMineralsReferenceCompilerConfig = {
@@ -7,12 +9,13 @@ export const rocksAndMineralsReferenceCompilerConfig = {
   eventName: 'Rocks and Minerals',
   division: 'C',
   mode: 'binder',
-  storageKey: 'olympiad-studio.rocksandminerals-c.2027-reference-binder',
-  fileStem: 'rocksandminerals-c-2027-reference-binder',
+  season: ACTIVE_SEASON,
+  storageKey: storageKey('rocksandminerals', 'reference-binder'),
+  fileStem: fileStem('rocksandminerals', 'reference-binder'),
   manualReference: 'Division C Rules Manual, pp. C52–C56',
   resource: {
-    title: 'Binder + commercial field guide + 2027 National Rocks and Minerals List',
-    summary: 'One binder of any size, one commercial field guide, and one copy of the 2027 National Rocks and Minerals List.',
+    title: `Binder + commercial field guide + ${ACTIVE_SEASON.year} National Rocks and Minerals List`,
+    summary: `One binder of any size, one commercial field guide, and one copy of the ${ACTIVE_SEASON.year} National Rocks and Minerals List.`,
     sides: 0,
     constraints: [
       'During specimen/display stations, only the official list may be removed from the binder.',
@@ -57,7 +60,7 @@ export const rocksAndMineralsReferenceCompilerConfig = {
       id: 'specimen-list',
       label: 'Specimen list & ID',
       objectives: [
-        { id: 'rm-list', label: '2027 National Rocks and Minerals List (seed cards; reference only)', level: 'core' },
+        { id: 'rm-list', label: `${ACTIVE_SEASON.year} National Rocks and Minerals List (seed cards; reference only)`, level: 'core' },
         { id: 'rm-id-strategy', label: 'Identification strategy and distinguishing pairs', level: 'core' }
       ]
     }

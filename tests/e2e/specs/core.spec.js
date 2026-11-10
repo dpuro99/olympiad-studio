@@ -8,12 +8,25 @@ import {
   expectModuleRendered,
   expectNoHorizontalOverflow,
   openModule,
+  SEASON_YEAR,
   seedNavigation,
   trackConsoleIssues
 } from '../helpers.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const appMap = JSON.parse(readFileSync(path.join(here, '../app-map.json'), 'utf8'));
+const rawAppMap = JSON.parse(readFileSync(path.join(here, '../app-map.json'), 'utf8'));
+const withSeason = (text) => text.replaceAll('{year}', String(SEASON_YEAR));
+const appMap = {
+  ...rawAppMap,
+  events: rawAppMap.events.map((event) => ({
+    ...event,
+    modules: event.modules.map((module) => ({
+      ...module,
+      label: withSeason(module.label),
+      expectText: withSeason(module.expectText)
+    }))
+  }))
+};
 
 test('landing page loads and a guest can enter from the landing view', async ({ page }, testInfo) => {
   const errors = trackConsoleIssues(page);

@@ -1,6 +1,8 @@
 import { calculateDaltonPartialPressure, calculateGrahamRateRatio, solveGasLaw } from './gasLaws.js';
 
-export const GAS_NOTEBOOK_STORAGE_KEY = 'olympiad-studio-chemlab-gases-v1';
+import { storageKey } from '../../../seasons/storageKeys.js';
+
+export const GAS_NOTEBOOK_STORAGE_KEY = storageKey('chemlab', 'gases');
 
 export function createEmptyGasNotebook() {
   return {

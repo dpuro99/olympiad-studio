@@ -1,28 +1,33 @@
 import { expect } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { ACTIVE_SEASON } from '../../src/seasons/manifest.js';
+import { fileStem, storageKey } from '../../src/seasons/storageKeys.js';
 
 export const BASE_PATH = '/olympiad-studio/';
 export const NAVIGATION_KEY = 'olympiad-studio-navigation';
 export const SCREENSHOT_DIR = 'test-results/screenshots';
 
-export const COMPILER_STORAGE_KEYS = {
-  anatomy: 'olympiad-studio.anatomy-c.2027-reference-sheet',
-  designergenes: 'olympiad-studio.designergenes-c.2027-reference-sheet',
-  chemlab: 'olympiad-studio.chemlab-c.2027-reference-sheet',
-  circuitlab: 'olympiad-studio.circuitlab-c.2027-reference-binder',
-  dynamicplanet: 'olympiad-studio.dynamicplanet-c.2027-reference-binder',
-  rocksandminerals: 'olympiad-studio.rocksandminerals-c.2027-reference-binder'
+export const SEASON_YEAR = ACTIVE_SEASON.year;
+
+// Reference-compiler keys/stems come from the season layer, so a season bump
+// updates the harness instead of leaving stale literals behind.
+const COMPILER_MODULES = {
+  anatomy: 'reference-sheet',
+  designergenes: 'reference-sheet',
+  chemlab: 'reference-sheet',
+  circuitlab: 'reference-binder',
+  dynamicplanet: 'reference-binder',
+  rocksandminerals: 'reference-binder'
 };
 
-export const COMPILER_FILE_STEMS = {
-  anatomy: 'anatomy-c-2027-reference-sheet',
-  designergenes: 'designergenes-c-2027-reference-sheet',
-  chemlab: 'chemlab-c-2027-reference-sheet',
-  circuitlab: 'circuitlab-c-2027-reference-binder',
-  dynamicplanet: 'dynamicplanet-c-2027-reference-binder',
-  rocksandminerals: 'rocksandminerals-c-2027-reference-binder'
-};
+export const COMPILER_STORAGE_KEYS = Object.fromEntries(
+  Object.entries(COMPILER_MODULES).map(([event, moduleId]) => [event, storageKey(event, moduleId)])
+);
+
+export const COMPILER_FILE_STEMS = Object.fromEntries(
+  Object.entries(COMPILER_MODULES).map(([event, moduleId]) => [event, fileStem(event, moduleId)])
+);
 
 export function seedNavigation(page, { eventId = null, moduleId, theme = 'light' } = {}) {
   const nav = {

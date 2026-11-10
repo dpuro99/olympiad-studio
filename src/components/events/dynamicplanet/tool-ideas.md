@@ -15,29 +15,29 @@ Source: supplied 2027 Division C Rules Manual, pp. C24–C25. This season is fre
 - **Persistence:** none.
 
 ## Tool: Freshwater Calculator Toolbox
-- **Status:** Planned
+- **Status:** Live — `src/components/events/dynamicplanet/FreshwaterToolbox.jsx` (logic in `freshwaterToolboxUtils.js`; citations and formula basis in `src/seasons/2027/dynamicplanet.js`)
 - **Category:** Calculator
 - **Goal:** Extend the live tools into a unit-aware toolbox covering the rest of the manual's quantitative freshwater content.
-- **Core interaction loop:** 1) Choose a calculator. 2) Enter user-provided values. 3) Read the unit-aware result with the course-content reference.
-- **Content & data:** Manual §3 course content — flood recurrence interval, stream order (network ordering), channel sinuosity, hydraulic gradient, Darcy/groundwater flow, residence time, sediment load/competence/capacity, and lake stratification/turnover; formulas checked against the course content. Immediate candidates: flood recurrence interval, stream order, sinuosity, hydraulic gradient, residence time.
-- **UI components:** Calculator chooser, per-calculator inputs, results panel.
-- **Interactivity:** Live: per-calculator results update as inputs are entered.
-- **Scoring & feedback:** Practice only; no invented official score weights.
+- **Core interaction loop:** 1) Choose a calculator. 2) Enter user-provided values in the unit measured. 3) Read the live result, the equation, and the manual section that names the quantity.
+- **Content & data:** Six calculators, each tied to the section that names the quantity: channel sinuosity (§3.d.i, where the manual explicitly asks for the calculation), hydraulic gradient (§3.g.iii), Darcy groundwater flow (§3.g.iii), reservoir residence time (§3.a.ii), flood recurrence interval (§3.f.iv), and Manning open-channel flow (§3.f.iii). The manual lists topics rather than printing formulas, so each calculator shows the section that names the quantity, the equation it applies, and whether that relationship is the standard definition for the quantity; the ranked-record plotting-position convention is explicitly left to the problem statement.
+- **UI components:** Calculator tabs, per-calculator unit-aware inputs (number + unit selector), live readouts, sinuosity/meander and well/water-table schematics, per-calculator citation footer.
+- **Interactivity:** Live: every result derives during render from the current inputs; no Calculate button.
+- **Scoring & feedback:** Practice only; results labeled practice, no invented official score weights.
 - **Level gating:** none.
 - **Persistence:** none.
-- **Open questions:** confirm which formulas the course content actually supplies (e.g., the recurrence-interval method) before labeling any as rule-derived.
+- **Open questions:** none blocking. Stream ordering and sediment load/competence/capacity were deliberately left to the generated-case tool below, because stream order needs a network surface and an explicit Strahler/Shreve convention before it is honest to compute.
 
 ## Tool: Freshwater Map and Hydrograph Practice
-- **Status:** Planned
+- **Status:** Live — `src/components/events/dynamicplanet/MapPractice.jsx` (logic in `mapPracticeUtils.js`; citations and conventions in `src/seasons/2027/dynamicplanet.js`)
 - **Category:** Practice
-- **Goal:** Practice topographic/contour, stream-network, groundwater, and hydrograph interpretation from generated cases.
-- **Core interaction loop:** 1) Choose a generated case (contour-map gradient, stream-network order, hydrograph lag/peak/recession, well-level/groundwater flow). 2) Reason/answer from the displayed evidence. 3) Review against the course content.
-- **Content & data:** Generated or clearly sourced datasets; no fabricated real-world records presented as authentic. Generating the cases removes the previous dependency on externally sourced station data.
-- **UI components:** Case viewer (SVG maps/charts), interpretation prompts, reference panel.
-- **Interactivity:** Direct manipulation: interactive SVG maps/hydrographs over generated cases, with interpretation prompts.
-- **Scoring & feedback:** Feedback on reasoning; practice only.
+- **Goal:** Practice the manual's interpretation tasks — topographic contours (§3.k.i), stream order (§3.c.ii), the water table from well data (§3.k.ii), and storm hydrographs (§3.k.iii) — from cases the tool generates itself.
+- **Core interaction loop:** 1) Pick a case type and read the generated SVG. 2) Enter the answers, or keep the seed and retry the same case. 3) Check to see per-question grading, the revealed map (well contours and flow arrow), and the worked reasoning.
+- **Content & data:** Four generators driven by an integer seed (`mulberry32`), so a case is reproducible and can be revisited: a synthetic tilted-plus-undulating height field with marching-squares contours (points A and B sit on labelled contours); a binary tributary network laid out from the tree; three well heads fitted to a water-table plane with regular 5 m contours and a downhill flow arrow; and a synthetic hydrograph with a hyetograph above it. No real place or station record is presented as authentic. Conventions the manual does not fix are stated in the case: Strahler ordering (Shreve noted), lag measured from the rainfall centroid, and the gradient as a straight-line average.
+- **UI components:** Case tabs, seed field with a New case button, one hand-rolled SVG per case (contour map with scale bar and contour labels, drainage network, well map with grid and reveal, hydrograph with hyetograph and axis ticks), numeric answer fields, explicit Check answers, per-question feedback with the expected value, worked solution, and a per-case citation footer.
+- **Interactivity:** Live where it is honest and explicit where it is not: the case redraws from the seed during render, answers and grading are state, and Check is an explicit action because grading and revealing the map are side effects, not recomputation.
+- **Scoring & feedback:** Per-question correct/not-yet with the accepted value and a three-line worked solution; practice only, never an official score.
 - **Level gating:** none.
-- **Persistence:** none.
+- **Persistence:** none (a case is reproducible from its seed, so there is nothing to save).
 
 ## Tool: Reference & Study Compiler
 - **Status:** Live — `src/components/events/dynamicplanet/DynamicPlanetReferenceCompiler.jsx` (shared engine `src/components/general/ReferenceCompiler.jsx`)
