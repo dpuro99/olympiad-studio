@@ -13,13 +13,10 @@ function parseRegistry(source) {
   const eventKeys = [...source.matchAll(/^ {2}([\w]+): (overview\(\{|{)/gm)];
   for (let i = 0; i < eventKeys.length; i += 1) {
     const id = eventKeys[i][1];
-    const isOverview = eventKeys[i][2].startsWith('overview');
     const start = eventKeys[i].index + eventKeys[i][0].length;
     const end = eventKeys[i + 1] ? eventKeys[i + 1].index : source.length;
     const body = source.slice(start, end);
     const moduleIds = [...body.matchAll(/id: '([^']+)'/g)].map((match) => match[1]);
-    // overview() synthesizes the shared 'main' module inside the helper.
-    if (isOverview) moduleIds.push('main');
     events[id] = new Set(moduleIds);
   }
   return events;

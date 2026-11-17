@@ -3,10 +3,10 @@
 Source: supplied 2027 Division C Rules Manual, pp. C26–C31 + official EV FAQ (checked Oct 8, 2026). The 2027 format is set-time + bottle push + reverse stop; old arc/can geometry and can-bonus assumptions are obsolete. EV already has the strongest tool set in the registry (score calculator + run logger), so the remaining planned work is complementary.
 
 ## Tool: Event Overview
-- **Status:** Live — `src/components/events/electricvehicle/ArcVisualizer.jsx`
+- **Status:** Live — folded into the field guide (`src/components/general/EventHome.jsx`), with the verified summary as event-level data in `src/components/events/registry.js`. No standalone tool or `ArcVisualizer.jsx` remains.
 - **Category:** Overview
 - **Goal:** Read the verified 2027 task, construction constraints, and run procedure.
-- **Core interaction loop:** Scroll the overview summary; follow links to the official FAQ and rules.
+- **Core interaction loop:** The summary appears under "Event rules at a glance" when the EV guide opens; follow links to the official FAQ and rules without opening a separate tool.
 - **Content & data:** Manual pp. C26–C31; 8-AA limit, 80 cm length, 35 cm width, rigid custom pusher, rear measurement point, impound, 8-minute/two-run window; official code-contribution clarification link.
 - **UI components:** Summary sections + source links.
 - **Interactivity:** Non-interactive by design: a static, verified reference summary. An interactive summary would add nothing; geometry practice is served by the Course & Geometry tool below.

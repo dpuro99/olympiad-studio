@@ -15,6 +15,7 @@ import {
 } from './freshwaterToolboxUtils';
 import {
   Card,
+  Collapsible,
   HelpText,
   MeasureField,
   NumberField,
@@ -22,17 +23,35 @@ import {
   SectionHeading,
   SelectField,
   StatusMessage,
-  Tabs,
+  Stepper,
   ToolHeader
 } from '../../general/ui/primitives';
 
 const CALCULATORS = [
-  { id: 'sinuosity', label: 'Sinuosity' },
-  { id: 'gradient', label: 'Hydraulic gradient' },
-  { id: 'darcy', label: 'Darcy flow' },
-  { id: 'residence', label: 'Residence time' },
-  { id: 'recurrence', label: 'Recurrence interval' },
-  { id: 'manning', label: 'Manning flow' }
+  { id: 'sinuosity', label: 'Sinuosity', hint: 'How much longer the channel is than the valley axis.' },
+  { id: 'gradient', label: 'Hydraulic gradient', hint: 'How much head is lost along a flow path.' },
+  { id: 'darcy', label: 'Darcy flow', hint: 'Groundwater discharge through an area.' },
+  { id: 'residence', label: 'Residence time', hint: 'How long water stays in a reservoir.' },
+  { id: 'recurrence', label: 'Recurrence interval', hint: 'Return period from an annual chance.' },
+  { id: 'manning', label: 'Manning flow', hint: 'Open-channel velocity and discharge.' }
+];
+
+// Only measurements count as progress — unit and display choices must not move the stepper.
+const REQUIRED = {
+  sinuosity: ['channel', 'valley'],
+  gradient: ['head', 'length'],
+  darcy: ['k', 'area', 'head', 'length'],
+  residence: ['storage', 'throughput'],
+  recurrence: ['probability'],
+  manning: ['area', 'perimeter', 'slope', 'roughness']
+};
+const FIRST_INPUT = {
+  sinuosity: 'channel', gradient: 'head', darcy: 'k', residence: 'storage', recurrence: 'probability', manning: 'area'
+};
+const WORKFLOW = [
+  { label: 'Pick a relationship' },
+  { label: 'Enter measurements' },
+  { label: 'Read the result' }
 ];
 
 const LENGTH_UNITS = unitOptions('length');
@@ -44,7 +63,7 @@ const CONDUCTIVITY_UNITS = unitOptions('conductivity');
 const PURPOSE = 'Compute the rest of Dynamic Planet’s quantitative freshwater relationships from your own measurements: channel sinuosity, hydraulic gradient, Darcy groundwater flow, reservoir residence time, flood recurrence, and Manning open-channel flow. Every result is driven entirely by the values you enter; nothing is preloaded, and results are practice, not official answers.';
 
 const STEPS = [
-  'Pick a calculator below.',
+  'Pick the freshwater relationship you want to calculate.',
   'Enter the measurements you took and choose the unit you measured them in — the result updates as you type.',
   'Read the result, the equation it comes from, and the manual section that names the quantity.'
 ];
@@ -79,16 +98,20 @@ function Readouts({ items }) {
   );
 }
 
-function Panel({ heading, intro, children, result, error, hint, equation, basis }) {
+function Panel({ heading, intro, children, advanced, advancedSummary, result, error, hint, equation, basis }) {
   return (
     <div style={{ display: 'grid', gap: 12 }}>
       <SectionHeading>{heading}</SectionHeading>
       <p style={bodyText}>{intro}</p>
       <div style={fieldGrid}>{children}</div>
+      {advanced && <Collapsible summary={advancedSummary}>{advanced}</Collapsible>}
       {error && <StatusMessage tone="error">{error}</StatusMessage>}
       {result}
       {!result && !error && hint && <HelpText>{hint}</HelpText>}
-      <HelpText>{equation}</HelpText>
+      <Collapsible summary="Show the equation">
+        <HelpText>{equation}</HelpText>
+      </Collapsible>
+      {/* The manual section stays on screen: a rule-derived number must never be unattributed. */}
       <p style={citationStyle}>
         <strong>{basis.citation}</strong> — {basis.basis}
       </p>
@@ -295,6 +318,15 @@ function DarcyPanel({ values, set, basis }) {
       hint="Enter conductivity, flow area, head change, and flow-path length to read the Darcy flux and discharge."
       equation="q = K · i,  Q = q · A,  v = q ÷ n (seepage velocity, when porosity is given)"
       basis={basis}
+      advancedSummary="Optional: seepage velocity"
+      advanced={
+        <NumberField
+          label="Effective porosity n (optional)"
+          value={values.porosity}
+          onChange={set('porosity')}
+          help="A fraction, not a percentage (0.25 = 25%). Leave blank to skip the seepage velocity."
+        />
+      }
       result={ok && (
         <Readouts items={[
           { label: 'Hydraulic gradient', value: `${formatMeasurement(result.gradient)} m/m` },
@@ -342,12 +374,6 @@ function DarcyPanel({ values, set, basis }) {
         units={LENGTH_UNITS}
         min="0"
       />
-      <NumberField
-        label="Effective porosity n (optional)"
-        value={values.porosity}
-        onChange={set('porosity')}
-        help="A fraction, not a percentage (0.25 = 25%). Leave blank to skip the seepage velocity."
-      />
     </Panel>
   );
 }
@@ -373,6 +399,17 @@ function ResidencePanel({ values, set, basis }) {
       hint="Enter the stored volume and the throughput rate to read the residence time."
       equation="τ = storage volume ÷ throughput (volume per unit time)"
       basis={basis}
+      advancedSummary="Time base & display units"
+      advanced={
+        <>
+          <SelectField label="Throughput time base" value={values.per} onChange={set('per')}>
+            {TIME_UNITS.map((unit) => <option key={unit} value={unit}>per {unit}</option>)}
+          </SelectField>
+          <SelectField label="Show the residence time in" value={values.show} onChange={set('show')}>
+            {TIME_UNITS.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
+          </SelectField>
+        </>
+      }
       result={ok && (
         <Readouts items={[
           { label: `Residence time (${values.show})`, value: `${formatMeasurement(fromSI(result.seconds, values.show, 'time'))} ${values.show}` },
@@ -401,12 +438,6 @@ function ResidencePanel({ values, set, basis }) {
         units={VOLUME_UNITS}
         min="0"
       />
-      <SelectField label="Throughput time base" value={values.per} onChange={set('per')}>
-        {TIME_UNITS.map((unit) => <option key={unit} value={unit}>per {unit}</option>)}
-      </SelectField>
-      <SelectField label="Show the residence time in" value={values.show} onChange={set('show')}>
-        {TIME_UNITS.map((unit) => <option key={unit} value={unit}>{unit}</option>)}
-      </SelectField>
     </Panel>
   );
 }
@@ -540,6 +571,10 @@ export default function FreshwaterToolbox() {
   };
 
   const toolbox = ACTIVE_DATA.dynamicplanet.toolbox;
+  const current = CALCULATORS.find((entry) => entry.id === mode) ?? CALCULATORS[0];
+  const entered = String(values[mode][FIRST_INPUT[mode]] ?? '').trim() !== '';
+  const filled = REQUIRED[mode].every((key) => String(values[mode][key] ?? '').trim() !== '');
+  const currentStep = filled ? 2 : entered ? 1 : 0;
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 860 }}>
@@ -555,7 +590,19 @@ export default function FreshwaterToolbox() {
       </ToolHeader>
 
       <Card style={{ display: 'grid', gap: 12 }}>
-        <Tabs tabs={CALCULATORS} active={mode} onChange={setMode} ariaLabel="Freshwater calculators" />
+        <Stepper steps={WORKFLOW} currentStep={currentStep} />
+        <SelectField
+          label="Relationship to calculate"
+          aria-label="Relationship to calculate"
+          value={mode}
+          onChange={(event) => setMode(event.target.value)}
+        >
+          {CALCULATORS.map((entry) => <option key={entry.id} value={entry.id}>{entry.label}</option>)}
+        </SelectField>
+        <p style={bodyText}>{current.hint}</p>
+      </Card>
+
+      <Card style={{ display: 'grid', gap: 12 }}>
         {mode === 'sinuosity' && <SinuosityPanel values={values.sinuosity} set={set('sinuosity')} basis={toolbox.sinuosity} />}
         {mode === 'gradient' && <GradientPanel values={values.gradient} set={set('gradient')} basis={toolbox.hydraulicGradient} />}
         {mode === 'darcy' && <DarcyPanel values={values.darcy} set={set('darcy')} basis={toolbox.darcyFlow} />}

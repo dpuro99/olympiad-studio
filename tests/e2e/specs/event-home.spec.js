@@ -33,27 +33,39 @@ test('the event guide lists the tools in order with one next step', async ({ pag
   await expect(page.getByRole('heading', { name: 'Electric Vehicle', level: 1 })).toBeVisible();
   await expectUniqueHeadingNames(page);
 
+  // The header's event-level links must resolve to real URLs and carry a citation.
+  // They previously read fields that only exist on modules, so href was undefined.
+  const headerLinks = page.locator('.field-guide-links a');
+  await expect(headerLinks).toHaveCount(2);
+  for (const link of await headerLinks.all()) {
+    await expect(link).toHaveAttribute('href', /^https:\/\//);
+  }
+  await expect(page.locator('.field-guide-cite')).not.toBeEmpty();
+
+  // The verified rule summary is folded into the guide, not a fourth tool.
+  await expect(page.getByRole('heading', { name: 'Event rules at a glance', level: 2 })).toBeVisible();
+  await expect(page.getByText(/pushes a water bottle past a line/i)).toBeVisible();
+
   // The spine follows the event's own journey, not the registry's file order.
   const rows = page.locator('.field-step');
-  await expect(rows).toHaveCount(4);
-  await expect(rows.nth(0)).toContainText('Event Overview');
-  await expect(rows.nth(1)).toContainText('Score Calculator');
-  await expect(rows.nth(2)).toContainText('Course & Geometry');
-  await expect(rows.nth(3)).toContainText('Practice Run Logger');
-  await expect(rows.nth(1)).toHaveAttribute('data-stage', 'reference');
-  await expect(rows.nth(3)).toHaveAttribute('data-stage', 'record');
+  await expect(rows).toHaveCount(3);
+  await expect(rows.nth(0)).toContainText('Score Calculator');
+  await expect(rows.nth(1)).toContainText('Course & Geometry');
+  await expect(rows.nth(2)).toContainText('Practice Run Logger');
+  await expect(rows.nth(0)).toHaveAttribute('data-stage', 'reference');
+  await expect(rows.nth(2)).toHaveAttribute('data-stage', 'record');
 
   // Exactly one next step. With nothing saved it points at the first step the
   // app can observe: calculators keep no saved work, so they can never be next.
   await expect(page.locator('.field-next')).toHaveCount(1);
-  await expect(rows.nth(3)).toContainText('Next');
+  await expect(rows.nth(2)).toContainText('Next');
 
   // An empty browser is reported as empty, not as progress.
   const rail = page.getByRole('complementary', { name: 'Your saved work' });
   await expect(rail.getByText(/Nothing saved in this browser yet/)).toBeVisible();
 
   await captureSnapshot(page, testInfo, 'event_home_ev_empty');
-  await rows.nth(3).click();
+  await rows.nth(2).click();
   // The exiting guide overlaps the lazy module shell for one transition frame,
   // so locate the heading by name instead of assuming a single <h1>.
   await expect(page.getByRole('heading', { name: 'Practice Run Logger', level: 1 }))
@@ -114,14 +126,14 @@ test('the lobby still lists every event and the index opens the same tools', asy
   await expect(page.locator('.event-card')).toHaveCount(appMap.events.length);
   await page.locator('.event-card').filter({ hasText: 'Rocks and Minerals' }).click();
   await expect(page.getByRole('heading', { name: 'Rocks and Minerals', level: 1 })).toBeVisible();
-  await expect(page.locator('.field-step')).toHaveCount(4);
+  await expect(page.locator('.field-step')).toHaveCount(3);
 
   // The full index is a disclosure: present but hidden until opened, then it navigates.
   const index = page.locator('.field-index');
   await expect(index.locator('.field-index-row').first()).toBeHidden();
-  await expect(index.getByText('All 4 tools in Rocks and Minerals')).toBeVisible();
+  await expect(index.getByText('All 3 tools in Rocks and Minerals')).toBeVisible();
   await index.locator('summary').click();
-  await expect(index.locator('.field-index-row')).toHaveCount(4);
+  await expect(index.locator('.field-index-row')).toHaveCount(3);
   await expect(index.locator('.field-index-row').first()).toBeVisible();
   await index.getByRole('button', { name: 'Mineral ID Key' }).click();
   await expect(page.getByRole('heading', { name: 'Mineral ID Key', level: 1 }))

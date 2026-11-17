@@ -1,9 +1,7 @@
 import { lazy } from 'react';
-import EventRulesOverview from '../general/EventRulesOverview';
 import { ACTIVE_DATA } from '../../seasons/active.js';
 import { ACTIVE_SEASON } from '../../seasons/manifest.js';
 
-const ArcVisualizer = lazy(() => import('./electricvehicle/ArcVisualizer'));
 const CourseGeometry = lazy(() => import('./electricvehicle/CourseGeometry'));
 const RunLogger = lazy(() => import('./electricvehicle/RunLogger'));
 const ScoreCalc = lazy(() => import('./electricvehicle/ScoreCalc'));
@@ -29,6 +27,8 @@ const MineralIdKey = lazy(() => import('./rocksandminerals/MineralIdKey'));
 const SpecimenPractice = lazy(() => import('./rocksandminerals/SpecimenPractice'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, journey = [], additionalModules = [] }) {
+  // The manual-verified summary is event-level data now: the field guide shows
+  // it directly, so there is no separate "Event Overview" tool to open.
   return {
     year: ACTIVE_SEASON.year,
     name,
@@ -37,23 +37,11 @@ function overview({ name, code, division, description, eventUrl, manualReference
     description,
     categories: ['Event'],
     journey,
-    modules: [{
-      id: 'main',
-      stage: 'learn',
-      gain: 'the manual’s task, timing, and constraints → a readable overview',
-      ti: 'ti-clipboard',
-      label: `${ACTIVE_SEASON.year} Event Overview`,
-      cat: 'Event',
-      live: true,
-      year: ACTIVE_SEASON.year,
-      component: EventRulesOverview,
-      desc: `Read a concise summary verified against the ${ACTIVE_SEASON.manualLabel}.`,
-      eventName: name,
-      manualReference,
-      ruleSummary,
-      eventUrl,
-      rulesUrl: ACTIVE_SEASON.rulesUrl
-    }, ...additionalModules]
+    manualReference,
+    ruleSummary,
+    eventUrl,
+    rulesUrl: ACTIVE_SEASON.rulesUrl,
+    modules: additionalModules
   };
 }
 
@@ -109,7 +97,7 @@ export const EVENT_REGISTRY = {
   boomilever: overview({
     name: 'Boomilever', code: 'BOOM', division: 'C',
     description: 'Build a cantilevered structure to support a load from a testing wall.',
-    journey: ['main', 'boomilever-estimator', 'boomilever-build-log'],
+    journey: ['boomilever-estimator', 'boomilever-build-log'],
     manualReference: 'Division C Rules Manual, pp. C7–C12',
     ruleSummary: [
       'One prebuilt wood-and-adhesive structure; Eye Protection B; no impound; six-minute setup/testing window.',
@@ -340,7 +328,7 @@ export const EVENT_REGISTRY = {
   dynamicplanet: overview({
     name: 'Dynamic Planet', code: 'DYN', division: 'C',
     description: `${ACTIVE_SEASON.year} focus: properties and processes of Earth’s fresh waters.`,
-    journey: ['main', 'freshwater-toolbox', 'freshwater-tools', 'map-practice', 'dynamicplanet-reference-compiler'],
+    journey: ['freshwater-toolbox', 'freshwater-tools', 'map-practice', 'dynamicplanet-reference-compiler'],
     manualReference: 'Division C Rules Manual, pp. C24–C25',
     ruleSummary: [
       'Exam and/or timed stations; a binder of any size is allowed. If the event features rotation through material-display stations, nothing may be removed from the binder throughout the event.',
@@ -422,18 +410,19 @@ export const EVENT_REGISTRY = {
     division: 'C',
     description: 'Design, build, and test an electric vehicle that pushes a bottle past a line, then reverses to stop near a target.',
     categories: ['Event', 'Testing'],
-    journey: ['arc', 'score', 'course', 'log'],
+    journey: ['score', 'course', 'log'],
+    manualReference: 'Division C Rules Manual, pp. C26–C31',
+    ruleSummary: [
+      'The vehicle travels for a set time, pushes a water bottle past a line, then reverses to stop near the Target Point.',
+      'Electrical energy comes from at most eight AA batteries; lithium/lead batteries and energy storage beyond battery output are prohibited.',
+      'Maximum dimensions: 80.0 cm long and 35.0 cm wide. A fixed, rigid Bottle Pusher leads the vehicle; the rear Measurement Point is the vehicle’s rearmost part.',
+      'One vehicle is impounded. Teams receive up to 8 minutes of Event Time and up to two runs.',
+      'The Event Supervisor announces Target Distance, Target Time, and Bottle Line Distance after impound; values are shared by teams at that competition.'
+    ],
+    eventUrl: 'https://www.soinc.org/electric-vehicle-c',
+    rulesUrl: ACTIVE_SEASON.rulesUrl,
+    clarificationsUrl: 'https://www.soinc.org/faq/electric-vehicle-div-c',
     modules: [
-      {
-        id: 'arc', ti: 'ti-vector-triangle', label: `${ACTIVE_SEASON.year} Event Overview`, cat: 'Event',
-        stage: 'learn',
-        gain: 'the run procedure and construction limits → a checked overview',
-        live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: ArcVisualizer,
-        desc: `Verified task, construction constraints, and run procedure from the ${ACTIVE_SEASON.manualLabel}.`,
-        eventName: 'Electric Vehicle',
-        manualReference: 'Division C Rules Manual, pp. C26–C31',
-        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: ACTIVE_SEASON.rulesUrl
-      },
       {
         id: 'score', ti: 'ti-trophy', label: 'Score Calculator', cat: 'Testing',
         stage: 'reference',
@@ -470,7 +459,7 @@ export const EVENT_REGISTRY = {
   rocksandminerals: overview({
     name: 'Rocks and Minerals', code: 'ROCK', division: 'C',
     description: 'Identify and classify rocks and minerals and connect them to geologic processes, Earth history, resources, and society.',
-    journey: ['main', 'mineral-id-key', 'specimen-practice', 'rocksandminerals-reference-compiler'],
+    journey: ['mineral-id-key', 'specimen-practice', 'rocksandminerals-reference-compiler'],
     manualReference: 'Division C Rules Manual, pp. C52–C56',
     ruleSummary: [
       `Identification is 30–50% of points; rock and mineral topics are balanced. Teams may bring the ${ACTIVE_SEASON.year} list, binder and field guide.`,

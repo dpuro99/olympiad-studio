@@ -4,7 +4,6 @@
       "code": "anatomy",
       "label": "Anatomy and Physiology",
       "modules": [
-        { "id": "main", "label": "{year} Event Overview", "expectText": "{year} overview" },
         { "id": "anatomy-notes", "label": "Practice Notes", "expectText": "Add a note" },
         { "id": "anatomy-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
       ]
@@ -13,7 +12,6 @@
       "code": "boomilever",
       "label": "Boomilever",
       "modules": [
-        { "id": "main", "label": "{year} Event Overview", "expectText": "{year} overview" },
         { "id": "boomilever-estimator", "label": "Efficiency Estimator", "expectText": "Structure efficiency estimator" },
         { "id": "boomilever-build-log", "label": "Build/Test Log", "expectText": "Log a build" }
       ]
@@ -22,7 +20,6 @@
       "code": "chemlab",
       "label": "Chemistry Lab",
       "modules": [
-        { "id": "main", "label": "{year} Event Overview", "expectText": "{year} overview" },
         { "id": "gas-laws", "label": "Gas-Law Practice", "expectText": "Gas-law unknown solver" },
         { "id": "kinetics", "label": "Kinetics Practice", "expectText": "Your measurements and rates" },
         { "id": "stoichiometry", "label": "Stoichiometry & Nomenclature", "expectText": "Practice score" },
@@ -33,7 +30,6 @@
       "code": "circuitlab",
       "label": "Circuit Lab",
       "modules": [
-        { "id": "main", "label": "{year} Event Overview", "expectText": "{year} overview" },
         { "id": "circuit-practice", "label": "Circuit Practice Calculator", "expectText": "Equivalent resistance" },
         { "id": "digital-logic", "label": "Digital Logic Workbench", "expectText": "Gate truth tables" },
         { "id": "circuitlab-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
@@ -43,7 +39,6 @@
       "code": "designergenes",
       "label": "Designer Genes",
       "modules": [
-        { "id": "main", "label": "{year} Event Overview", "expectText": "{year} overview" },
         { "id": "molecular-sequences", "label": "Molecular Sequence Workbench", "expectText": "DNA sequence" },
         { "id": "designergenes-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
       ]
@@ -52,7 +47,6 @@
       "code": "dynamicplanet",
       "label": "Dynamic Planet",
       "modules": [
-        { "id": "main", "label": "{year} Event Overview", "expectText": "{year} overview" },
         { "id": "freshwater-tools", "label": "Freshwater Measurement Tools", "expectText": "Stream discharge" },
         { "id": "freshwater-toolbox", "label": "Freshwater Calculator Toolbox", "expectText": "Channel sinuosity" },
         { "id": "map-practice", "label": "Map & Hydrograph Practice", "expectText": "Topographic contour gradient" },
@@ -63,7 +57,6 @@
       "code": "ev",
       "label": "Electric Vehicle",
       "modules": [
-        { "id": "arc", "label": "{year} Event Overview", "expectText": "Electric Vehicle C" },
         { "id": "score", "label": "Score Calculator", "expectText": "Electric Vehicle score calculator" },
         { "id": "course", "label": "Course & Geometry", "expectText": "Required average speed" },
         { "id": "log", "label": "Practice Run Logger", "expectText": "Practice run journal" }
@@ -73,7 +66,6 @@
       "code": "rocksandminerals",
       "label": "Rocks and Minerals",
       "modules": [
-        { "id": "main", "label": "{year} Event Overview", "expectText": "{year} overview" },
         { "id": "mineral-id-key", "label": "Mineral ID Key", "expectText": "What did you observe?" },
         { "id": "specimen-practice", "label": "Specimen Practice", "expectText": "Only recorded minerals" },
         { "id": "rocksandminerals-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
@@ -82,9 +74,7 @@
     {
       "code": "writeitdoit",
       "label": "Write It, Do It",
-      "modules": [
-        { "id": "main", "label": "{year} Event Overview", "expectText": "{year} overview" }
-      ]
+      "modules": []
     }
   ]
 }

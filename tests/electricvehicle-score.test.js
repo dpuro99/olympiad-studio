@@ -5,7 +5,6 @@ import { calculateFinalScore, calculateRunScore } from '../src/components/events
 import { ACTIVE_SEASON } from '../src/seasons/manifest.js';
 
 const registrySource = readFileSync(new URL('../src/components/events/registry.js', import.meta.url), 'utf8');
-const evOverviewSource = readFileSync(new URL('../src/components/events/electricvehicle/ArcVisualizer.jsx', import.meta.url), 'utf8');
 
 test('registry is limited to current-season project events', () => {
   assert.match(registrySource, /year: ACTIVE_SEASON\.year/);
@@ -84,10 +83,12 @@ test('National event-time bonus and missed-impound final penalty are applied onl
   assert.equal(calculateFinalScore({ runScores: [100, 110], eventTimeUsedSec: 481, nationalTournament: true }), null);
 });
 
-test('EV overview contains verified constraints and points to the official FAQ', () => {
-  assert.match(evOverviewSource, /pushes a water bottle past a line/i);
-  assert.match(evOverviewSource, /eight AA batteries/i);
-  assert.match(evOverviewSource, /80\.0 cm/i);
-  assert.match(evOverviewSource, /8 minutes/i);
-  assert.match(evOverviewSource, /faq\/electric-vehicle-div-c/i);
+test('EV event summary contains verified constraints and points to the official FAQ', () => {
+  // The summary now lives as event-level data in the registry and is rendered
+  // by the field guide, so guard the verified strings at their new home.
+  assert.match(registrySource, /pushes a water bottle past a line/i);
+  assert.match(registrySource, /eight AA batteries/i);
+  assert.match(registrySource, /80\.0 cm/i);
+  assert.match(registrySource, /8 minutes/i);
+  assert.match(registrySource, /faq\/electric-vehicle-div-c/i);
 });

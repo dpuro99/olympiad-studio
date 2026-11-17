@@ -76,7 +76,7 @@ Shared views consume registry data. New tools must be registered rather than har
 
 One page per event, derived entirely from the registry entry:
 
-- `src/components/general/EventHome.jsx` renders the header (division/code/year eyebrow, `<h1>` event name, description, event + rules links, `manualReference`), the numbered `.field-spine` of `.field-step` rows (icon, name, stage chip, `gain`, saved-work chip, one `.field-next`), the `.field-rail` (`complementary`, named "Your saved work"), and a collapsible `.field-index` listing every tool.
+- `src/components/general/EventHome.jsx` renders the header (division/code/year eyebrow, `<h1>` event name, description, event + rules links, `manualReference`), the folded-in "Event rules at a glance" summary from event-level `ruleSummary`/`clarificationsUrl`, the numbered `.field-spine` of `.field-step` rows (icon, name, stage chip, `gain`, saved-work chip, one `.field-next`), the `.field-rail` (`complementary`, named "Your saved work"), and a collapsible `.field-index` listing every tool. Events with zero tools (Write It, Do It) show only the header and summary. The overview is no longer a separate registry module: `overview()` puts its facts on the event instead of synthesizing a `main` module, and EV's facts live on the `ev` entry instead of an `arc` module.
 - `src/components/general/stages.js` owns the five-stage vocabulary `learn → prepare → practice → record → reference` with `STAGE_META`, `stageIndex`, `normalizeStage`, and `stageMeta`. A module with no stage falls back to `practice` rather than disappearing.
 - `src/components/general/journeyUtils.js` is pure: `buildJourney(event)` appends any module the `journey` override forgets in stage order, `pickNextStep(steps)` returns the first tracked step without saved work, and `summarizeJourney(steps)` reports real counts only.
 - `src/components/general/eventProgress.js` is the read-only `localStorage` probe: `SIGNALS` maps a registry `signal` name to its storage module and counting rule, `probeModuleProgress` returns `{ kind, count, started, label, unavailable }`, and blocked or corrupt storage is `unavailable` (reported as "unreadable") rather than empty. `STORAGE_EVENT_IDS` maps the shell id `ev` to the storage token `electricvehicle` before calling `storageKey`.
@@ -86,7 +86,7 @@ One page per event, derived entirely from the registry entry:
 
 - `src/components/general/` contains the public landing page and dashboard shell views.
 - `src/components/events/[event-name]/` contains event-specific UI and domain logic.
-- EV geometry belongs in `electricvehicle/ArcVisualizer.jsx` or a nearby EV utility module.
+- EV geometry belongs in `electricvehicle/CourseGeometry.jsx` with its pure logic in `courseUtils.js`; the manual-verified event overview is event-level registry data rendered by the field guide, not a separate tool component.
 - EV scoring belongs in `electricvehicle/ScoreCalc.jsx` or a nearby EV utility module.
 - EV practice persistence belongs in `electricvehicle/RunLogger.jsx` and currently writes only to browser `localStorage`.
 - R&M mineral property storage and candidate ranking live in `rocksandminerals/specimenCardsUtils.js`; the official mineral list, its classes/levels and the key's citations belong in season data. One `specimen-cards` store is shared by every R&M practice tool, so a second tool must extend the engine rather than open its own key.

@@ -22,8 +22,9 @@ test('freshwater workbench computes discharge and water-budget balance live', as
 test('reference compiler: full author/save/prune/export/clear flow', async ({ page }, testInfo) => {
   await flowReferenceCompiler(page, testInfo, { eventId: 'dynamicplanet' });
 });
-test('freshwater calculator toolbox derives each relationship live and keeps inputs across tabs', async ({ page }, testInfo) => {
+test('freshwater calculator toolbox derives each relationship live and keeps inputs across choices', async ({ page }, testInfo) => {
   const errors = await openModule(page, testInfo, { eventId: 'dynamicplanet', moduleId: 'freshwater-toolbox' });
+  const choose = (id) => page.getByRole('combobox', { name: 'Relationship to calculate' }).selectOption(id);
   await expect(page.getByRole('heading', { name: 'Channel sinuosity', level: 2 })).toBeVisible();
 
   // Sinuosity fills from the fields as typed.
@@ -33,18 +34,18 @@ test('freshwater calculator toolbox derives each relationship live and keeps inp
   await expect(page.getByText('Meandering', { exact: true })).toBeVisible();
   await expect(page.getByText('50%', { exact: true })).toBeVisible();
 
-  // Switching tabs and coming back keeps the measurements.
-  await page.getByRole('tab', { name: 'Hydraulic gradient' }).click();
+  // Switching relationships and coming back keeps the measurements.
+  await choose('gradient');
   await expect(page.getByRole('heading', { name: 'Hydraulic gradient', level: 2 })).toBeVisible();
   await page.getByLabel('Head change Δh (m)').fill('10');
   await page.getByLabel('Flow-path length L (m)').fill('100');
   await expect(page.getByText('0.1 m/m')).toBeVisible();
   await expect(page.getByText('10%', { exact: true })).toBeVisible();
-  await page.getByRole('tab', { name: 'Sinuosity' }).click();
+  await choose('sinuosity');
   await expect(page.getByLabel('Channel (thalweg) length (km)')).toHaveValue('1.5');
 
   // Darcy: K = 1e-5 m/s over a 0.01 gradient gives q = 1e-7 m/s through 1000 m².
-  await page.getByRole('tab', { name: 'Darcy flow' }).click();
+  await choose('darcy');
   await page.getByLabel('Hydraulic conductivity K unit').selectOption('m/s');
   await page.getByLabel('Hydraulic conductivity K (m/s)').fill('0.00001');
   await page.getByLabel('Flow cross-sectional area A (m²)').fill('1000');
@@ -52,23 +53,24 @@ test('freshwater calculator toolbox derives each relationship live and keeps inp
   await page.getByLabel('Flow-path length L (m)').fill('200');
   await expect(page.getByText('1.00e-7 m/s')).toBeVisible();
   await expect(page.getByText('8.64 m³/day')).toBeVisible();
+  await page.getByText('Optional: seepage velocity').click();
   await page.getByLabel('Effective porosity n (optional)').fill('0.25');
   await expect(page.getByText('4.00e-7 m/s')).toBeVisible();
 
   // Residence time: 10⁶ m³ at 1 m³/s is about 11.57 days.
-  await page.getByRole('tab', { name: 'Residence time' }).click();
+  await choose('residence');
   await page.getByLabel('Stored volume (m³)').fill('1000000');
   await page.getByLabel('Throughput (m³)').fill('1');
   await expect(page.getByText('11.57 day')).toBeVisible();
 
   // Recurrence: 2% annual chance is a 50-year return period.
-  await page.getByRole('tab', { name: 'Recurrence interval' }).click();
+  await choose('recurrence');
   await page.getByLabel('Annual exceedance probability (%)').fill('2');
   await expect(page.getByText('50 yr')).toBeVisible();
   await expect(page.getByText('18.29%')).toBeVisible();
 
   // Manning: R = 2/3 m, v ≈ 0.8044 m/s at n = 0.03 and S = 0.001.
-  await page.getByRole('tab', { name: 'Manning flow' }).click();
+  await choose('manning');
   await page.getByLabel('Flow cross-sectional area A (m²)').fill('2');
   await page.getByLabel('Wetted perimeter P (m)').fill('3');
   await page.getByLabel('Channel slope S (m/m)').fill('0.001');

@@ -1,7 +1,7 @@
 # Active Context
 
 ## Current Focus (2026-11-17)
-**Phase 2.5 — Intuitive workflow & tool simplification.** Approved and recorded in `memory_bank/roadmap.md` v1.8. Two tracks: Track A makes each event read as an ordered workflow; Track B makes each tool less busy. Track B runs first, opening with `FreshwaterToolbox.jsx`. The 2026-11-05 redesign foundation and 2026-11-12 field guide are the preceding work and are functionally unchanged.
+**Phase 2.5 — Intuitive workflow & tool simplification.** Approved and recorded in `memory_bank/roadmap.md` v1.8. Two tracks: Track A makes each event read as an ordered workflow; Track B makes each tool less busy. Track B runs first. First pass complete: `FreshwaterToolbox.jsx` now shows one calculator at a time behind a stepper + select, with optional inputs and equations collapsed. Also folded the manual-verified overview into the field guide and removed the standalone overview tool — the guide now carries the rule summary, citation and working event/rules links, and events with no tools (WIDI) show only that summary. Both changes are verified and **await the commit David approved with "Go"**. Next = B1 (CircuitLabPractice, ScoreCalc, BoomileverEstimator, FreshwaterTools, KineticsPractice, GasLawPractice). The 2026-11-05 redesign foundation and 2026-11-12 field guide are the preceding work, committed as baseline `3d4bf32`.
 
 ## Recent Changes
 - Created `PRODUCT.md` (product truth for redesign).
@@ -22,7 +22,8 @@
 
 ## Blockers / Uncertainties
 - **Resolved 2026-11-17:** the "58 pre-existing uncommitted modified files" warning was stale. Re-checked: 27 entries, all this project's own uncommitted redesign + field-guide work (no alien changes). User approved committing them as the baseline before Phase 2.5 starts.
-- `Stepper` and `Accordion` are exported from `ui/primitives.jsx` but used by no tool — dead code from the 2026-11-05 pass. Batch B2 either uses them or deletes them.
+- `Stepper` is now used by `FreshwaterToolbox.jsx` (first 2.5 pass); `Accordion` is still exported from `ui/primitives.jsx` but unused — B2 either uses it or deletes it.
+- The FreshwaterToolbox simplification and the overview-into-guide merge are verified (191 unit / lint / build, focused Playwright 70/70, full e2e sweep pending) and await the commit David approved with "Go" — do not push or open a PR.
 
 ## Recent Changes (2026-11-05 continued)
 - Improved module page chrome in `src/App.jsx`/`src/index.css` for better navigation/ease of use: breadcrumbs now show in workspace home + module pages; sidebar header shows current event name + Division/code; loading spinner uses Citrus accent + accessible text; consistent content padding (`0 24px 32px`); friendly "Module not found" empty state with back action; `@keyframes spin` in CSS.
@@ -35,7 +36,8 @@
 - Earlier this pass: `src/components/general/Home.jsx` event cards show ready-tool previews with clearer ARIA labels; `EventRulesOverview.jsx` and shared `ReferenceCompiler.jsx` (all 6 event compilers) shed robotic mono for sans styling; reference compiler primary actions use Citrus accent; `.breadcrumb-link` hover styling, Citrus `::selection`, `button:disabled` state added to `src/index.css`.
 
 ## Next Steps (2026-11-17)
-1. Commit the existing redesign + field-guide work as the clean baseline (explicitly approved).
-2. Phase 2.5 Track B: simplify `FreshwaterToolbox.jsx` first (stepper over six calculators, one visible at a time), then B1 → B3 → B4, each with `npm test`/`lint`/`build` and the event e2e flow.
-3. Track A afterwards: tune each event's `journey`/`gain` and the guide's next-step wording.
-4. Update `progress.md` as each batch lands. Do **not** push or open a PR without a new explicit ask; commits are only for what David approves.
+1. Baseline redesign + field-guide work committed as `3d4bf32` (done).
+2. Commit the verified `FreshwaterToolbox.jsx` simplification and the overview-into-guide merge together — David said "Go" to that commit; do not push or open a PR.
+3. Phase 2.5 Track B continues with B1 (CircuitLabPractice, ScoreCalc, BoomileverEstimator, FreshwaterTools, KineticsPractice, GasLawPractice) → B3 → B4, each with `npm test`/`lint`/`build` and the event e2e flow.
+4. Track A afterwards: tune each event's `journey`/`gain` and the guide's next-step wording.
+5. Update `progress.md` as each batch lands. Do **not** push or open a PR without a new explicit ask; commits are only for what David approves.

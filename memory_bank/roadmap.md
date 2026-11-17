@@ -10,7 +10,7 @@
 - **Sizing legend:** S ≤ half session · M ≈ one session · L ≈ multiple sessions.
 - **Roadmap maintenance:** when work is completed, move Current position and strike the item's status. Substantive scope/decision changes get a dated changelog line at the bottom of this file and a version bump (e.g. 1.1) — append, never rewrite history.
 
-**Current position:** Phase 0 complete (2026-10-19) · Phase 1 complete (2026-10-27) · Phase 2 items 1–5 (DG Molecular Sequence Workbench, DP Freshwater Calculator Toolbox, DP Map & Hydrograph Practice, R&M Mineral ID Key, R&M Specimen Practice) complete (2026-10-27 → 2026-11-01) · **Phase 2.5 approved (2026-11-17); Track B in progress, first pass = `FreshwaterToolbox.jsx`** · Phase 2 item 6 (Anatomy Respiratory Data Practice) is deferred until Phase 2.5 exits.
+**Current position:** Phase 0 complete (2026-10-19) · Phase 1 complete (2026-10-27) · Phase 2 items 1–5 (DG Molecular Sequence Workbench, DP Freshwater Calculator Toolbox, DP Map & Hydrograph Practice, R&M Mineral ID Key, R&M Specimen Practice) complete (2026-10-27 → 2026-11-01) · **Phase 2.5 Track B in progress: `FreshwaterToolbox.jsx` simplified 2026-11-17; next = B1 (CircuitLabPractice, ScoreCalc, BoomileverEstimator, FreshwaterTools, KineticsPractice, GasLawPractice)** · Phase 2 item 6 (Anatomy Respiratory Data Practice) is deferred until Phase 2.5 exits.
 
 ## Invariants (apply to every phase)
 
