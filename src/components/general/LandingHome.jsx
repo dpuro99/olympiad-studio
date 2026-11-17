@@ -1,4 +1,3 @@
-import Logo from './Logo';
 import { ACTIVE_SEASON } from '../../seasons/manifest.js';
 
 const LAUNCH_AREAS = [
@@ -51,17 +50,16 @@ function LaunchConstellation() {
   );
 }
 
-export default function LandingHome({ currentUser, onGoToDashboard, onGuestAccess, theme, toggleTheme }) {
+export default function LandingHome({ currentUser, onGoToDashboard, onGuestAccess }) {
   const launch = () => (currentUser ? onGoToDashboard() : onGuestAccess());
   const entryLabel = currentUser ? 'Open Dashboard' : 'Continue as guest';
   const mainAction = currentUser ? 'Open workspace' : 'Enter studio';
-  const themeLabel = theme === 'dark' ? 'light' : 'dark';
 
   return (
     <div
       style={{
-        height: '100dvh',
-        minHeight: '100dvh',
+        height: 'calc(100dvh - var(--app-nav-height))',
+        minHeight: 'calc(100dvh - var(--app-nav-height))',
         overflow: 'hidden',
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1.15fr) minmax(320px, 0.85fr)',
@@ -76,13 +74,6 @@ export default function LandingHome({ currentUser, onGoToDashboard, onGuestAcces
       <section style={{ position: 'relative', minHeight: 0, overflow: 'hidden', borderRight: '1px solid var(--color-border-tertiary)' }}>
         <LaunchConstellation />
         <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 'clamp(14px, 2.2vh, 24px) clamp(16px, 2.8vw, 34px)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-            <Logo />
-            <button type="button" aria-label={`Switch to ${themeLabel} mode`} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} onClick={toggleTheme} style={{ width: 38, height: 38, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: '1px solid var(--color-border-secondary)', background: 'color-mix(in srgb, var(--color-background-secondary) 80%, transparent)', color: 'var(--color-text-secondary)', cursor: 'pointer', flexShrink: 0 }}>
-              <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true" style={{ fontSize: 18 }} />
-            </button>
-          </div>
-
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(8px, 1.4vh, 14px)', maxWidth: 760 }}>
             <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--color-accent-primary)' }}>
               Science Olympiad {ACTIVE_SEASON.year} · hands-on prep
@@ -131,7 +122,7 @@ export default function LandingHome({ currentUser, onGoToDashboard, onGuestAcces
             <i className="ti ti-shield-check" aria-hidden="true" style={{ color: 'var(--color-accent-primary)', fontSize: 18, flexShrink: 0, marginTop: 1 }} />
             <span><strong style={{ color: 'var(--color-text-primary)' }}>Grounded in the rules.</strong> Tools cite the official manual — verify details for your tournament.</span>
           </div>
-          <button type="button" aria-label={entryLabel} onClick={launch} style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-secondary)', background: 'var(--color-background-secondary)', color: 'var(--color-text-primary)', fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>
+          <button type="button" aria-label="Enter the studio without signing in" onClick={launch} style={{ width: '100%', padding: '12px 14px', borderRadius: 'var(--radius-md)', border: '1px solid var(--color-border-secondary)', background: 'var(--color-background-secondary)', color: 'var(--color-text-primary)', fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>
             {entryLabel} →
           </button>
         </div>

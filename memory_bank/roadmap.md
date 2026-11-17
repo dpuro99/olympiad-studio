@@ -1,6 +1,6 @@
 # Olympiad Studio — Roadmap
 
-**Version:** 1.7 · **Created:** 2026-10-16
+**Version:** 1.8 · **Created:** 2026-10-16
 
 ## How to use this document
 
@@ -10,7 +10,7 @@
 - **Sizing legend:** S ≤ half session · M ≈ one session · L ≈ multiple sessions.
 - **Roadmap maintenance:** when work is completed, move Current position and strike the item's status. Substantive scope/decision changes get a dated changelog line at the bottom of this file and a version bump (e.g. 1.1) — append, never rewrite history.
 
-**Current position:** Phase 0 complete (2026-10-19) · Phase 1 complete (2026-10-27) · Phase 2 items 1–5 (DG Molecular Sequence Workbench, DP Freshwater Calculator Toolbox, DP Map & Hydrograph Practice, R&M Mineral ID Key, R&M Specimen Practice) complete (2026-10-27 → 2026-11-01) · next build = Phase 2 item 6 (Anatomy Respiratory Data Practice, generated spirometry/flow-volume cases).
+**Current position:** Phase 0 complete (2026-10-19) · Phase 1 complete (2026-10-27) · Phase 2 items 1–5 (DG Molecular Sequence Workbench, DP Freshwater Calculator Toolbox, DP Map & Hydrograph Practice, R&M Mineral ID Key, R&M Specimen Practice) complete (2026-10-27 → 2026-11-01) · **Phase 2.5 approved (2026-11-17); Track B in progress, first pass = `FreshwaterToolbox.jsx`** · Phase 2 item 6 (Anatomy Respiratory Data Practice) is deferred until Phase 2.5 exits.
 
 ## Invariants (apply to every phase)
 
@@ -79,6 +79,35 @@ Order below = recommended build order. Each: pure logic module + `node:test` fir
 | 12 | **WIDI Timed Relay + Structure Generator** (`writeitdoit`) | full writer→builder rep, parametric structure generator, phase timers, rubric reveal | WIDI §3 timings (25/20) + scoring rubric | L | **Consolidation decision at build:** fold Writer/Builder practice into phases of the relay vs ship 3 modules — decide with user, update spec statuses |
 
 **Phase 2 exit:** every Division C event has ≥2 interactive tools; WIDI has the relay; chemlab remains complete. Checkpoint: re-audit all 9 `tool-ideas.md` statuses against the registry.
+
+## Phase 2.5 — Intuitive workflow & tool simplification · ~14 passes
+
+Approved 2026-11-17. Runs before Phase 3; Phase 2 item 6 and the rest of that queue are deferred until this phase exits.
+
+**Why:** every live tool is a full page that surfaces all controls at once, and an event is a list of tools rather than a workflow. The 2026-11-05 pass proved the fix but covered only 4 tools; the 2026-11-12 field guide gave events a reading order without simplifying any tool. This phase was previously recorded only in `activeContext.md`, so it lost to "next build" every session — recording it here is the point.
+
+**Track A — per-event workflow (9 events).** Each event's `journey` reads as "do this, then this"; each `gain` states the output the tool produces; `EventHome.jsx` names the single next step in the student's words. No new components; registry `journey`/`gain`/`stage` + guide copy only. The guide stays a reading order, never a gate.
+
+**Track B — per-tool simplification (every live module).** Batches, smallest-blast-radius first; **Track B runs before Track A** because the "less busy" complaint is the direct one and it establishes the idiom Track A frames.
+
+| # | Batch | Modules |
+|---|---|---|
+| B1 | Single-purpose calculators | CircuitLabPractice, ScoreCalc, BoomileverEstimator, FreshwaterTools, KineticsPractice, GasLawPractice |
+| B2 | Multi-mode tools → one mode at a time | FreshwaterToolbox (6 calculators, first pass), StoichiometryPractice (balance vs nomenclature), DigitalLogicWorkbench (tab shell) |
+| B3 | Authoring & records | RunLogger, BoomileverBuildLog, AnatomyPractice, shared ReferenceCompiler |
+| B4 | Direct-manipulation surfaces | CourseGeometry, CircuitCanvas, MapPractice |
+
+**Per-tool contract (all batches):**
+
+- one primary action; every other control secondary
+- inputs split "what you know" (visible) vs "advanced" (collapsed)
+- one live-derived result panel in a fixed position — never behind a Calculate button
+- saved history collapsed, newest few visible
+- no in-tool `<h2>` repeating the page `<h1>`
+- every string the unit/e2e tests regex stays verbatim; `app-map.json` guard updated only when anchor text genuinely moved
+- authoring tools keep explicit Save/Print/Export plus a live derived signal (budget bar, score preview)
+
+**Exit:** every live module opens on one clear primary action; every event guide reads as an ordered workflow; `npm test`/`lint`/`build` green; e2e green including 375 px overflow and unique-heading guards; a new tool can be built by copying the idiom.
 
 ## Phase 3 — Compliance & hands-on layer · ~5 builds
 
@@ -178,4 +207,5 @@ Sequence (each its own session):
 - **2026-10-27 (v1.4)** — Phase 2 item 2 complete: DP Freshwater Calculator Toolbox. Re-verified every candidate formula against the 2027 Div C manual text (pp. C24–C25) and the event FAQ: the manual lists freshwater topics and prints no formulas, so the toolbox ships six calculators that each record the section naming the quantity plus an explicit basis string (`src/seasons/2027/dynamicplanet.js`) — sinuosity (manual asks for the calculation), hydraulic gradient, Darcy flow, residence time, flood recurrence (definitional `T = 1/P` + n-year chance), and Manning flow. Dropped: ranked-record recurrence plotting (no printed convention) and stream order (needs a network surface + an explicit Strahler/Shreve convention — it belongs to item 3, the generated map/hydrograph tool). Unit conversion is its own tested layer (`toSI`/`fromSI`/`unitOptions`), the UI is live with no Calculate button, and a shared `MeasureField` primitive (number + unit select) was added. Current position → Phase 2 item 3.
 - **2026-10-27 (v1.5)** — Phase 2 item 3 complete: DP Map & Hydrograph Practice. The manual text was re-read first, which fixed the scope to the four interpretation tasks it actually names: §3.k.i topographic-map features, §3.k.ii water table from well data, §3.k.iii stream gauging/hydrographs/lag time, plus §3.c.ii stream order (the item the toolbox deferred here because it needs a drawn network). Each case is generated from an integer seed by a pure engine (`mapPracticeUtils.js`): a synthetic height field contoured with marching squares (A and B sit on labelled contours, so relief is read, not guessed), a binary tributary network ordered with Strahler (Shreve noted), three well heads fitted to a water-table plane with regular 5 m contours and a downhill flow arrow revealed on check, and a synthetic hydrograph with its hyetograph. Conventions the manual does not fix are stated in the case, and the citations live in `src/seasons/2027/dynamicplanet.js`. Current position → Phase 2 item 4 (R&M Mineral ID Key).
 - **2026-10-28 (v1.6)** — Phase 2 item 4 complete: R&M Mineral ID Key, and the seeding open decision is closed. The manual's official list (pp. C55–C56) prints names, chemical-class groupings and State/National asterisks but **no per-mineral properties** (footnote 1: diagnostic material is provided at the tournament), so shipping property values would have invented an answer key. Per the user decision, `src/seasons/2027/rocksandminerals.js` transcribes the list as a skeleton (81 minerals, 27 starred State/National) and every property value is student-authored, inline or by CSV round-trip. `specimenCardsUtils.js` holds the property vocabulary, hardness-window matching, the match/unknown/excluded buckets and the CSV codec, with `specimen-cards` as the shared store item 5 will reuse. Current position → Phase 2 item 5 (R&M Specimen Practice).
+- **2026-11-17 (v1.8)** — Added Phase 2.5 (Intuitive workflow & tool simplification), after the user confirmed the two-part goal from the 2026-11-05 "Tool intuitiveness overhaul" that had never been roadmapped: each event must read as an intuitive workflow, and every tool must be less busy/easier to use. Two tracks — per-event workflow framing (Track A) and per-tool de-cluttering (Track B) — with Track B first and `FreshwaterToolbox.jsx` as the opening pass. It is placed at 2.5, not 6, because Phase 6 is already Season rollover and renumbering would break existing cross-references. The old "58 uncommitted files" blocker recorded in `activeContext.md` was re-checked: the tree now holds 27 entries, all this project's own uncommitted redesign + field-guide work, so those are committed as the clean baseline before simplification begins. Phase 2 item 6 is deferred until Phase 2.5 exits.
 - **2026-11-01 (v1.7)** — Phase 2 item 5 complete: R&M Specimen Practice. The drill reads the same `specimen-cards` store as the Mineral ID Key (nothing is re-authored or duplicated), builds its questions at runtime from the recorded properties (`specimenDrillUtils.js`: deck scope → shuffled queue → generated multiple-choice with same-class distractors and an identical-property exclusion), and keeps the session scoreboard/missed list session-only. The property editor was extracted to `PropertyForm.jsx` so both R&M tools author through one component. Current position → Phase 2 item 6 (Anatomy Respiratory Data Practice).

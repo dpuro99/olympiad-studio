@@ -104,8 +104,6 @@ export default function MineralIdKey() {
   const [criteria, setCriteria] = useState(createCriteria);
   const [editingId, setEditingId] = useState('');
   const [message, setMessage] = useState({ text: '', error: false });
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [showAllCandidates, setShowAllCandidates] = useState(false);
   const importRef = useRef(null);
 
   const cards = useMemo(() => buildCards(authored), [authored]);

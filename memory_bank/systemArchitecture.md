@@ -13,9 +13,17 @@
 The dashboard has two local-state levels:
 
 1. The event lobby lists registered event workspaces.
-2. An event workspace lists categories and modules from that event's registry entry.
+2. An event opens its field guide: the numbered tool spine, the saved-work rail, and a full tool index.
 
 There is no URL router. Navigation state is intentionally local to the SPA for now.
+
+## App Shell
+
+- `src/components/general/AppNav.jsx` is the one persistent top bar on every view (landing included): logo, breadcrumb trail, season chip, and the only theme toggle and auth control in the app. It holds no state and imports no registry, so it can never disagree with `App.jsx` about where the user is.
+- The nav is a normal-flow `position: sticky` `<header className="app-nav">`, not `position: fixed`, so document scrolling is untouched and the print sheet (`.reference-print-area`) can never be clipped by it. `@media print` hides only `.app-nav` and `.skip-link`.
+- `App.jsx` renders the nav outside `AnimatePresence`, then the landing view or the dashboard. The dashboard is `.dashboard-pane` (a flex row of `<aside className="dashboard-sidebar" aria-label="Workspace navigation">` plus `<main id="main-content">`), and a skip link precedes the nav.
+- The sidebar is scoped to the workspace: it groups the event's modules by field-guide stage, in the event's own journey order (`journey.reduce` over `buildJourney`), with an "Event guide" home button. It no longer reads `categories`.
+- Breadcrumbs live in the nav (lobby → event → module); there is no second in-page crumb row. At ≤720 px the trail collapses to a single back-crumb and the sidebar becomes a horizontal tool strip.
 
 ## Season Boundary
 
@@ -39,7 +47,7 @@ Reference-compiler configs declare `season: ACTIVE_SEASON`; saved state is stamp
 
 ## Registry Contract
 
-`src/components/events/registry.js` is the single source of truth for event workspaces and modules. An event entry currently contains `name`, `code`, `division`, `description`, `categories`, and `modules`. A module contains:
+`src/components/events/registry.js` is the single source of truth for event workspaces and modules. An event entry contains `name`, `code`, `division`, `description`, `categories`, `journey`, and `modules`. A module contains:
 
 ```js
 {
@@ -50,13 +58,29 @@ Reference-compiler configs declare `season: ACTIVE_SEASON`; saved state is stamp
 	live,
 	requiresAuth,
 	component,
-	desc
+	desc,
+	// field-guide metadata (additive, optional)
+	stage,          // 'learn' | 'prepare' | 'practice' | 'record' | 'reference'
+	gain,           // "input → output" one-liner shown in the guide
+	signal          // name of the saved-work probe in eventProgress.js
 }
 ```
+
+`stage` and `gain` are present on every module and `signal` only on modules that keep saved work; an event's `journey` is an ordered array of module ids that may reorder the guide but never drop a module. `overview({...})` accepts `journey` and passes it through; the EV entry (not built by `overview`) declares its own.
 
 Shared views consume registry data. New tools must be registered rather than hardcoded into `Home.jsx` or `App.jsx`. Unfinished tools use `live: false`.
 
 `requiresAuth: true` identifies modules that need an authenticated Supabase user or another backend capability. `App.jsx` gates those modules for guests with the shared `AuthRequired` view before the module component mounts. Backend-dependent tools should declare this capability in the registry instead of implementing guest checks themselves.
+
+## Event Field Guide
+
+One page per event, derived entirely from the registry entry:
+
+- `src/components/general/EventHome.jsx` renders the header (division/code/year eyebrow, `<h1>` event name, description, event + rules links, `manualReference`), the numbered `.field-spine` of `.field-step` rows (icon, name, stage chip, `gain`, saved-work chip, one `.field-next`), the `.field-rail` (`complementary`, named "Your saved work"), and a collapsible `.field-index` listing every tool.
+- `src/components/general/stages.js` owns the five-stage vocabulary `learn → prepare → practice → record → reference` with `STAGE_META`, `stageIndex`, `normalizeStage`, and `stageMeta`. A module with no stage falls back to `practice` rather than disappearing.
+- `src/components/general/journeyUtils.js` is pure: `buildJourney(event)` appends any module the `journey` override forgets in stage order, `pickNextStep(steps)` returns the first tracked step without saved work, and `summarizeJourney(steps)` reports real counts only.
+- `src/components/general/eventProgress.js` is the read-only `localStorage` probe: `SIGNALS` maps a registry `signal` name to its storage module and counting rule, `probeModuleProgress` returns `{ kind, count, started, label, unavailable }`, and blocked or corrupt storage is `unavailable` (reported as "unreadable") rather than empty. `STORAGE_EVENT_IDS` maps the shell id `ev` to the storage token `electricvehicle` before calling `storageKey`.
+- The guide is a reading order, not a gate: every row is a plain button, nothing is locked, and no step requires the one before it. A step the app cannot observe (a calculator, a generated drill) can never be "next".
 
 ## Module Boundaries
 

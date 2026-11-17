@@ -90,7 +90,6 @@ export default function MolecularSequenceWorkbench() {
   const [dna, setDna] = useState(DEFAULT_SEQUENCE);
   const [reference, setReference] = useState(DEFAULT_SEQUENCE);
   const [variant, setVariant] = useState(DEFAULT_VARIANT);
-  const [showSequenceDetails, setShowSequenceDetails] = useState(false);
 
   const parsed = normalizeSequence(dna);
   const sequence = parsed.sequence;

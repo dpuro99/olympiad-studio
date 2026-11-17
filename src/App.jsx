@@ -3,11 +3,13 @@ import { AnimatePresence } from 'framer-motion';
 import { supabase } from './supabaseClient';
 import { trackEvent, trackPageView } from './analytics';
 import LandingHome from './components/general/LandingHome';
-import Logo from './components/general/Logo';
+import AppNav from './components/general/AppNav';
 import Home from './components/general/Home';
 import AuthRequired from './components/general/AuthRequired';
 import PageTransition from './PageTransition';
 import { EVENT_REGISTRY } from './components/events/registry';
+import { STAGE_META } from './components/general/stages';
+import { buildJourney } from './components/general/journeyUtils';
 
 const NAVIGATION_STORAGE_KEY = 'olympiad-studio-navigation';
 
@@ -55,8 +57,19 @@ export default function App() {
 
   // Resolve active event from registry dynamically
   const currentEvent = selectedEventId ? EVENT_REGISTRY[selectedEventId] : null;
-  const CATS = currentEvent ? currentEvent.categories : [];
   const MODS = currentEvent ? currentEvent.modules : [];
+  // Sidebar groups mirror the field guide's stages in the event's own journey
+  // order, so the rail and the guide never disagree about what comes next.
+  const journey = currentEvent ? buildJourney(currentEvent) : [];
+  const stageGroups = journey.reduce((groups, step) => {
+    const group = groups.find((entry) => entry.stage === step.stage);
+    if (group) {
+      group.steps.push(step);
+    } else {
+      groups.push({ stage: step.stage, label: STAGE_META[step.stage].short, steps: [step] });
+    }
+    return groups;
+  }, []);
   const activeModule = MODS.find(m => m.id === page);
   const dashboardContentRef = useRef(null);
   const virtualPage = currentView === "landing" || (!currentUser && !isGuest)
@@ -252,13 +265,9 @@ export default function App() {
 
   const landingContent = (
     <LandingHome 
-      onLogin={handleGoogleLogin} 
-      authLoading={authLoading} 
       currentUser={currentUser}
       onGoToDashboard={() => setCurrentView("dashboard")} 
       onGuestAccess={handleGuestAccess}
-      theme={theme}
-      toggleTheme={toggleTheme}
     />
   );
 
@@ -267,8 +276,6 @@ export default function App() {
   if (page === "home") {
     RenderComponent = (
       <Home 
-        MODS={MODS} 
-        CATS={CATS} 
         onNav={handleModuleNavigation} 
         selectedEventId={selectedEventId}
         EVENT_REGISTRY={EVENT_REGISTRY}
@@ -305,7 +312,7 @@ export default function App() {
     <div className="dashboard-shell">
       
       {/* Sidebar Navigation Dashboard Panel */}
-      <div className="dashboard-sidebar" style={{ width: 220, background: "var(--color-background-secondary)", borderRight: "1px solid var(--color-border-tertiary)", display: "flex", flexDirection: "column" }}>
+      <aside className="dashboard-sidebar" aria-label="Workspace navigation">
         
         {/* Clickable Header Button: Contextually changes depending on Workspace level */}
         {selectedEventId ? (
@@ -314,11 +321,8 @@ export default function App() {
             className="dashboard-brand-button"
             onClick={() => { setSelectedEventId(null); setPage("home"); }} 
             aria-label="Back to all events"
-            style={{ padding: "16px 14px 12px", borderBottom: "1px solid var(--color-border-tertiary)", textAlign: "left" }}
+            style={{ padding: "14px", borderBottom: "1px solid var(--color-border-tertiary)", textAlign: "left" }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-              <Logo compact />
-            </div>
             <div style={{ fontSize: 11, color: "var(--color-accent-primary)", fontFamily: "var(--font-sans)", fontWeight: 700, display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
               <i className="ti ti-arrow-left" aria-hidden="true" style={{ fontSize: 12 }}></i> All events
             </div>
@@ -334,11 +338,8 @@ export default function App() {
             type="button"
             className="dashboard-brand-button"
             onClick={() => setCurrentView("landing")} 
-            style={{ padding: "16px 14px 12px", borderBottom: "1px solid var(--color-border-tertiary)" }}
+            style={{ padding: "14px", borderBottom: "1px solid var(--color-border-tertiary)" }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-              <Logo compact />
-            </div>
             <div style={{ fontSize: 11, color: "var(--color-text-secondary)", fontFamily: "var(--font-sans)", fontWeight: 500, display: "flex", alignItems: "center", gap: 4 }}>
               <span>&larr;</span> Home
             </div>
@@ -349,17 +350,13 @@ export default function App() {
         <nav style={{ padding: "10px 8px", flex: 1, overflowY: "auto" }}>
           {selectedEventId ? (
             <>
-              {navBtn("home", "ti-home", "Workspace Home", true, true, openWorkspaceHome)}
-              {CATS.map(cat => {
-                const mods = MODS.filter(m => m.cat === cat);
-                if (mods.length === 0) return null;
-                return (
-                  <div key={cat} style={{ marginTop: 14 }}>
-                    <div style={{ fontSize: 10, color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.1em", padding: "0 10px", marginBottom: 6, fontFamily: "var(--font-sans)", fontWeight: 700 }}>{cat}</div>
-                    {mods.map(m => navBtn(m.id, m.ti, m.label, m.live, false))}
-                  </div>
-                );
-              })}
+              {navBtn("home", "ti-map", "Event guide", true, true, openWorkspaceHome)}
+              {stageGroups.map(group => (
+                <div key={group.stage} style={{ marginTop: 14 }}>
+                  <div style={{ fontSize: 10, color: "var(--color-text-tertiary)", textTransform: "uppercase", letterSpacing: "0.1em", padding: "0 10px", marginBottom: 6, fontFamily: "var(--font-sans)", fontWeight: 700 }}>{group.label}</div>
+                  {group.steps.map(step => navBtn(step.id, step.module.ti, step.module.label, step.live, false))}
+                </div>
+              ))}
             </>
           ) : (
             <div style={{ marginTop: 4 }}>
@@ -384,59 +381,11 @@ export default function App() {
         </nav>
 
         <div style={{ marginTop: "auto" }}></div>
-      </div>
+      </aside>
 
       {/* Main Content Pane */}
-      <div ref={dashboardContentRef} style={{ flex: 1, overflowY: "auto", background: "var(--color-background-primary)" }}>
-        <header style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 10, padding: "12px 24px", borderBottom: "1px solid var(--color-border-tertiary)", background: "var(--color-background-secondary)", position: "sticky", top: 0, zIndex: 10 }}>
-          <button type="button" aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`} onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`} style={{ background: "var(--color-background-tertiary)", border: "1px solid var(--color-border-secondary)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--color-text-secondary)", padding: 8, borderRadius: "var(--radius-md)", cursor: "pointer" }}>
-            <i className={`ti ${theme === 'dark' ? 'ti-sun' : 'ti-moon'}`} aria-hidden="true" style={{ fontSize: 16 }}></i>
-          </button>
-          {isGuest ? (
-            <button type="button" aria-label="Sign in with Google" onClick={handleGoogleLogin} disabled={authLoading} style={{
-              padding: "8px 14px", background: "var(--color-background-tertiary)", color: "var(--color-text-primary)",
-              border: "1px solid var(--color-border-secondary)", borderRadius: "var(--radius-md)", fontWeight: 500,
-              display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 13,
-            }}>
-              <svg width="14" height="14" viewBox="0 0 18 18">
-                <path d="M17.64 9.2c0-.63-.06-1.25-.16-1.84H9v3.47h4.84c-.21 1.12-.84 2.07-1.79 2.7v2.24h2.9c1.69-1.55 2.69-3.84 2.69-6.57z" fill="#4285F4"/>
-                <path d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.24c-.8.54-1.84.87-3.06.87-2.35 0-4.34-1.58-5.05-3.71H.96v2.32C2.44 15.09 5.47 18 9 18z" fill="#34A853"/>
-                <path d="M3.95 10.74c-.18-.54-.28-1.12-.28-1.74s.1-1.2.28-1.74V4.94H.96A8.977 8.977 0 0 0 0 9c0 1.48.36 2.9 1 4.14l2.95-2.4z" fill="#FBBC05"/>
-                <path d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.8 11.42 0 9 0 5.47 0 2.44 2.91.96 5.34l2.95 2.32C4.66 5.16 6.65 3.58 9 3.58z" fill="#EA4335"/>
-              </svg>
-              {authLoading ? "Connecting..." : "Sign in"}
-            </button>
-          ) : (
-            <>
-              <span style={{ maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12, color: "var(--color-text-secondary)" }} title={currentUser?.email}>
-                {currentUser?.email}
-              </span>
-              <button type="button" aria-label="Log out" onClick={handleLogout} style={{ background: "transparent", border: "1px solid var(--color-border-secondary)", color: "var(--color-text-secondary)", padding: "7px 12px", borderRadius: "var(--radius-md)", fontSize: 12, cursor: "pointer" }}>
-                Log out
-              </button>
-            </>
-          )}
-        </header>
-        <div className="dashboard-content" style={{ padding: "0 24px 32px" }}>
-          {/* Breadcrumbs / location context */}
-          {(selectedEventId || page !== "home") && (
-            <nav aria-label="Breadcrumb" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 18, fontSize: 12, fontFamily: "var(--font-sans)", color: "var(--color-text-tertiary)", flexWrap: "wrap" }}>
-              <button type="button" className="breadcrumb-link" onClick={() => { setSelectedEventId(null); setPage("home"); }}>Events</button>
-              {currentEvent && (
-                <>
-                  <span style={{ opacity: 0.45 }} aria-hidden="true">/</span>
-                  <button type="button" className="breadcrumb-link" onClick={() => setPage("home")}>{currentEvent.name}</button>
-                </>
-              )}
-              {activeModule && (
-                <>
-                  <span style={{ opacity: 0.45 }} aria-hidden="true">/</span>
-                  <span style={{ color: "var(--color-text-secondary)", fontWeight: 600 }} aria-current="page">{activeModule.label}</span>
-                </>
-              )}
-            </nav>
-          )}
-          
+      <div className="dashboard-pane" ref={dashboardContentRef}>
+        <main id="main-content" className="dashboard-content" style={{ padding: "24px 24px 32px" }}>
           {page !== "home" && activeModule && <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 18, color: "var(--color-text-primary)", letterSpacing: "-0.025em", lineHeight: 1.15 }}>{activeModule.label}</h1>}
           
           <AnimatePresence mode="wait" initial={false}>
@@ -453,16 +402,35 @@ export default function App() {
               </Suspense>
             </PageTransition>
           </AnimatePresence>
-        </div>
+        </main>
       </div>
     </div>
   );
 
   return (
-    <AnimatePresence mode="wait">
-      <PageTransition key={showLanding ? "landing" : "dashboard"}>
-        {showLanding ? landingContent : dashboardContent}
-      </PageTransition>
-    </AnimatePresence>
+    <>
+      {!showLanding && (
+        <a className="skip-link" href="#main-content">Skip to main content</a>
+      )}
+      <AppNav
+        currentUser={currentUser}
+        authLoading={authLoading}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        currentEvent={currentEvent}
+        activeModule={activeModule}
+        showLanding={showLanding}
+        onBrandClick={() => { setSelectedEventId(null); setPage("home"); }}
+        onAllEvents={() => { setSelectedEventId(null); setPage("home"); }}
+        onOpenEventHome={openWorkspaceHome}
+        onLogin={handleGoogleLogin}
+        onLogout={handleLogout}
+      />
+      <AnimatePresence mode="wait">
+        <PageTransition key={showLanding ? "landing" : "dashboard"}>
+          {showLanding ? landingContent : dashboardContent}
+        </PageTransition>
+      </AnimatePresence>
+    </>
   );
 }

@@ -25,6 +25,7 @@ export default function Logo({ compact = false }) {
         <circle cx="21" cy="9" r="1.5" fill="var(--color-accent-primary)" />
       </svg>
       <span
+        className="logo-wordmark"
         style={{
           fontSize: compact ? 15 : 19,
           lineHeight: 1,

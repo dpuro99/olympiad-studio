@@ -10,6 +10,7 @@ import {
   openModule,
   SEASON_YEAR,
   seedNavigation,
+  SHELL_READY_TIMEOUT,
   trackConsoleIssues
 } from '../helpers.js';
 
@@ -31,9 +32,9 @@ const appMap = {
 test('landing page loads and a guest can enter from the landing view', async ({ page }, testInfo) => {
   const errors = trackConsoleIssues(page);
   await page.goto(BASE_PATH);
-  await expect(page.getByText('Olympiad Studio').first()).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText('Olympiad Studio').first()).toBeVisible({ timeout: SHELL_READY_TIMEOUT });
   await page.getByRole('button', { name: 'Continue as guest' }).click();
-  await page.waitForSelector('.dashboard-shell', { timeout: 20_000 });
+  await page.waitForSelector('.dashboard-shell', { timeout: SHELL_READY_TIMEOUT });
   await captureSnapshot(page, testInfo, 'landing_guest_entry');
   expect(errors).toEqual([]);
 });
@@ -42,11 +43,14 @@ test('guest can click through lobby -> event workspace -> module', async ({ page
   const errors = trackConsoleIssues(page);
   await seedNavigation(page, {});
   await page.goto(BASE_PATH);
-  await page.waitForSelector('.dashboard-shell', { timeout: 20_000 });
+  await page.waitForSelector('.dashboard-shell', { timeout: SHELL_READY_TIMEOUT });
   await page.locator('.dashboard-sidebar').getByRole('button', { name: 'Electric Vehicle' }).click();
-  await page.waitForSelector('header');
+  await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
   await page.locator('.module-card').filter({ hasText: 'Score Calculator' }).click();
-  await expect(page.locator('h1')).toHaveText('Score Calculator', { timeout: 20_000 });
+  // The exiting event guide overlaps the lazy module shell for one transition
+  // frame, so locate the heading by name rather than assuming a single <h1>.
+  await expect(page.getByRole('heading', { name: 'Score Calculator', level: 1 }))
+    .toBeVisible({ timeout: 20_000 });
   await expect(page.getByText('Electric Vehicle score calculator')).toBeVisible();
   await captureSnapshot(page, testInfo, 'clickthrough_ev_score');
   expect(errors).toEqual([]);
@@ -55,7 +59,7 @@ test('guest can click through lobby -> event workspace -> module', async ({ page
 test('theme toggle flips the data-theme attribute and persists', async ({ page }) => {
   await seedNavigation(page, { theme: 'dark' });
   await page.goto(BASE_PATH);
-  await page.waitForSelector('header', { timeout: 20_000 });
+  await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await page.getByRole('button', { name: 'Switch to light mode' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
@@ -85,7 +89,7 @@ for (const event of appMap.events) {
       const errors = trackConsoleIssues(page);
       await seedNavigation(page, { eventId: event.code, moduleId: module.id });
       await page.goto(BASE_PATH);
-      await page.waitForSelector('header', { timeout: 20_000 });
+      await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
       await expectModuleRendered(page, { label: module.label, expectText: module.expectText });
       await expectNoHorizontalOverflow(page, 375);
       await page.screenshot({ path: `test-results/screenshots/mobile_${event.code}_${module.id}.png`, fullPage: true });
@@ -101,7 +105,7 @@ test('dashboard shell switches to a stacked layout exactly at the 720px breakpoi
     const page = await context.newPage();
     await seedNavigation(page, { eventId: 'ev', moduleId: 'score' });
     await page.goto(BASE_PATH);
-    await page.waitForSelector('.dashboard-shell', { timeout: 20_000 });
+    await page.waitForSelector('.dashboard-shell', { timeout: SHELL_READY_TIMEOUT });
     const direction = await page.locator('.dashboard-shell').evaluate((el) => getComputedStyle(el).flexDirection);
     await context.close();
     return direction;
@@ -116,7 +120,7 @@ test('EV score calculator stays usable on a narrow phone viewport', async ({ bro
   const errors = trackConsoleIssues(page);
   await seedNavigation(page, { eventId: 'ev', moduleId: 'score' });
   await page.goto(BASE_PATH);
-  await page.waitForSelector('header', { timeout: 20_000 });
+  await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
   await expect(page.getByText('Electric Vehicle score calculator')).toBeVisible();
   const { scrollWidth } = await page.evaluate(() => ({
     scrollWidth: document.documentElement.scrollWidth

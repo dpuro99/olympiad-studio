@@ -28,7 +28,7 @@ const RocksAndMineralsReferenceCompiler = lazy(() => import('./rocksandminerals/
 const MineralIdKey = lazy(() => import('./rocksandminerals/MineralIdKey'));
 const SpecimenPractice = lazy(() => import('./rocksandminerals/SpecimenPractice'));
 
-function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, additionalModules = [] }) {
+function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, journey = [], additionalModules = [] }) {
   return {
     year: ACTIVE_SEASON.year,
     name,
@@ -36,8 +36,11 @@ function overview({ name, code, division, description, eventUrl, manualReference
     division,
     description,
     categories: ['Event'],
+    journey,
     modules: [{
       id: 'main',
+      stage: 'learn',
+      gain: 'the manual’s task, timing, and constraints → a readable overview',
       ti: 'ti-clipboard',
       label: `${ACTIVE_SEASON.year} Event Overview`,
       cat: 'Event',
@@ -68,6 +71,9 @@ export const EVENT_REGISTRY = {
     ],
     additionalModules: [{
       id: 'anatomy-notes',
+      stage: 'record',
+      gain: 'observations while you study → saved notes and a CSV export',
+      signal: 'notes',
       ti: 'ti-notebook',
       label: 'Practice Notes',
       cat: 'Event',
@@ -82,6 +88,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'anatomy-reference-compiler',
+      stage: 'prepare',
+      gain: 'objectives you mark → one printable double-sided sheet',
+      signal: 'sheet',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
@@ -100,6 +109,7 @@ export const EVENT_REGISTRY = {
   boomilever: overview({
     name: 'Boomilever', code: 'BOOM', division: 'C',
     description: 'Build a cantilevered structure to support a load from a testing wall.',
+    journey: ['main', 'boomilever-estimator', 'boomilever-build-log'],
     manualReference: 'Division C Rules Manual, pp. C7–C12',
     ruleSummary: [
       'One prebuilt wood-and-adhesive structure; Eye Protection B; no impound; six-minute setup/testing window.',
@@ -108,6 +118,8 @@ export const EVENT_REGISTRY = {
     ],
     additionalModules: [{
       id: 'boomilever-estimator',
+      stage: 'reference',
+      gain: 'load supported and structure mass → efficiency score',
       ti: 'ti-ruler',
       label: 'Efficiency Estimator',
       cat: 'Event',
@@ -122,6 +134,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'boomilever-build-log',
+      stage: 'record',
+      gain: 'each prototype and test result → saved build history and CSV',
+      signal: 'buildLog',
       ti: 'ti-clipboard-list',
       label: 'Build/Test Log',
       cat: 'Event',
@@ -148,6 +163,8 @@ export const EVENT_REGISTRY = {
     ],
     additionalModules: [{
       id: 'gas-laws',
+      stage: 'practice',
+      gain: 'known quantities in their units → the unknown, with the law shown',
       ti: 'ti-flask',
       label: 'Gas-Law Practice',
       cat: 'Event',
@@ -162,6 +179,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'kinetics',
+      stage: 'practice',
+      gain: 'trial measurements → observed rate and a saved notebook',
+      signal: 'kinetics',
       ti: 'ti-activity',
       label: 'Kinetics Practice',
       cat: 'Event',
@@ -176,6 +196,8 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'stoichiometry',
+      stage: 'practice',
+      gain: 'a generated equation or compound → balanced work, step by step',
       ti: 'ti-atom',
       label: 'Stoichiometry & Nomenclature',
       cat: 'Event',
@@ -190,6 +212,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'chemlab-reference-compiler',
+      stage: 'prepare',
+      gain: 'objectives you mark → one printable sheet per participant',
+      signal: 'sheet',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
@@ -216,6 +241,8 @@ export const EVENT_REGISTRY = {
     ],
     additionalModules: [{
       id: 'circuit-practice',
+      stage: 'practice',
+      gain: 'resistance and voltage you enter → current, power, and equivalent resistance',
       ti: 'ti-bulb',
       label: 'Circuit Practice Calculator',
       cat: 'Event',
@@ -230,6 +257,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'digital-logic',
+      stage: 'practice',
+      gain: 'gates you wire or an expression you type → a live truth table',
+      signal: 'canvas',
       ti: 'ti-binary',
       label: 'Digital Logic Workbench',
       cat: 'Event',
@@ -244,6 +274,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'circuitlab-reference-compiler',
+      stage: 'prepare',
+      gain: 'objectives you mark → a printable reference binder',
+      signal: 'binder',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
@@ -270,6 +303,8 @@ export const EVENT_REGISTRY = {
     ],
     additionalModules: [{
       id: 'molecular-sequences',
+      stage: 'practice',
+      gain: 'a DNA sequence → reading frames, translation, and mutation calls',
       ti: 'ti-dna',
       label: 'Molecular Sequence Workbench',
       cat: 'Practice',
@@ -284,6 +319,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'designergenes-reference-compiler',
+      stage: 'prepare',
+      gain: 'objectives you mark → one printable double-sided sheet',
+      signal: 'sheet',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
@@ -302,6 +340,7 @@ export const EVENT_REGISTRY = {
   dynamicplanet: overview({
     name: 'Dynamic Planet', code: 'DYN', division: 'C',
     description: `${ACTIVE_SEASON.year} focus: properties and processes of Earth’s fresh waters.`,
+    journey: ['main', 'freshwater-toolbox', 'freshwater-tools', 'map-practice', 'dynamicplanet-reference-compiler'],
     manualReference: 'Division C Rules Manual, pp. C24–C25',
     ruleSummary: [
       'Exam and/or timed stations; a binder of any size is allowed. If the event features rotation through material-display stations, nothing may be removed from the binder throughout the event.',
@@ -310,6 +349,8 @@ export const EVENT_REGISTRY = {
     ],
     additionalModules: [{
       id: 'freshwater-tools',
+      stage: 'reference',
+      gain: 'field measurements → discharge and a balanced water budget',
       ti: 'ti-ripple',
       label: 'Freshwater Measurement Tools',
       cat: 'Event',
@@ -324,6 +365,8 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'freshwater-toolbox',
+      stage: 'reference',
+      gain: 'a quantity in mixed units → an SI answer with its basis',
       ti: 'ti-calculator',
       label: 'Freshwater Calculator Toolbox',
       cat: 'Event',
@@ -338,6 +381,8 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'map-practice',
+      stage: 'practice',
+      gain: 'a generated map or hydrograph → an answer and the worked reasoning',
       ti: 'ti-map-2',
       label: 'Map & Hydrograph Practice',
       cat: 'Practice',
@@ -352,6 +397,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'dynamicplanet-reference-compiler',
+      stage: 'prepare',
+      gain: 'topics you mark → a printable reference binder',
+      signal: 'binder',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',
@@ -374,9 +422,12 @@ export const EVENT_REGISTRY = {
     division: 'C',
     description: 'Design, build, and test an electric vehicle that pushes a bottle past a line, then reverses to stop near a target.',
     categories: ['Event', 'Testing'],
+    journey: ['arc', 'score', 'course', 'log'],
     modules: [
       {
         id: 'arc', ti: 'ti-vector-triangle', label: `${ACTIVE_SEASON.year} Event Overview`, cat: 'Event',
+        stage: 'learn',
+        gain: 'the run procedure and construction limits → a checked overview',
         live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: ArcVisualizer,
         desc: `Verified task, construction constraints, and run procedure from the ${ACTIVE_SEASON.manualLabel}.`,
         eventName: 'Electric Vehicle',
@@ -385,6 +436,8 @@ export const EVENT_REGISTRY = {
       },
       {
         id: 'score', ti: 'ti-trophy', label: 'Score Calculator', cat: 'Testing',
+        stage: 'reference',
+        gain: 'target time and measured distances → two run scores and the final score',
         live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: ScoreCalc,
         desc: `Calculate two EV run scores and the final score using the ${ACTIVE_SEASON.year} manual formula.`,
         eventName: 'Electric Vehicle',
@@ -393,6 +446,8 @@ export const EVENT_REGISTRY = {
       },
       {
         id: 'course', ti: 'ti-map-2', label: 'Course & Geometry', cat: 'Testing',
+        stage: 'reference',
+        gain: 'level distance and target time → pacing, sensitivity, and score tradeoffs',
         live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: CourseGeometry,
         desc: `Drag the bottle line and explore set-time pacing, sensitivity, and the live ${ACTIVE_SEASON.year} run-score tradeoffs.`,
         eventName: 'Electric Vehicle',
@@ -401,6 +456,9 @@ export const EVENT_REGISTRY = {
       },
       {
         id: 'log', ti: 'ti-file-analytics', label: 'Practice Run Logger', cat: 'Testing',
+        stage: 'record',
+        gain: 'each measured run → saved history with the verified score',
+        signal: 'runs',
         live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: RunLogger,
         desc: `Save measured practice runs locally with the verified ${ACTIVE_SEASON.year} score calculation.`,
         eventName: 'Electric Vehicle',
@@ -412,6 +470,7 @@ export const EVENT_REGISTRY = {
   rocksandminerals: overview({
     name: 'Rocks and Minerals', code: 'ROCK', division: 'C',
     description: 'Identify and classify rocks and minerals and connect them to geologic processes, Earth history, resources, and society.',
+    journey: ['main', 'mineral-id-key', 'specimen-practice', 'rocksandminerals-reference-compiler'],
     manualReference: 'Division C Rules Manual, pp. C52–C56',
     ruleSummary: [
       `Identification is 30–50% of points; rock and mineral topics are balanced. Teams may bring the ${ACTIVE_SEASON.year} list, binder and field guide.`,
@@ -420,6 +479,9 @@ export const EVENT_REGISTRY = {
     ],
     additionalModules: [{
       id: 'mineral-id-key',
+      stage: 'reference',
+      gain: 'properties you observe → ranked candidates and why each is ruled out',
+      signal: 'cards',
       ti: 'ti-diamond',
       label: 'Mineral ID Key',
       cat: 'Practice',
@@ -434,6 +496,8 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'specimen-practice',
+      stage: 'practice',
+      gain: 'your recorded cards → a graded drill and a missed list',
       ti: 'ti-cards',
       label: 'Specimen Practice',
       cat: 'Practice',
@@ -448,6 +512,9 @@ export const EVENT_REGISTRY = {
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {
       id: 'rocksandminerals-reference-compiler',
+      stage: 'prepare',
+      gain: 'topics and specimens you mark → a printable reference binder',
+      signal: 'binder',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
       cat: 'Event',

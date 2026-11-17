@@ -365,15 +365,18 @@ export function Stepper({ steps, currentStep, style }) {
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', marginBottom: 16, ...style }}>
-      {steps.map((step, i) => (
-        <span key={step.id || i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={stepDot(i)}>
-            {completed ? <i className="ti ti-check" style={{ fontSize: 10 }} aria-hidden="true"></i> : i + 1}
+      {steps.map((step, i) => {
+        const completed = i < currentStep;
+        return (
+          <span key={step.id || i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={stepDot(i)}>
+              {completed ? <i className="ti ti-check" style={{ fontSize: 10 }} aria-hidden="true"></i> : i + 1}
+            </span>
+            <span style={stepLabel(i)}>{step.label}</span>
+            {i < steps.length - 1 && <i className="ti ti-chevron-right" style={{ fontSize: 12, color: 'var(--color-text-tertiary)' }} aria-hidden="true"></i>}
           </span>
-          <span style={stepLabel(i)}>{step.label}</span>
-          {i < steps.length - 1 && <i className="ti ti-chevron-right" style={{ fontSize: 12, color: 'var(--color-text-tertiary)' }} aria-hidden="true"></i>}
-        </span>
-      ))}
+        );
+      })}
     </div>
   );
 }

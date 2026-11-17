@@ -1,7 +1,7 @@
 # Active Context
 
-## Current Focus (2026-11-05)
-**Redesign ("Warm Workshop") — foundation complete.** The app shell and shared design system were redesigned to be polished, casual, and approachable for students while keeping the engineering workbench feel. All tools, registry, navigation, calculations, and localStorage keys remain functionally unchanged.
+## Current Focus (2026-11-17)
+**Phase 2.5 — Intuitive workflow & tool simplification.** Approved and recorded in `memory_bank/roadmap.md` v1.8. Two tracks: Track A makes each event read as an ordered workflow; Track B makes each tool less busy. Track B runs first, opening with `FreshwaterToolbox.jsx`. The 2026-11-05 redesign foundation and 2026-11-12 field guide are the preceding work and are functionally unchanged.
 
 ## Recent Changes
 - Created `PRODUCT.md` (product truth for redesign).
@@ -21,8 +21,8 @@
 - Backward-compat CSS aliases added to avoid breaking event tools that still reference `--border-radius-*`.
 
 ## Blockers / Uncertainties
-- **58 pre-existing uncommitted modified files** in the working tree (unrelated in-progress work). Do not touch or stage them. The redesign changes are limited to `src/index.css`, `src/App.jsx`, `src/components/general/ui/primitives.jsx`, `src/components/general/LandingHome.jsx`, `Home.jsx`, `Logo.jsx`, `AuthRequired.jsx`, `index.html`, `PRODUCT.md`, and `memory_bank/activeContext.md`.
-- Event tool components with legacy/local styling that are already in the dirty set cannot be migrated now without risking conflicts; CSS aliases keep them functional. Migrate only when those files are clean or with explicit coordination.
+- **Resolved 2026-11-17:** the "58 pre-existing uncommitted modified files" warning was stale. Re-checked: 27 entries, all this project's own uncommitted redesign + field-guide work (no alien changes). User approved committing them as the baseline before Phase 2.5 starts.
+- `Stepper` and `Accordion` are exported from `ui/primitives.jsx` but used by no tool — dead code from the 2026-11-05 pass. Batch B2 either uses them or deletes them.
 
 ## Recent Changes (2026-11-05 continued)
 - Improved module page chrome in `src/App.jsx`/`src/index.css` for better navigation/ease of use: breadcrumbs now show in workspace home + module pages; sidebar header shows current event name + Division/code; loading spinner uses Citrus accent + accessible text; consistent content padding (`0 24px 32px`); friendly "Module not found" empty state with back action; `@keyframes spin` in CSS.
@@ -34,8 +34,8 @@
 - `PropertyForm.jsx` (shared R&M): grouped fields into collapsible sections for less visual clutter.
 - Earlier this pass: `src/components/general/Home.jsx` event cards show ready-tool previews with clearer ARIA labels; `EventRulesOverview.jsx` and shared `ReferenceCompiler.jsx` (all 6 event compilers) shed robotic mono for sans styling; reference compiler primary actions use Citrus accent; `.breadcrumb-link` hover styling, Citrus `::selection`, `button:disabled` state added to `src/index.css`.
 
-## Next Steps
-1. Run broader e2e (resilience and/or key event specs) if desired to catch regressions beyond core render/responsive coverage.
-2. Incrementally migrate clean (non-dirty) event tool components to the new design system/primitives when safe; re-verify print/reference compiler rendering and responsive behavior after visual changes.
-3. Update `memory_bank/progress.md` with further redesign batches as they land.
-4. Do **not** commit, amend, push, or open a PR unless explicitly asked.
+## Next Steps (2026-11-17)
+1. Commit the existing redesign + field-guide work as the clean baseline (explicitly approved).
+2. Phase 2.5 Track B: simplify `FreshwaterToolbox.jsx` first (stepper over six calculators, one visible at a time), then B1 → B3 → B4, each with `npm test`/`lint`/`build` and the event e2e flow.
+3. Track A afterwards: tune each event's `journey`/`gain` and the guide's next-step wording.
+4. Update `progress.md` as each batch lands. Do **not** push or open a PR without a new explicit ask; commits are only for what David approves.

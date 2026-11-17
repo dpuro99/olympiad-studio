@@ -1,4 +1,6 @@
-export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTRY, onSelectEvent }) {
+import EventHome from './EventHome';
+
+export default function Home({ onNav, selectedEventId, EVENT_REGISTRY, onSelectEvent }) {
   // --- LEVEL 1: MULTI-EVENT HUB ---
   if (!selectedEventId) {
     const events = Object.keys(EVENT_REGISTRY).map((key) => ({ key, evt: EVENT_REGISTRY[key] }));
@@ -157,141 +159,14 @@ export default function Home({ MODS, CATS, onNav, selectedEventId, EVENT_REGISTR
     );
   }
 
-  // --- LEVEL 2: EVENT-SPECIFIC WORKSPACE ---
-  const groupedModules = CATS.reduce((acc, cat) => {
-    acc[cat] = MODS.filter(m => m.cat === cat);
-    return acc;
-  }, {});
-
+  // --- LEVEL 2: EVENT FIELD GUIDE ---
+  // One page per event: the numbered tool spine, the saved-work rail, and the
+  // full index. All of it is derived from the registry entry.
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-      {/* Workspace Welcome Banner */}
-      <div style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-        gap: 16,
-        flexWrap: "wrap",
-        padding: "22px 24px",
-        background: "var(--color-background-secondary)",
-        border: "1px solid var(--color-border-tertiary)",
-        borderRadius: "var(--radius-lg)",
-        boxShadow: "var(--shadow-sm)"
-      }}>
-        <div>
-          <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, color: "var(--color-text-primary)", letterSpacing: "-0.02em" }}>
-            Tools & resources
-          </h2>
-          <p style={{ fontSize: 14, color: "var(--color-text-secondary)", lineHeight: 1.55, maxWidth: "62ch", margin: 0 }}>
-            Choose a tool below to start practicing, calculating, or studying for this event.
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 12, padding: "6px 10px", borderRadius: "var(--radius-full)", background: "var(--color-accent-muted)", color: "var(--color-accent-primary)", border: "1px solid var(--color-border-warning)", fontWeight: 600 }}>
-            {MODS.filter((m) => m.live).length} ready
-          </span>
-          <span style={{ fontSize: 12, padding: "6px 10px", borderRadius: "var(--radius-full)", background: "var(--color-background-tertiary)", color: "var(--color-text-secondary)", border: "1px solid var(--color-border-secondary)" }}>
-            {MODS.length} total
-          </span>
-        </div>
-      </div>
-
-      {/* Dynamic Categories & Cards */}
-      {CATS.map(cat => {
-        const modulesInCat = groupedModules[cat] || [];
-        if (modulesInCat.length === 0) return null;
-
-        return (
-          <div key={cat} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            {/* Category Header */}
-            <div style={{
-              fontSize: 11,
-              fontFamily: "var(--font-sans)",
-              textTransform: "uppercase",
-              letterSpacing: "0.1em",
-              color: "var(--color-text-tertiary)",
-              fontWeight: 700,
-              paddingBottom: 2
-            }}>
-              {cat}
-            </div>
-
-            {/* Modules Grid */}
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-              gap: 14
-            }}>
-              {modulesInCat.map(mod => (
-                <button
-                  key={mod.id}
-                  type="button"
-                  className="module-card"
-                  onClick={() => onNav(mod.id)}
-                  aria-label={`${mod.label}${mod.live ? "" : " (coming soon, preview)"}`}
-                  style={{
-                    background: "var(--color-background-secondary)",
-                    border: mod.live ? "1px solid var(--color-border-tertiary)" : "1px dashed var(--color-border-secondary)",
-                    borderRadius: "var(--radius-md)",
-                    padding: 18,
-                    cursor: "pointer",
-                    opacity: mod.live ? 1 : 0.82,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    height: "100%",
-                    minHeight: 140,
-                    boxShadow: mod.live ? "var(--shadow-sm)" : "none",
-                    textAlign: "left"
-                  }}
-                >
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
-                      <div style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: "var(--radius-md)",
-                        background: mod.live ? "var(--color-accent-muted)" : "var(--color-background-tertiary)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        border: mod.live ? "1px solid var(--color-border-warning)" : "1px solid var(--color-border-tertiary)"
-                      }}>
-                        <i className={`ti ${mod.ti}`} style={{
-                          color: mod.live ? "var(--color-accent-primary)" : "var(--color-text-tertiary)",
-                          fontSize: 17
-                        }}></i>
-                      </div>
-                      <h3 style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-primary)", margin: 0 }}>{mod.label}</h3>
-                    </div>
-                    <p style={{ fontSize: 13, color: "var(--color-text-secondary)", lineHeight: 1.5, margin: 0 }}>
-                      {mod.desc}
-                    </p>
-                  </div>
-
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14 }}>
-                    <span style={{
-                      fontSize: 11,
-                      fontFamily: "var(--font-sans)",
-                      fontWeight: 600,
-                      padding: "3px 8px",
-                      borderRadius: "var(--radius-full)",
-                      background: mod.live ? "var(--color-background-success)" : "var(--color-background-tertiary)",
-                      color: mod.live ? "var(--color-text-success)" : "var(--color-text-tertiary)",
-                      border: `1px solid ${mod.live ? "var(--color-border-success)" : "var(--color-border-tertiary)"}`
-                    }}>
-                      {mod.live ? "Ready" : "Coming soon"}
-                    </span>
-                    <span style={{ fontSize: 12, color: mod.live ? "var(--color-accent-primary)" : "var(--color-text-tertiary)", fontWeight: 500, display: "flex", alignItems: "center", gap: 2 }}>
-                      {mod.live ? "Open" : "Preview"} <i className="ti ti-chevron-right" style={{ fontSize: 14 }} aria-hidden="true"></i>
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        );
-      })}
-    </div>
+    <EventHome
+      eventId={selectedEventId}
+      event={EVENT_REGISTRY[selectedEventId]}
+      onNav={onNav}
+    />
   );
 }

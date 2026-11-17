@@ -7,6 +7,10 @@ import { fileStem, storageKey } from '../../src/seasons/storageKeys.js';
 export const BASE_PATH = '/olympiad-studio/';
 export const NAVIGATION_KEY = 'olympiad-studio-navigation';
 export const SCREENSHOT_DIR = 'test-results/screenshots';
+// First paint after a source edit races Vite's dependency re-optimization on the
+// OneDrive mount: the app shell can take >20 s even though the bundle is tiny.
+// This budget covers that dev-server stall, not slow application code.
+export const SHELL_READY_TIMEOUT = 40_000;
 
 export const SEASON_YEAR = ACTIVE_SEASON.year;
 
@@ -76,7 +80,7 @@ export async function openModule(page, testInfo, { eventId, moduleId, theme = 'l
   const errors = trackConsoleIssues(page);
   await seedNavigation(page, { eventId, moduleId, theme });
   await page.goto(BASE_PATH);
-  await page.waitForSelector('header', { timeout: 20_000 });
+  await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
   await page.evaluate(() => window.scrollTo(0, 0));
   return errors;
 }

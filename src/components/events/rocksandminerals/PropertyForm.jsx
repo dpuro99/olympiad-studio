@@ -21,6 +21,7 @@ import {
 import {
   Button,
   CheckboxField,
+  Collapsible,
   NumberField,
   SelectField,
   StatusMessage,

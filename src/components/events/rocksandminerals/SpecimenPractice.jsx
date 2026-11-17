@@ -159,8 +159,6 @@ export default function SpecimenPractice() {
   const [round, setRound] = useState(0);
   const [editingId, setEditingId] = useState('');
   const [message, setMessage] = useState({ text: '', error: false });
-  const [showMissed, setShowMissed] = useState(false);
-  const [showRecord, setShowRecord] = useState(false);
 
   const activeDeck = focusCards ?? deck;
   const activeKey = activeDeck.map((c) => c.id).join('|');
@@ -170,10 +168,10 @@ export default function SpecimenPractice() {
 
   const attempt = (card, correct) => setSession((s) => recordAttempt(s, card, correct));
   const restart = () => { setSession(createSession()); setFocusCards(null); setRound((c) => c + 1); setMessage({ text: '', error: false }); };
-  const practiceMissed = () => { if (!missed.length) return; const ids = new Set(missed.map((c) => c.id)); setFocusCards(deck.filter((c) => ids.has(c.id))); setRound((c) => c + 1); setShowMissed(false); setMessage({ text: `Drilling ${missed.length} missed mineral${missed.length === 1 ? '' : 's'}.`, error: false }); };
+  const practiceMissed = () => { if (!missed.length) return; const ids = new Set(missed.map((c) => c.id)); setFocusCards(deck.filter((c) => ids.has(c.id))); setRound((c) => c + 1); setMessage({ text: `Drilling ${missed.length} missed mineral${missed.length === 1 ? '' : 's'}.`, error: false }); };
   const persist = (next) => { setAuthored(next); try { window.localStorage.setItem(SPECIMEN_STORAGE_KEY, JSON.stringify(next)); setStorageError(''); return true; } catch { setStorageError('Local storage is unavailable, so this change is kept for this session only.'); return false; } };
-  const saveProperties = (properties) => { if (!editingCard) return; const saved = persist({ ...authored, [editingCard.id]: properties }); setMessage({ text: saved ? `Properties saved for ${editingCard.name}.` : `Properties for ${editingCard.name} updated for this session; local storage is unavailable.`, error: !saved }); setEditingId(''); setShowRecord(false); };
-  const startEditing = (id) => { if (!cards.some((c) => c.id === id)) return; setEditingId(id); setShowRecord(true); setMessage({ text: '', error: false }); };
+  const saveProperties = (properties) => { if (!editingCard) return; const saved = persist({ ...authored, [editingCard.id]: properties }); setMessage({ text: saved ? `Properties saved for ${editingCard.name}.` : `Properties for ${editingCard.name} updated for this session; local storage is unavailable.`, error: !saved }); setEditingId(''); };
+  const startEditing = (id) => { if (!cards.some((c) => c.id === id)) return; setEditingId(id); setMessage({ text: '', error: false }); };
 
   return (
     <div style={{ display: 'grid', gap: 14, maxWidth: 960 }}>
@@ -217,7 +215,7 @@ export default function SpecimenPractice() {
       {editingCard && (
         <Card style={{ display: 'grid', gap: 10, borderColor: 'var(--color-accent-primary)', boxShadow: 'var(--shadow-md)' }}>
           <SectionHeading>Recording: {editingCard.name}</SectionHeading>
-          <PropertyForm key={editingCard.id} card={editingCard} onSave={saveProperties} onCancel={() => { setEditingId(''); setShowRecord(false); }} />
+          <PropertyForm key={editingCard.id} card={editingCard} onSave={saveProperties} onCancel={() => setEditingId('')} />
           {message.text && <StatusMessage tone={message.error ? 'error' : 'status'}>{message.text}</StatusMessage>}
         </Card>
       )}
@@ -225,7 +223,7 @@ export default function SpecimenPractice() {
       {/* ── 5. FOOTER: Quick record access + backup ── */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', paddingTop: 4, borderTop: '1px solid var(--color-border-tertiary)', color: 'var(--color-text-tertiary)', fontSize: 11 }}>
         <span>{coverage.recorded} of {coverage.total} minerals have recorded properties.</span>
-        <SelectField label="Quick record" value={editingId} onChange={(e) => (e.target.value ? startEditing(e.target.value) : (setEditingId(''), setShowRecord(false)))} style={{ width: 'auto', minWidth: 200 }}>
+        <SelectField label="Quick record" value={editingId} onChange={(e) => (e.target.value ? startEditing(e.target.value) : setEditingId(''))} style={{ width: 'auto', minWidth: 200 }}>
           <option value="">Choose a mineral to record…</option>
           {CHEMICAL_CLASSES.map((g) => { const gcs = recordingScope.filter((c) => c.cls === g); if (!gcs.length) return null; return <optgroup key={g} label={g}>{gcs.map((c) => <option key={c.id} value={c.id}>{c.name}{c.level === 'state' ? ' (S/N)' : ''}</option>)}</optgroup>; })}
         </SelectField>
