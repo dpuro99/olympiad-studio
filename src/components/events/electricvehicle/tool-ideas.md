@@ -52,11 +52,11 @@ Source: supplied 2027 Division C Rules Manual, pp. C26–C31 + official EV FAQ (
 - **Persistence:** localStorage, explicit save/restore; CSV export escaped and formula-injection-safe.
 
 ## Tool: Kit/Programming Compliance Checklist
-- **Status:** Planned
+- **Status:** Live — `src/components/events/electricvehicle/KitComplianceChecklist.jsx` (engine in `complianceUtils.js`)
 - **Category:** Worksheet
 - **Goal:** Help teams self-check the two functional kit modifications, self-built pusher, and code contribution rules.
 - **Core interaction loop:** Check each constraint in turn; read guidance; record what was documented.
-- **Content & data:** Manual construction rules + official code-contribution clarification (current/non-roster student link from the FAQ).
+- **Content & data:** Manual §3.k.i–iv (kit modifications, own pusher, kit-part limits, non-modification penalty §5.i.iii) and §3.l (program developed by at least one of the 15 team members; single-source programs prohibited), plus the official EV FAQ code-contribution clarification. The earlier `§8.r` pointer was wrong.
 - **UI components:** Checklist with per-rule status; source citations per rule.
 - **Interactivity:** Live: each constraint's status updates as it is checked, with its citation.
 - **Scoring & feedback:** Report-only; must not claim to pre-judge an ES inspection.

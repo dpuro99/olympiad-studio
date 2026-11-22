@@ -65,7 +65,8 @@
       "modules": [
         { "id": "score", "label": "Score Calculator", "expectText": "Electric Vehicle score calculator" },
         { "id": "course", "label": "Course & Geometry", "expectText": "Required average speed" },
-        { "id": "log", "label": "Practice Run Logger", "expectText": "Practice run journal" }
+        { "id": "log", "label": "Practice Run Logger", "expectText": "Practice run journal" },
+        { "id": "compliance", "label": "Kit & Program Compliance", "expectText": "Self-check only" }
       ]
     },
     {

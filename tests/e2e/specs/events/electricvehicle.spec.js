@@ -77,3 +77,35 @@ test('run logger blocks an incomplete run (native required validation)', async (
   await expect(page.getByText('Run saved in this browser.')).toHaveCount(0);
   expect(errors).toEqual([]);
 });
+
+test('compliance checklist filters kit clauses and derives a live self-check summary', async ({ page }, testInfo) => {
+  const errors = await openModule(page, testInfo, { eventId: 'ev', moduleId: 'compliance' });
+  await expect(page.getByText('Self-check only', { exact: false })).toBeVisible();
+
+  // Kit on by default: four applicable check rows, all unreviewed.
+  await expect(page.getByText('0 of 4 applicable checks marked compliant.')).toBeVisible();
+  const checkRows = page.getByRole('group', { name: / status$/ });
+  await expect(checkRows).toHaveCount(4);
+
+  // Mark the program rule compliant and add a note; the summary updates live.
+  const program = page.locator('section').filter({
+    has: page.getByRole('heading', { name: 'The program has a current team-member contributor' })
+  });
+  await program.getByRole('button', { name: 'Compliant' }).click();
+  await program.getByLabel('Note for The program has a current team-member contributor').fill(' contributor logged ');
+  await expect(page.getByText('1 of 4 applicable checks marked compliant.')).toBeVisible();
+
+  // Turning off the kit switch excludes the three kit clauses from the count.
+  await page.getByRole('switch', { name: /We used a purchased or open-source kit/ }).click();
+  await expect(page.getByText('1 of 1 applicable checks marked compliant.')).toBeVisible();
+  await expect(checkRows).toHaveCount(1);
+  await expect(page.getByText('Every applicable check is marked compliant', { exact: false })).toBeVisible();
+
+  // Reset needs confirmation; cancelling keeps the current review.
+  page.once('dialog', (dialog) => dialog.dismiss());
+  await page.getByRole('button', { name: 'Reset checklist' }).click();
+  await expect(page.getByText('1 of 1 applicable checks marked compliant.')).toBeVisible();
+
+  await captureSnapshot(page, testInfo, 'ev_compliance_selfcheck');
+  expect(errors).toEqual([]);
+});

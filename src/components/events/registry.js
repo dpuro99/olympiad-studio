@@ -3,6 +3,7 @@ import { ACTIVE_DATA } from '../../seasons/active.js';
 import { ACTIVE_SEASON } from '../../seasons/manifest.js';
 
 const CourseGeometry = lazy(() => import('./electricvehicle/CourseGeometry'));
+const KitComplianceChecklist = lazy(() => import('./electricvehicle/KitComplianceChecklist'));
 const RunLogger = lazy(() => import('./electricvehicle/RunLogger'));
 const ScoreCalc = lazy(() => import('./electricvehicle/ScoreCalc'));
 const GasLawPractice = lazy(() => import('./chemlab/GasLawPractice'));
@@ -513,7 +514,7 @@ export const EVENT_REGISTRY = {
     division: 'C',
     description: 'Design, build, and test an electric vehicle that pushes a bottle past a line, then reverses to stop near a target.',
     categories: ['Event', 'Testing'],
-    journey: ['score', 'course', 'log'],
+    journey: ['score', 'course', 'log', 'compliance'],
     manualReference: 'Division C Rules Manual, pp. C26–C31',
     ruleSummary: [
       'The vehicle travels for a set time, pushes a water bottle past a line, then reverses to stop near the Target Point.',
@@ -555,6 +556,16 @@ export const EVENT_REGISTRY = {
         desc: `Save measured practice runs locally with the verified ${ACTIVE_SEASON.year} score calculation.`,
         eventName: 'Electric Vehicle',
         manualReference: 'Division C Rules Manual, pp. C26–C31',
+        eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: ACTIVE_SEASON.rulesUrl
+      },
+      {
+        id: 'compliance', ti: 'ti-list-check', label: 'Kit & Program Compliance', cat: 'Testing',
+        stage: 'practice',
+        gain: 'per-clause review and notes → which checks still need attention',
+        live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: KitComplianceChecklist,
+        desc: `Self-check the ${ACTIVE_SEASON.year} kit-modification and program rules clause by clause, with citations and the official FAQ clarification.`,
+        eventName: 'Electric Vehicle',
+        manualReference: 'Division C Rules Manual, pp. C26–C31 (§3.k, §3.l)',
         eventUrl: 'https://www.soinc.org/electric-vehicle-c', rulesUrl: ACTIVE_SEASON.rulesUrl
       }
     ]

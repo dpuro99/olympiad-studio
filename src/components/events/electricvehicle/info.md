@@ -8,7 +8,7 @@ Teams design/build one electric vehicle. It travels in a set time, pushes a wate
 ## Key construction rules
 - All electrical energy: at most eight AA batteries, 1.2–1.5 V each, no lithium/lead batteries; no energy storage beyond battery instantaneous output. Lasers prohibited.
 - Max vehicle length 80.0 cm and width 35.0 cm. Rigid, fixed, foremost bottle pusher; rear-most accessible measurement point. No remote control/tether; vehicle moves as one unit.
-- A kit/open-source kit requires at least two functional documented modifications; team must build its own bottle pusher. Code must be developed/contributed to by a current team member; single-source programs are prohibited.
+- A kit/open-source kit requires at least two functional documented modifications (§3.k.i), a team-built bottle pusher (§3.k.ii) and only commonly available kit parts (§3.k.iii); violations draw the non-modification penalty (§5.i.iii). Code must be developed by at least one of the 15 team members; single-source programs are prohibited (§3.l).
 - Target distance, target time and bottle-line distance are announced after impound. Bottle position varies by level: 2 m Regional/Invitational, 3 m State, 4 m National.
 
 ## Run workflow and scoring
