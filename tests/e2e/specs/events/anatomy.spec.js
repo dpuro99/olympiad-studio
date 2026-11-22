@@ -26,6 +26,36 @@ test('practice notes save locally and export as CSV', async ({ page }, testInfo)
   expect(errors).toEqual([]);
 });
 
+test('system diagram drill labels targets and reveals the manual-cited key', async ({ page }, testInfo) => {
+  const errors = await openModule(page, testInfo, { eventId: 'anatomy', moduleId: 'system-diagram' });
+  await expect(page.getByRole('heading', { name: 'System Diagram Drill', level: 1 })).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Respiratory', exact: true })).toHaveAttribute('aria-selected', 'true');
+
+  // Target 1 is the pharynx. The choice set always includes the correct name.
+  const target1 = page.getByRole('button', { name: /^Target 1/ });
+  await target1.click();
+  await expect(page.getByRole('group', { name: 'Structure name choices' }).getByRole('button', { name: 'Pharynx' })).toBeVisible();
+  await page.getByRole('group', { name: 'Structure name choices' }).getByRole('button', { name: 'Pharynx' }).click();
+  await expect(page.getByRole('button', { name: 'Target 1, labelled Pharynx' })).toBeVisible();
+
+  // Keyboard path: focus target 2 and select it with Enter.
+  await page.getByRole('button', { name: 'Target 2, unlabelled' }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('status').filter({ hasText: 'Target 2 selected' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Check labels' }).click();
+  await expect(page.getByRole('status').filter({ hasText: '1 of 6 correct' })).toBeVisible();
+  await expect(page.getByText('Pharynx', { exact: true }).first()).toBeVisible();
+  await captureSnapshot(page, testInfo, 'anatomy_system_diagram_key');
+
+  // Switching systems resets the round rather than carrying labels across.
+  await page.getByRole('tab', { name: 'Digestive', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Target 1, unlabelled' })).toBeVisible();
+  await expect(page.getByRole('status').filter({ hasText: '1 of 6 correct' })).toHaveCount(0);
+
+  expect(errors).toEqual([]);
+});
+
 test('respiratory data practice grades a generated loop and a shifted gas curve', async ({ page }, testInfo) => {
   const errors = await openModule(page, testInfo, { eventId: 'anatomy', moduleId: 'respiratory-data' });
   await expect(page.getByRole('heading', { name: 'Respiratory Data Practice', level: 1 })).toBeVisible();

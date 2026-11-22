@@ -4,6 +4,7 @@
       "code": "anatomy",
       "label": "Anatomy and Physiology",
       "modules": [
+        { "id": "system-diagram", "label": "System Diagram Drill", "expectText": "Structure names" },
         { "id": "respiratory-data", "label": "Respiratory Data Practice", "expectText": "Generated teaching data" },
         { "id": "anatomy-notes", "label": "Practice Notes", "expectText": "Add a note" },
         { "id": "anatomy-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }

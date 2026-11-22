@@ -19,6 +19,7 @@ const BoomileverBuildLog = lazy(() => import('./boomilever/BoomileverBuildLog'))
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
 const RespiratoryDataPractice = lazy(() => import('./anatomy/RespiratoryDataPractice'));
+const SystemDiagramDrill = lazy(() => import('./anatomy/SystemDiagramDrill'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
 const MolecularSequenceWorkbench = lazy(() => import('./designergenes/MolecularSequenceWorkbench'));
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
@@ -60,6 +61,22 @@ export const EVENT_REGISTRY = {
       'Content is respiratory, digestive, and immune systems, with tournament-level additions listed in the manual.'
     ],
     additionalModules: [{
+      id: 'system-diagram',
+      stage: 'practice',
+      gain: 'a schematic target → the manual-listed structure name, checked against a cited key',
+      ti: 'ti-diagram-2',
+      label: 'System Diagram Drill',
+      cat: 'Event',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: SystemDiagramDrill,
+      desc: 'Label numbered targets on respiratory, digestive, and immune schematics, then check your work against manual-cited names.',
+      eventName: 'Anatomy and Physiology',
+      manualReference: 'Division C Rules Manual, pp. C3–C5',
+      eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
       id: 'respiratory-data',
       stage: 'practice',
       gain: 'a generated case and its plot → a classified pattern with checked reasoning',

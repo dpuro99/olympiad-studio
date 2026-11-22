@@ -56,16 +56,16 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Persistence:** none.
 
 ## Tool: System Diagram Drill
-- **Status:** Planned
+- **Status:** Live — `src/components/events/anatomy/SystemDiagramDrill.jsx` + `diagramDrillUtils.js`
 - **Category:** Practice
 - **Goal:** Identify structures of the respiratory, digestive, and immune systems on diagrams or models.
-- **Core interaction loop:** 1) Choose a system. 2) Label/select structures on a diagram view. 3) Reveal manual-cited names and functions.
-- **Content & data:** Simple schematic diagrams (state-drawn SVG) or user-supplied images; no invented anatomy. Official resources stress identifying structures on diagrams and models.
-- **UI components:** Diagram canvas, label targets, reveal panel.
-- **Interactivity:** Direct manipulation: click-to-label an SVG diagram (with a keyboard path); reveal panel confirms names/functions.
-- **Scoring & feedback:** Identify-against-key; practice only.
-- **Level gating:** level-tagged structures.
-- **Persistence:** none.
-- **Open questions:** source of diagram artwork (state-drawn SVG schematics vs user-supplied images).
+- **Core interaction loop:** 1) Choose a system. 2) Select a numbered target on a schematic and choose its structure name. 3) Check labels to reveal the manual-cited names and short study notes for every target.
+- **Content & data:** State-drawn SVG schematics with cosmetic target markers; the only structure names used are the ones the manual itself lists (respiratory §3.a.iii, digestive §3.b.ii–iv, immune §3.c.i), transcribed into `src/seasons/2027/anatomy.js` with the subsection citation. The short notes are general biology study aids, labelled as such in the UI — not official text. No user-supplied images and no invented anatomy.
+- **UI components:** Diagram SVG with keyboard-focusable targets, structure-name choice buttons, Stepper, Tabs, result table with a manual-scope note.
+- **Interactivity:** Direct manipulation: click/Enter/Space to select a numbered SVG target (each is a named button), then pick a name; choices, labelled markers and the coverage count all derive live. Check/reveal is an explicit action because grading is a side effect.
+- **Scoring & feedback:** Identify-against-key; correct / wrong / unlabelled are reported separately in the reveal table. Practice only — no score is stored or ranked.
+- **Level gating:** The drill uses the manual's base-level named structures; a level note states that State/National additions are outside this drill. No per-structure level tags (the manual does not tag individual structures).
+- **Persistence:** none — a round is session-only and a system switch resets it.
+- **Open questions:** none (state-drawn SVG schematics chosen; user-supplied images rejected because the targets and answer key could not be rule-grounded).
 
 This document is a planning tool only; it does not invent official scoring.
