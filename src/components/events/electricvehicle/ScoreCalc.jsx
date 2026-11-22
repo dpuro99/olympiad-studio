@@ -5,11 +5,20 @@ import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 import {
   Card,
   CheckboxField,
+  Collapsible,
   NumberField,
   ResultPanel,
   SectionHeading,
+  Stepper,
   ToolHeader
 } from '../../general/ui/primitives';
+
+const WORKFLOW = [
+  { label: 'Measure each run' },
+  { label: 'Add any rulings' },
+  { label: 'Read the final score' }
+];
+const RULINGS_SUMMARY = 'Rulings and penalties (expand only if any apply)';
 
 const createEmptyRun = () => ({
   targetTimeSec: '',
@@ -27,6 +36,11 @@ const createEmptyRun = () => ({
 });
 
 const numberOrNull = (value) => value === '' ? null : Number(value);
+const MEASURED_FIELDS = ['targetTimeSec', 'runTimeSec', 'vehicleDistanceCm', 'bottleDistanceCm', 'pusherOpeningWidthCm'];
+const RULING_FIELDS = ['failedRun', 'bottlePastTarget', 'bottleFullyPastLine', 'competitionViolation', 'constructionViolation', 'nonModificationPenalty'];
+
+const hasMeasurements = (run) => MEASURED_FIELDS.some((field) => String(run[field]).trim() !== '');
+const hasRulings = (run) => RULING_FIELDS.some((field) => run[field]) || !run.movingBottleRequirementsMet;
 
 function ScoreRow({ label, value }) {
   return (
@@ -70,6 +84,9 @@ export default function ScoreCalc() {
     nationalTournament,
     vehicleNotImpounded
   });
+  const currentStep = finalResult
+    ? 2
+    : runs.some((run) => hasMeasurements(run) || hasRulings(run)) ? 1 : 0;
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 1000 }}>
@@ -80,7 +97,7 @@ export default function ScoreCalc() {
         manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual, EV sections 5–8 (pp. C28–C31)`}
         steps={[
           'Measure distances in centimeters and times in seconds and enter them for Run 1 (and Run 2 if the team runs twice).',
-          'Tick any rulings the Event Supervisor recorded (failed run, violations, bottle line, moving-bottle requirements).',
+          'Expand rulings only if the Event Supervisor recorded one; leave them closed for a clean run.',
           'Read the Run score at the bottom of each run panel.',
           'Enter the Event Time used and any tournament/impound conditions to see the final score.'
         ]}
@@ -89,6 +106,10 @@ export default function ScoreCalc() {
           This applies the manual&rsquo;s numeric rules only. It cannot judge course measurements, failed-run rulings, or violations — confirm those with the Event Supervisor.
         </p>
       </ToolHeader>
+
+      <Card style={{ display: 'grid', gap: 4 }}>
+        <Stepper steps={WORKFLOW} currentStep={currentStep} />
+      </Card>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14 }}>
         {runs.map((run, index) => {
@@ -105,15 +126,17 @@ export default function ScoreCalc() {
                 <NumberField label="Bottle distance from bottle line" unit="cm" step="0.1" value={run.bottleDistanceCm} onChange={setNumber('bottleDistanceCm')} help="Distance the bottle stopped from the Bottle Line." />
                 <NumberField label="Pusher foremost opening width measured by ES" unit="cm" step="0.1" value={run.pusherOpeningWidthCm} onChange={setNumber('pusherOpeningWidthCm')} help="Width of the pusher's foremost opening, measured by the Event Supervisor." />
               </div>
-              <div style={{ display: 'grid', gap: 7 }}>
-                <CheckboxField label={`Failed run (manual assigns ${ACTIVE_DATA.electricvehicle.failedRunDistanceScore} distance points and 0.00 s run time)`} checked={run.failedRun} onChange={setCheck('failedRun')} />
-                <CheckboxField label="Bottle fully beyond the Bottle Line (−20 points)" checked={run.bottleFullyPastLine} onChange={setCheck('bottleFullyPastLine')} />
-                <CheckboxField label="Bottle reached/passed the Target Point" checked={run.bottlePastTarget} onChange={setCheck('bottlePastTarget')} />
-                <CheckboxField label="Moving Water Bottle Requirements were followed" checked={run.movingBottleRequirementsMet} onChange={setCheck('movingBottleRequirementsMet')} />
-                <CheckboxField label="One or more Competition Violations recorded (+150)" checked={run.competitionViolation} onChange={setCheck('competitionViolation')} />
-                <CheckboxField label="One or more Construction Violations recorded (+300)" checked={run.constructionViolation} onChange={setCheck('constructionViolation')} />
-                <CheckboxField label="Non-modification penalty applies (+50)" checked={run.nonModificationPenalty} onChange={setCheck('nonModificationPenalty')} />
-              </div>
+              <Collapsible summary={RULINGS_SUMMARY} defaultOpen={hasRulings(run)}>
+                <div style={{ display: 'grid', gap: 7 }}>
+                  <CheckboxField label={`Failed run (manual assigns ${ACTIVE_DATA.electricvehicle.failedRunDistanceScore} distance points and 0.00 s run time)`} checked={run.failedRun} onChange={setCheck('failedRun')} />
+                  <CheckboxField label="Bottle fully beyond the Bottle Line (−20 points)" checked={run.bottleFullyPastLine} onChange={setCheck('bottleFullyPastLine')} />
+                  <CheckboxField label="Bottle reached/passed the Target Point" checked={run.bottlePastTarget} onChange={setCheck('bottlePastTarget')} />
+                  <CheckboxField label="Moving Water Bottle Requirements were followed" checked={run.movingBottleRequirementsMet} onChange={setCheck('movingBottleRequirementsMet')} />
+                  <CheckboxField label="One or more Competition Violations recorded (+150)" checked={run.competitionViolation} onChange={setCheck('competitionViolation')} />
+                  <CheckboxField label="One or more Construction Violations recorded (+300)" checked={run.constructionViolation} onChange={setCheck('constructionViolation')} />
+                  <CheckboxField label="Non-modification penalty applies (+50)" checked={run.nonModificationPenalty} onChange={setCheck('nonModificationPenalty')} />
+                </div>
+              </Collapsible>
               {result ? (
                 <ResultPanel style={{ padding: 0, background: 'transparent', border: 'none' }}>
                   <ScoreRow label="Base score" value={result.baseScore} />

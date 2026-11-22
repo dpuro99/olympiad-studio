@@ -8,12 +8,20 @@ import {
   parseSavedExperiment
 } from './experimentNotebook';
 import {
-  Button, Card, EmptyState, HelpText, SectionHeading,
-  SelectField, StatusMessage, TextAreaField, TextField, ToolHeader
+  Button, Card, Collapsible, EmptyState, HelpText, SectionHeading,
+  SelectField, StatusMessage, Stepper, TextAreaField, TextField, ToolHeader
 } from '../../general/ui/primitives';
 import { LineChart } from '../../general/ui/charts';
 import { LEGACY_STORAGE_KEYS, readStorageWithLegacy } from '../../../seasons/storageKeys.js';
 import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
+
+const WORKFLOW = [
+  { label: 'Set up' },
+  { label: 'Measure trials' },
+  { label: 'Conclude and save' }
+];
+const CONDITIONS_SUMMARY = 'Units and conditions held constant (expand to edit)';
+const CONCLUSION_SUMMARY = 'Your conclusion';
 
 function getTrialRate(trial, measurementType) {
   if (trial.initialValue === '' || trial.finalValue === '' || trial.elapsedTime === '') return null;
@@ -138,6 +146,8 @@ export default function KineticsPractice() {
   const quantityDescription = experiment.measurementType === 'reactant-consumed' ? 'remaining amount' : 'product formed';
   const rateUnit = experiment.quantityUnit && experiment.timeUnit ? `${experiment.quantityUnit}/${experiment.timeUnit}` : 'quantity unit/time unit';
   const plotSeries = buildPlotSeries(experiment.trials);
+  const conditionsActive = Boolean(experiment.factorUnit || experiment.quantityUnit || experiment.timeUnit || experiment.controls);
+  const currentStep = experiment.conclusion.trim() ? 2 : (plotSeries.length > 0 ? 1 : 0);
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 960 }}>
@@ -146,10 +156,10 @@ export default function KineticsPractice() {
         purpose="Design your own reaction-rate investigation and record the measurements you take. Enter initial and final amounts over an elapsed time and the average rate updates as you type."
         manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual §3.f, p. C14`}
         steps={[
-          'Choose the factor you are varying and set the units you will record in.',
+          'Choose the factor you are varying and the measurement type; expand units only if you want to label your numbers.',
           'Add a trial for each run and enter the measured amounts and elapsed time — the average rate appears immediately.',
           'The plot shows each trial’s change in the measured quantity over its elapsed time.',
-          'Save to this browser or export the notebook as CSV.'
+          'Write a conclusion, then save to this browser or export the notebook as CSV.'
         ]}
       >
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
@@ -157,21 +167,31 @@ export default function KineticsPractice() {
         </p>
       </ToolHeader>
 
+      <Card style={{ display: 'grid', gap: 4 }}>
+        <Stepper steps={WORKFLOW} currentStep={currentStep} />
+      </Card>
+
       <Card style={{ display: 'grid', gap: 14 }}>
         <SectionHeading>Experiment setup</SectionHeading>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
           <SelectField label="Factor you are varying" value={experiment.factorId} onChange={(event) => updateExperiment('factorId', event.target.value)}>
             {RATE_FACTORS.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
           </SelectField>
-          <TextField label="Unit for the factor" value={experiment.factorUnit} onChange={(event) => updateExperiment('factorUnit', event.target.value)} placeholder="e.g. °C, mol/L, g" />
           <SelectField label="Measurement type" value={experiment.measurementType} onChange={(event) => updateExperiment('measurementType', event.target.value)}>
             <option value="reactant-consumed">Reactant remaining over time</option>
             <option value="product-formed">Product formed over time</option>
           </SelectField>
-          <TextField label="Measured quantity unit" value={experiment.quantityUnit} onChange={(event) => updateExperiment('quantityUnit', event.target.value)} placeholder="e.g. g, mL, mol/L" />
-          <TextField label="Time unit" value={experiment.timeUnit} onChange={(event) => updateExperiment('timeUnit', event.target.value)} placeholder="e.g. s, min" />
         </div>
-        <TextField label="Conditions you are holding constant" value={experiment.controls} onChange={(event) => updateExperiment('controls', event.target.value)} placeholder="Describe what you keep the same across trials" />
+        <Collapsible summary={CONDITIONS_SUMMARY} defaultOpen={conditionsActive}>
+          <div style={{ display: 'grid', gap: 10 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
+              <TextField label="Unit for the factor" value={experiment.factorUnit} onChange={(event) => updateExperiment('factorUnit', event.target.value)} placeholder="e.g. °C, mol/L, g" />
+              <TextField label="Measured quantity unit" value={experiment.quantityUnit} onChange={(event) => updateExperiment('quantityUnit', event.target.value)} placeholder="e.g. g, mL, mol/L" />
+              <TextField label="Time unit" value={experiment.timeUnit} onChange={(event) => updateExperiment('timeUnit', event.target.value)} placeholder="e.g. s, min" />
+            </div>
+            <TextField label="Conditions you are holding constant" value={experiment.controls} onChange={(event) => updateExperiment('controls', event.target.value)} placeholder="Describe what you keep the same across trials" />
+          </div>
+        </Collapsible>
       </Card>
 
       <Card style={{ display: 'grid', gap: 12 }}>
@@ -217,9 +237,10 @@ export default function KineticsPractice() {
         )}
       </Card>
 
-      <Card style={{ display: 'grid', gap: 12 }}>
-        <SectionHeading>Your conclusion</SectionHeading>
-        <TextAreaField label="What does your data suggest?" value={experiment.conclusion} onChange={(event) => updateExperiment('conclusion', event.target.value)} rows={4} placeholder="Summarize the trend you measured and note any uncertainty or surprises." />
+      <Card>
+        <Collapsible summary={CONCLUSION_SUMMARY} style={{ borderTop: 'none', paddingTop: 0 }} defaultOpen={Boolean(experiment.conclusion)}>
+          <TextAreaField label="What does your data suggest?" value={experiment.conclusion} onChange={(event) => updateExperiment('conclusion', event.target.value)} rows={4} placeholder="Summarize the trend you measured and note any uncertainty or surprises." />
+        </Collapsible>
       </Card>
 
       <Card style={{ display: 'grid', gap: 10 }}>

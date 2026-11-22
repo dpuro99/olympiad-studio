@@ -9,11 +9,13 @@ test('freshwater workbench computes discharge and water-budget balance live', as
   await page.getByLabel('Average velocity (m/s)').fill('1.5');
   await expect(page.getByText('3 m³/s').first()).toBeVisible();
 
+  // One measurement is on screen at a time; switch to the water-budget panel.
+  await page.getByRole('combobox', { name: 'Measurement to calculate' }).selectOption('budget');
   await page.getByLabel('Inflow amounts 1').fill('1200');
   await page.getByRole('button', { name: 'Add inflow' }).click();
   await page.getByLabel('Inflow amounts 2').fill('300');
   await page.getByLabel('Outflow amounts 1').fill('1000');
-  await expect(page.getByRole('status').last()).toContainText('Net budget change: 500 m³');
+  await expect(page.getByRole('status').first()).toContainText('Net budget change: 500 m³');
 
   await captureSnapshot(page, testInfo, 'dynamicplanet_freshwater');
   expect(errors).toEqual([]);

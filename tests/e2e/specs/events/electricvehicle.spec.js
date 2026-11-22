@@ -13,6 +13,8 @@ test('score calculator reproduces the manual example run (118.17)', async ({ pag
   await run1.getByLabel('Vehicle distance from target (cm)').fill('17.6');
   await run1.getByLabel('Bottle distance from bottle line (cm)').fill('10.6');
   await run1.getByLabel('Pusher foremost opening width measured by ES (cm)').fill('16');
+  // Rulings are collapsed until one applies; open the panel before ticking.
+  await run1.getByText('Rulings and penalties (expand only if any apply)').click();
   await run1.getByText('Bottle reached/passed the Target Point').click();
 
   await expect(run1.getByText('118.17')).toBeVisible({ timeout: 10_000 });
@@ -24,6 +26,7 @@ test('score calculator reproduces the manual example run (118.17)', async ({ pag
   await run2.getByLabel('Vehicle distance from target (cm)').fill('22.5');
   await run2.getByLabel('Bottle distance from bottle line (cm)').fill('12.1');
   await run2.getByLabel('Pusher foremost opening width measured by ES (cm)').fill('16');
+  await run2.getByText('Rulings and penalties (expand only if any apply)').click();
   await run2.getByText('Bottle reached/passed the Target Point').click();
   await run2.getByText('Bottle fully beyond the Bottle Line').click();
   await expect(run2.getByText('109.79')).toBeVisible({ timeout: 10_000 });
@@ -43,6 +46,8 @@ test('run logger saves a run locally, persists, and deletes with confirmation', 
   await page.getByLabel('Vehicle distance from target (cm)').fill('17.6');
   await page.getByLabel('Bottle distance from line (cm)').fill('10.6');
   await page.getByLabel('Pusher opening width measured by ES (cm)').fill('16');
+  // Rulings and notes are collapsed until they apply; open the panel first.
+  await page.getByText('Rulings and notes (expand only if any apply)').click();
   await page.getByText('Bottle reached/passed Target Point').click();
   await page.getByLabel('Notes').fill('E2E audit note');
   await page.getByRole('button', { name: 'Save run' }).click();

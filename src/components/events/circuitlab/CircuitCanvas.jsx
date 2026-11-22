@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { compileSchematic, evaluateSchematic, schematicTruthTable, layoutSchematic, GATE_ARITY, GATE_IDS } from './booleanLogic';
 import TruthTable from './TruthTable';
-import { Button, Card, HelpText, SectionHeading, StatusMessage } from '../../general/ui/primitives';
+import { Button, Card, Collapsible, HelpText, SectionHeading, StatusMessage } from '../../general/ui/primitives';
 import { storageKey } from '../../../seasons/storageKeys.js';
 
 const NODE_W = 132;
@@ -222,9 +222,16 @@ export default function CircuitCanvas() {
   return (
     <Card style={{ display: 'grid', gap: 14 }}>
       <SectionHeading>Circuit canvas</SectionHeading>
-      <HelpText>
-        Drag a gate by its header to move it. To wire, drag from a node&rsquo;s right-hand output dot to another node&rsquo;s left-hand input dot — or click an output then click an input. Click a wire to remove it, or use Tidy up to lay the circuit out left to right. Your circuit is saved in this browser. The current input values and every node&rsquo;s simulated value are shown live, with the full truth table below.
-      </HelpText>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 14, fontSize: 11, color: 'var(--color-text-secondary)' }}>
+        <span><span style={{ color: 'var(--color-text-success)' }}>●</span> wire carrying 1</span>
+        <span><span style={{ color: 'var(--color-border-secondary)' }}>●</span> wire carrying 0</span>
+        <span>Node values and the truth table update live as you toggle inputs.</span>
+      </div>
+      <Collapsible summary="How to use the canvas (expand for controls)" style={{ borderTop: 'none', paddingTop: 0 }}>
+        <HelpText>
+          Drag a gate by its header to move it. To wire, drag from a node&rsquo;s right-hand output dot to another node&rsquo;s left-hand input dot — or click an output then click an input. Click a wire to remove it, or use Tidy up to lay the circuit out left to right. Your circuit is saved in this browser. The current input values and every node&rsquo;s simulated value are shown live, with the full truth table below.
+        </HelpText>
+      </Collapsible>
 
       {storageError && (
         <StatusMessage tone="error">Saved circuit could not be read from this browser; starting from a fresh circuit.</StatusMessage>

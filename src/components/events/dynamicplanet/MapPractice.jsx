@@ -15,9 +15,16 @@ import {
   ResultPanel,
   SectionHeading,
   StatusMessage,
+  Stepper,
   Tabs,
   ToolHeader
 } from '../../general/ui/primitives';
+
+const CASE_WORKFLOW = [
+  { label: 'Read the case' },
+  { label: 'Enter answers' },
+  { label: 'Check & learn' }
+];
 
 const TABS = [
   { id: 'contour', label: 'Contour gradient' },
@@ -404,6 +411,8 @@ export default function MapPractice() {
   };
 
   const newCase = () => update({ seed: String(seed + 1), answers: {}, checked: false });
+  const answeredCount = Object.values(session.answers).filter((value) => value !== '' && value != null).length;
+  const caseStep = session.checked ? 2 : answeredCount > 0 ? 1 : 0;
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 860 }}>
@@ -419,6 +428,7 @@ export default function MapPractice() {
       </ToolHeader>
 
       <Card style={{ display: 'grid', gap: 12 }}>
+        <Stepper steps={CASE_WORKFLOW} currentStep={caseStep} style={{ marginBottom: 0 }} />
         <Tabs tabs={TABS} active={kind} onChange={setKind} ariaLabel="Map and hydrograph cases" />
         <div style={actionRow}>
           <NumberField

@@ -12,23 +12,28 @@ import {
   safeParseEntries,
   summarizeEntry
 } from './buildLogUtils';
+import {
+  Button,
+  Card,
+  CheckboxField,
+  Collapsible,
+  EmptyState,
+  NumberField,
+  ResultPanel,
+  SectionHeading,
+  SelectField,
+  StatusMessage,
+  Stepper,
+  TextAreaField,
+  TextField,
+  ToolHeader
+} from '../../general/ui/primitives';
 
-const cardStyle = {
-  background: 'var(--color-background-secondary)',
-  border: '1px solid var(--color-border-tertiary)',
-  borderRadius: 'var(--border-radius-lg)',
-  padding: 18
-};
-const inputStyle = {
-  width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)',
-  border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)',
-  borderRadius: 6, fontSize: 13, fontFamily: 'var(--font-mono)'
-};
-const checkStyle = {
-  display: 'flex', alignItems: 'flex-start', gap: 8,
-  color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.5
-};
-const fieldStyle = { display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 };
+const WORKFLOW = [
+  { label: 'Weigh the build' },
+  { label: 'Record the test' },
+  { label: 'Save & compare' }
+];
 
 function efficiencyText(summary) {
   if (!summary.tested) return 'not yet tested';
@@ -144,106 +149,115 @@ export default function BoomileverBuildLog() {
 
   const summaries = entries.map(summarizeEntry);
   const bestScore = summaries.reduce((best, summary) => (summary.scored && (best === null || summary.score > best) ? summary.score : best), null);
+  const currentStep = !hasMass ? 0 : (previewSummary.tested ? 2 : 1);
+  const recentEntries = entries.slice(0, 2);
+  const olderEntries = entries.slice(2);
+
+  const entryCard = (entry, index, summary) => {
+    const isBest = summary.scored && bestScore !== null && summary.score === bestScore;
+    return (
+      <article key={index} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline', flexWrap: 'wrap' }}>
+          <div>
+            <strong>{entry.label || 'Prototype'}</strong>
+            {isBest && <span style={{ marginLeft: 8, color: 'var(--color-text-success)', fontSize: 11, fontWeight: 600 }}>Best efficiency</span>}
+            <div style={{ color: 'var(--color-text-secondary)', fontSize: 11, marginTop: 3 }}>{baseOptionLabel(entry.baseOption)}</div>
+          </div>
+          <strong style={{ fontFamily: 'var(--font-mono)' }}>{efficiencyText(summary)}</strong>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8, color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
+          <span>mass {entry.structureMassGrams || '—'} g</span>
+          <span>load {summary.tested ? `${entry.loadSupportedGrams} g` : '—'}</span>
+          <span>{ACTIVE_DATA.boomilever.bonusHoldsKg} kg {summary.tested ? (entry.holds15Kg ? 'held' : 'no') : '—'}</span>
+          <span>{summary.tested ? entry.tier : 'untested'}</span>
+        </div>
+        {entry.memberDescription && <div style={{ marginTop: 6, fontSize: 12, color: 'var(--color-text-secondary)' }}>Members: {entry.memberDescription}</div>}
+        {entry.failureMode && <div style={{ marginTop: 4, fontSize: 12, color: 'var(--color-text-secondary)' }}>Failure: {entry.failureMode}</div>}
+        {entry.changes && <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap' }}>{entry.changes}</p>}
+        <Button
+          variant="danger"
+          onClick={() => { if (window.confirm('Delete this locally saved build?')) removeEntry(index); }}
+          style={{ marginTop: 8, padding: '4px 8px', fontSize: 11 }}
+        >
+          Delete
+        </Button>
+      </article>
+    );
+  };
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 960 }}>
-      <section style={{ ...cardStyle, display: 'grid', gap: 8 }}>
-        <div style={{ color: 'var(--color-text-info)', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '.06em', textTransform: 'uppercase' }}>
-          Boomilever C · {ACTIVE_SEASON.year} · Manual C7–C12
-        </div>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
-          {`Log each prototype you build and test so designs can be compared across iterations. Records stay in this browser and are not uploaded. Efficiency follows the verified formula (Load Scored ÷ Structure Mass with the optional ${ACTIVE_DATA.boomilever.loadScoredBonusGrams.toLocaleString('en-US')} g bonus); it is a practice record, not an Event Supervisor ruling.`}
-        </p>
-      </section>
+      <ToolHeader
+        eyebrow={`Boomilever C · ${ACTIVE_SEASON.year} · Manual C7–C12 · saved in this browser`}
+        purpose={`Log each prototype you build and test so designs can be compared across iterations. Records stay in this browser and are not uploaded. Efficiency follows the verified formula (Load Scored ÷ Structure Mass with the optional ${ACTIVE_DATA.boomilever.loadScoredBonusGrams.toLocaleString('en-US')} g bonus); it is a practice record, not an Event Supervisor ruling.`}
+        manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual, pp. C7–C12`}
+        steps={[
+          'Weigh the structure and give the prototype a short label.',
+          'After testing, record the load held, the tier, and whether the bonus mass condition was met.',
+          'Save the build, then compare efficiencies in the history below. Export as CSV when you want a backup.'
+        ]}
+      />
 
-      <form onSubmit={saveEntry} style={{ ...cardStyle, display: 'grid', gap: 14 }}>
-        <h2 style={{ margin: 0, fontSize: 15 }}>Log a build &amp; test</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
-          <label style={fieldStyle}>Prototype label
-            <input name="label" value={form.label} onChange={update} placeholder="e.g. balsa box beam v2" style={{ ...inputStyle, fontFamily: 'var(--font-sans)' }} />
-          </label>
-          <label style={fieldStyle}>Structure mass (g)
-            <input name="structureMassGrams" type="number" min="0" step="any" value={form.structureMassGrams} onChange={update} placeholder="e.g. 6.4" style={inputStyle} />
-          </label>
-          <label style={fieldStyle}>Members &amp; material
-            <input name="memberDescription" value={form.memberDescription} onChange={update} placeholder="e.g. 3.2 mm balsa box beam" style={{ ...inputStyle, fontFamily: 'var(--font-sans)' }} />
-          </label>
-          <label style={fieldStyle}>Wall-contact base option
-            <select name="baseOption" value={form.baseOption} onChange={update} style={inputStyle}>
+      <Card style={{ display: 'grid', gap: 0 }}>
+        <Stepper steps={WORKFLOW} currentStep={currentStep} />
+        <form onSubmit={saveEntry} style={{ display: 'grid', gap: 14 }}>
+          <SectionHeading as="h3" style={{ fontSize: 15 }}>Log a build &amp; test</SectionHeading>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
+            <TextField label="Prototype label" name="label" value={form.label} onChange={update} placeholder="e.g. balsa box beam v2" />
+            <NumberField label="Structure mass (g)" name="structureMassGrams" value={form.structureMassGrams} onChange={update} placeholder="e.g. 6.4" />
+            <SelectField label="Wall-contact base option" name="baseOption" value={form.baseOption} onChange={update}>
               {BASE_OPTIONS.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
-            </select>
-          </label>
-        </div>
-
-        <h3 style={{ margin: 0, fontSize: 13, color: 'var(--color-text-secondary)' }}>Test result (leave blank until tested)</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
-          <label style={fieldStyle}>Load supported (g)
-            <input name="loadSupportedGrams" type="number" min="0" step="any" value={form.loadSupportedGrams} onChange={update} placeholder="e.g. 12000" style={inputStyle} />
-          </label>
-          <label style={fieldStyle}>Tier
-            <select name="tier" value={form.tier} onChange={update} style={inputStyle}>
-              {TIERS.map((tier) => <option key={tier} value={tier}>{tier}</option>)}
-            </select>
-          </label>
-        </div>
-        <label style={checkStyle}>
-          <input name="holds15Kg" type="checkbox" checked={form.holds15Kg} onChange={update} />
-          <span>Structure held {ACTIVE_DATA.boomilever.bonusHoldsKg} kg (required for the {ACTIVE_DATA.boomilever.loadScoredBonusGrams.toLocaleString('en-US')} g bonus)</span>
-        </label>
-        <label style={fieldStyle}>Failure mode / where it broke
-          <input name="failureMode" value={form.failureMode} onChange={update} placeholder="e.g. tension member snapped above the bolt" style={{ ...inputStyle, fontFamily: 'var(--font-sans)' }} />
-        </label>
-        <label style={fieldStyle}>Changes made for the next build
-          <textarea name="changes" value={form.changes} onChange={update} rows={3} placeholder="Record what you will change and why." style={{ ...inputStyle, resize: 'vertical', fontFamily: 'var(--font-sans)' }} />
-        </label>
-
-        {hasMass && previewSummary.tested && (
-          <div aria-live="polite" style={{ fontSize: 13 }}>
-            Efficiency: <strong style={{ fontFamily: 'var(--font-mono)' }}>{efficiencyText(previewSummary)}</strong>
-            {previewSummary.scored && previewSummary.loadScoredBonus > 0 ? ' (bonus applied)' : ''}
+            </SelectField>
           </div>
-        )}
-        {message && <div role={messageIsError ? 'alert' : 'status'} style={{ color: messageIsError ? 'var(--color-text-danger)' : 'var(--color-text-secondary)', fontSize: 11 }}>{message}</div>}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button type="submit" disabled={!loaded} style={{ padding: '10px 14px', border: 0, borderRadius: 'var(--border-radius-md)', background: 'var(--color-text-info)', color: '#fff', fontWeight: 600, fontSize: 12, cursor: loaded ? 'pointer' : 'wait' }}>
-            {loaded ? 'Save build' : 'Loading…'}
-          </button>
-          <button type="button" onClick={exportCsv} disabled={entries.length === 0} style={{ padding: '9px 12px', border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', color: 'var(--color-text-primary)', background: 'transparent', fontSize: 12, cursor: entries.length ? 'pointer' : 'not-allowed', opacity: entries.length ? 1 : 0.6 }}>Export CSV</button>
-          <button type="button" onClick={clearLog} disabled={entries.length === 0} style={{ padding: '9px 12px', border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', color: 'var(--color-text-danger)', background: 'transparent', fontSize: 12, cursor: entries.length ? 'pointer' : 'not-allowed', opacity: entries.length ? 1 : 0.6 }}>Clear log</button>
-        </div>
-      </form>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 10 }}>
+            <NumberField label="Load supported (g)" name="loadSupportedGrams" value={form.loadSupportedGrams} onChange={update} placeholder="e.g. 12000" />
+            <SelectField label="Tier" name="tier" value={form.tier} onChange={update}>
+              {TIERS.map((tier) => <option key={tier} value={tier}>{tier}</option>)}
+            </SelectField>
+          </div>
+          <CheckboxField
+            label={`Structure held ${ACTIVE_DATA.boomilever.bonusHoldsKg} kg (required for the ${ACTIVE_DATA.boomilever.loadScoredBonusGrams.toLocaleString('en-US')} g bonus)`}
+            name="holds15Kg"
+            checked={form.holds15Kg}
+            onChange={update}
+          />
+          <Collapsible summary="Build notes (expand only if you want to record them)">
+            <div style={{ display: 'grid', gap: 10 }}>
+              <TextField label="Members & material" name="memberDescription" value={form.memberDescription} onChange={update} placeholder="e.g. 3.2 mm balsa box beam" />
+              <TextField label="Failure mode / where it broke" name="failureMode" value={form.failureMode} onChange={update} placeholder="e.g. tension member snapped above the bolt" />
+              <TextAreaField label="Changes made for the next build" name="changes" value={form.changes} onChange={update} rows={3} placeholder="Record what you will change and why." />
+            </div>
+          </Collapsible>
+          {hasMass && previewSummary.tested && (
+            <ResultPanel>
+              Efficiency: <strong style={{ fontFamily: 'var(--font-mono)' }}>{efficiencyText(previewSummary)}</strong>
+              {previewSummary.scored && previewSummary.loadScoredBonus > 0 ? ' (bonus applied)' : ''}
+            </ResultPanel>
+          )}
+          {message && <StatusMessage tone={messageIsError ? 'error' : 'status'}>{message}</StatusMessage>}
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Button type="submit" variant="primary" disabled={!loaded} style={{ padding: '10px 14px' }}>
+              {loaded ? 'Save build' : 'Loading…'}
+            </Button>
+            <Button onClick={exportCsv} disabled={entries.length === 0}>Export CSV</Button>
+            <Button variant="danger" onClick={clearLog} disabled={entries.length === 0}>Clear log</Button>
+          </div>
+        </form>
+      </Card>
 
-      <section style={{ ...cardStyle, display: 'grid', gap: 12 }}>
-        <h2 style={{ margin: 0, fontSize: 15 }}>Saved builds ({entries.length})</h2>
-        {entries.length === 0 ? <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12 }}>No builds saved in this browser yet.</p> : entries.map((entry, index) => {
-          const summary = summaries[index];
-          const isBest = summary.scored && bestScore !== null && summary.score === bestScore;
-          return (
-            <article key={index} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'baseline', flexWrap: 'wrap' }}>
-                <div>
-                  <strong>{entry.label || 'Prototype'}</strong>
-                  {isBest && <span style={{ marginLeft: 8, color: 'var(--color-text-success)', fontSize: 11, fontWeight: 600 }}>Best efficiency</span>}
-                  <div style={{ color: 'var(--color-text-secondary)', fontSize: 11, marginTop: 3 }}>{baseOptionLabel(entry.baseOption)}</div>
-                </div>
-                <strong style={{ fontFamily: 'var(--font-mono)' }}>{efficiencyText(summary)}</strong>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8, color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
-                <span>mass {entry.structureMassGrams || '—'} g</span>
-                <span>load {summary.tested ? `${entry.loadSupportedGrams} g` : '—'}</span>
-                <span>{ACTIVE_DATA.boomilever.bonusHoldsKg} kg {summary.tested ? (entry.holds15Kg ? 'held' : 'no') : '—'}</span>
-                <span>{summary.tested ? entry.tier : 'untested'}</span>
-              </div>
-              {entry.memberDescription && <div style={{ marginTop: 6, fontSize: 12, color: 'var(--color-text-secondary)' }}>Members: {entry.memberDescription}</div>}
-              {entry.failureMode && <div style={{ marginTop: 4, fontSize: 12, color: 'var(--color-text-secondary)' }}>Failure: {entry.failureMode}</div>}
-              {entry.changes && <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap' }}>{entry.changes}</p>}
-              <button type="button" onClick={() => {
-                if (window.confirm('Delete this locally saved build?')) removeEntry(index);
-              }} style={{ marginTop: 8, padding: '4px 8px', border: '1px solid var(--color-border-secondary)', borderRadius: 4, color: 'var(--color-text-danger)', background: 'transparent', cursor: 'pointer', fontSize: 11 }}>Delete</button>
-            </article>
-          );
-        })}
-      </section>
+      <Card style={{ display: 'grid', gap: 12 }}>
+        <SectionHeading as="h3" style={{ fontSize: 15 }}>Saved builds ({entries.length})</SectionHeading>
+        {entries.length === 0
+          ? <EmptyState>No builds saved in this browser yet.</EmptyState>
+          : recentEntries.map((entry, index) => entryCard(entry, index, summaries[index]))}
+        {olderEntries.length > 0 && (
+          <Collapsible summary={`Older builds (${olderEntries.length}) — expand to compare`}>
+            <div style={{ display: 'grid', gap: 10 }}>
+              {olderEntries.map((entry, offset) => entryCard(entry, offset + 2, summaries[offset + 2]))}
+            </div>
+          </Collapsible>
+        )}
+      </Card>
 
       <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
         Source: {ACTIVE_SEASON.year} Division C Rules Manual pp. C7–C12. This is a build/test notebook, not an official score or a compliance checker. Confirm measurements, tier conditions, and bonus eligibility with the Event Supervisor.

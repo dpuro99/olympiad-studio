@@ -20,6 +20,14 @@ import {
   STATUS_ORDER,
   updateBlock
 } from './referenceCompilerUtils';
+import { Collapsible, Stepper } from './ui/primitives';
+
+const WORKFLOW = [
+  { label: 'Track objectives' },
+  { label: 'Add blocks' },
+  { label: 'Check the budget' },
+  { label: 'Save & print' }
+];
 
 const cardStyle = {
   background: 'var(--color-background-secondary)',
@@ -237,10 +245,16 @@ export default function ReferenceCompiler({ config }) {
     .filter((entry) => entry.objectives.length > 0);
 
   const blocksForObjective = (objectiveId) => state.blocks.filter((block) => block.objectiveId === objectiveId);
+  const objectiveLabelFor = (objectiveId) => config.objectiveGroups
+    .flatMap((group) => group.objectives)
+    .find((objective) => objective.id === objectiveId)?.label || objectiveId;
   const sheetSections = assembleSheet(config, state, { pruneConfident });
+  const hasStatus = Object.values(state.objectiveStatus).some((status) => status && status !== COMPILER_STATUS.NOT_STARTED);
+  const currentStep = state.blocks.length === 0 ? (hasStatus ? 1 : 0) : (dirty ? 2 : 3);
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 960 }}>
+      <Stepper steps={WORKFLOW} currentStep={currentStep} />
       {/* Header / Context */}
       <section style={{ ...cardStyle, display: 'grid', gap: 10 }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
@@ -257,9 +271,11 @@ export default function ReferenceCompiler({ config }) {
             <strong style={{ fontSize: 12 }}>Allowed resource: {config.resource.title}</strong>
             <span style={{ color: 'var(--color-text-tertiary)', fontSize: 11 }}>{config.resource.summary}</span>
           </div>
-          <ul style={{ margin: '6px 0 0', paddingLeft: 18, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.6 }}>
-            {config.resource.constraints.map((line) => <li key={line}>{line}</li>)}
-          </ul>
+          <Collapsible summary="Resource constraints (expand only if needed)" style={{ borderTop: 'none', paddingTop: 6 }}>
+            <ul style={{ margin: 0, paddingLeft: 18, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.6 }}>
+              {config.resource.constraints.map((line) => <li key={line}>{line}</li>)}
+            </ul>
+          </Collapsible>
         </div>
       </section>
 
@@ -364,28 +380,45 @@ export default function ReferenceCompiler({ config }) {
               <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 4 }}>No reference blocks yet</div>
               <div style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>Add your first block above to start building your reference sheet.</div>
             </div>
-          : config.objectiveGroups.map((group) => {
-              const rows = group.objectives.flatMap((objective) => blocksForObjective(objective.id).map((block) => ({ objective, block })));
-              if (rows.length === 0) return null;
-              return (
-                <div key={group.id} style={{ display: 'grid', gap: 8 }}>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-secondary)', paddingBottom: 4, borderBottom: '1px solid var(--color-border-tertiary)' }}>{group.label}</div>
-                  {rows.map(({ objective, block }) => (
-                    <article key={block.id} style={{ ...cardStyleMuted, display: 'grid', gap: 8 }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
-                        <strong style={{ fontSize: 13 }}>{block.title || 'Reference block'}</strong>
-                        <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>{objective.label}</span>
-                      </div>
-                      {block.body && <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>{block.body}</p>}
-                      <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                        <button type="button" style={secondaryButton} onClick={() => editBlock(block)}>Edit</button>
-                        <button type="button" style={{ ...secondaryButton, color: 'var(--color-text-danger)' }} onClick={() => mutate((current) => removeBlock(current, block.id))}>Delete</button>
-                      </div>
-                    </article>
+          : <>
+              {state.blocks.length > 2 && (
+                <div style={{ display: 'grid', gap: 4 }}>
+                  {state.blocks.slice(0, 2).map((block) => (
+                    <div key={block.id} style={{ fontSize: 12 }}>
+                      <strong>{block.title || 'Reference block'}</strong>
+                      <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}> · {objectiveLabelFor(block.objectiveId)}</span>
+                    </div>
                   ))}
                 </div>
-              );
-            })}
+              )}
+              {(() => {
+                const groups = config.objectiveGroups.map((group) => {
+                  const rows = group.objectives.flatMap((objective) => blocksForObjective(objective.id).map((block) => ({ objective, block })));
+                  if (rows.length === 0) return null;
+                  return (
+                    <div key={group.id} style={{ display: 'grid', gap: 8 }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--color-text-secondary)', paddingBottom: 4, borderBottom: '1px solid var(--color-border-tertiary)' }}>{group.label}</div>
+                      {rows.map(({ objective, block }) => (
+                        <article key={block.id} style={{ ...cardStyleMuted, display: 'grid', gap: 8 }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', gap: 8, alignItems: 'baseline' }}>
+                            <strong style={{ fontSize: 13 }}>{block.title || 'Reference block'}</strong>
+                            <span style={{ color: 'var(--color-text-secondary)', fontSize: 11 }}>{objective.label}</span>
+                          </div>
+                          {block.body && <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-secondary)', whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>{block.body}</p>}
+                          <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                            <button type="button" style={secondaryButton} onClick={() => editBlock(block)}>Edit</button>
+                            <button type="button" style={{ ...secondaryButton, color: 'var(--color-text-danger)' }} onClick={() => mutate((current) => removeBlock(current, block.id))}>Delete</button>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  );
+                }).filter(Boolean);
+                return state.blocks.length > 2
+                  ? <Collapsible summary={`All compiled blocks (${state.blocks.length}) — expand to review and edit`}><div style={{ display: 'grid', gap: 8 }}>{groups}</div></Collapsible>
+                  : groups;
+              })()}
+            </>}
       </section>
 
       {/* Sheet Space Budget */}

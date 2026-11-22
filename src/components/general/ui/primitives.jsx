@@ -315,23 +315,6 @@ export function Collapsible({ summary, children, defaultOpen = false, style, sum
   );
 }
 
-// Accordion — single open panel at a time. `items` is an array of { id, summary, children }.
-export function Accordion({ items, activeKey, onChange, style }) {
-  return (
-    <div style={{ display: 'grid', gap: 8, ...style }}>
-      {items.map((item) => (
-        <details key={item.id} open={activeKey === item.id} onToggle={() => onChange(activeKey === item.id ? null : item.id)}>
-          <summary style={{ cursor: 'pointer', fontSize: 13, color: 'var(--color-accent-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0' }}>
-            {item.summary}
-            <i className={`ti ${activeKey === item.id ? 'ti-chevron-up' : 'ti-chevron-down'}`} style={{ fontSize: 14, flexShrink: 0 }} aria-hidden="true"></i>
-          </summary>
-          <div style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid var(--color-border-tertiary)' }}>{item.children}</div>
-        </details>
-      ))}
-    </div>
-  );
-}
-
 // Empty state with icon, headline, description, and optional action.
 export function EmptyState({ icon, title, description, action, children, style }) {
   if (children) return <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 13, ...style }}>{children}</p>;

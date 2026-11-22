@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import { checkProblem, formatNumber, generateProblem } from './stoichiometry';
 import {
-  Button, Card, HelpText, ResultPanel, SectionHeading, StatusMessage, Tabs, TextField,
+  Button, Card, HelpText, ResultPanel, SectionHeading, StatusMessage, Stepper, Tabs, TextField,
   ToggleSwitch, ToolHeader
 } from '../../general/ui/primitives';
 
@@ -14,6 +14,12 @@ const TABS = [
 ];
 
 const PURPOSE = 'Unlimited generated practice for Chemistry Lab’s supporting skills: balancing equations, mole/mass/particle/gas-volume conversions, limiting reagent, percent yield, and ionic name ↔ formula. Every problem is generated fresh — there is no fixed question bank, and results are practice only, not official answers.';
+
+const WORKFLOW = [
+  { label: 'Pick a skill' },
+  { label: 'Work the problem' },
+  { label: 'Check and reveal' }
+];
 
 const STEPS = [
   'Choose a mode below, and switch on “State & National ions” if you want the expanded ion list.',
@@ -231,6 +237,7 @@ function DrillPanel({ mode, level }) {
 
   return (
     <div style={{ display: 'grid', gap: 14 }}>
+      <Stepper steps={WORKFLOW} currentStep={result ? 2 : (answerReady(problem, answer) ? 1 : 0)} />
       <StatusMessage>Practice score: {score.correct} / {score.total}</StatusMessage>
       <SectionHeading>Problem</SectionHeading>
       <ProblemPrompt problem={problem} />

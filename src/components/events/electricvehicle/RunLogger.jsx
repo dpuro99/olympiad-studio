@@ -4,10 +4,12 @@ import {
   Button,
   Card,
   CheckboxField,
+  Collapsible,
   EmptyState,
   NumberField,
   SectionHeading,
   StatusMessage,
+  Stepper,
   TextAreaField,
   TextField,
   ToolHeader
@@ -16,6 +18,22 @@ import { LEGACY_STORAGE_KEYS, readStorageWithLegacy, storageKey } from '../../..
 import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
 const STORAGE_KEY = storageKey('electricvehicle', 'practice-runs');
+const WORKFLOW = [
+  { label: 'Measure' },
+  { label: 'Add rulings' },
+  { label: 'Save & compare' }
+];
+const RULING_KEYS = [
+  'failedRun',
+  'bottleFullyPastLine',
+  'bottlePastTarget',
+  'movingBottleRequirementsMet',
+  'competitionViolation',
+  'constructionViolation',
+  'nonModificationPenalty'
+];
+const RULING_SUMMARY = 'Rulings and notes (expand only if any apply)';
+
 const emptyForm = () => ({
   label: '',
   targetTimeSec: '',
@@ -86,10 +104,7 @@ export default function RunLogger() {
       return;
     }
 
-    const entry = {
-      ...form,
-      score
-    };
+    const entry = { ...form, score };
     const updated = [entry, ...runs];
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
@@ -120,6 +135,13 @@ export default function RunLogger() {
     <CheckboxField key={name} label={label} name={name} checked={form[name]} onChange={update} />
   );
 
+  const hasMeasurement = ['targetTimeSec', 'runTimeSec', 'vehicleDistanceCm', 'bottleDistanceCm', 'pusherOpeningWidthCm']
+    .some((key) => form[key] !== '' || form.label !== '');
+  const hasRulings = RULING_KEYS.some((key) => key === 'movingBottleRequirementsMet' ? !form[key] : form[key]) || Boolean(form.notes);
+  const currentStep = score ? 2 : (hasMeasurement ? 1 : 0);
+  const recentRuns = runs.slice(0, 2);
+  const olderRuns = runs.slice(2);
+
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 960 }}>
       <ToolHeader
@@ -135,59 +157,88 @@ export default function RunLogger() {
         ]}
       >
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
-          `Records stay in this browser and are not synced to Supabase. The displayed score follows the verified ${ACTIVE_SEASON.year} run formula; it cannot determine rule compliance.`
+          {`Records stay in this browser and are not synced to Supabase. The displayed score follows the verified ${ACTIVE_SEASON.year} run formula; it cannot determine rule compliance.`}
         </p>
       </ToolHeader>
 
-      <Card as="form" onSubmit={saveRun} noValidate style={{ display: 'grid', gap: 14 }}>
-        <SectionHeading as="h3" style={{ fontSize: 15 }}>Log a run</SectionHeading>
-        <TextField label="Session label" name="label" value={form.label} onChange={update} placeholder="e.g. gearing adjustment" />
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
-          {field('Target time', 'targetTimeSec', 's', '0.1')}
-          {field('Actual run time', 'runTimeSec', 's', '0.01')}
-          {field('Vehicle distance from target', 'vehicleDistanceCm', 'cm', '0.1')}
-          {field('Bottle distance from line', 'bottleDistanceCm', 'cm', '0.1')}
-          {field('Pusher opening width measured by ES', 'pusherOpeningWidthCm', 'cm', '0.1')}
-        </div>
-        <div style={{ display: 'grid', gap: 7 }}>
-          {check('Failed run', 'failedRun')}
-          {check('Bottle fully beyond Bottle Line (earns −20)', 'bottleFullyPastLine')}
-          {check('Bottle reached/passed Target Point', 'bottlePastTarget')}
-          {check('Moving-bottle requirements met', 'movingBottleRequirementsMet')}
-          {check('Competition violation recorded', 'competitionViolation')}
-          {check('Construction violation recorded', 'constructionViolation')}
-          {check('Non-modification penalty applies', 'nonModificationPenalty')}
-        </div>
-        <TextAreaField label="Notes" name="notes" rows={3} value={form.notes} onChange={update} />
-        {score && <StatusMessage>Calculated run score: <strong style={{ fontFamily: 'var(--font-mono)' }}>{score.totalScore.toFixed(2)}</strong></StatusMessage>}
-        {error && <StatusMessage tone="error">{error}</StatusMessage>}
-        {saved && <StatusMessage tone="success">Run saved in this browser.</StatusMessage>}
-        <Button type="submit" variant="primary" style={{ justifySelf: 'start', padding: '10px 14px' }}>Save run</Button>
+      <Card style={{ display: 'grid', gap: 0 }}>
+        <Stepper steps={WORKFLOW} currentStep={currentStep} />
+        <form onSubmit={saveRun} noValidate style={{ display: 'grid', gap: 14 }}>
+          <SectionHeading as="h3" style={{ fontSize: 15 }}>Log a run</SectionHeading>
+          <TextField label="Session label" name="label" value={form.label} onChange={update} placeholder="e.g. gearing adjustment" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
+            {field('Target time', 'targetTimeSec', 's', '0.1')}
+            {field('Actual run time', 'runTimeSec', 's', '0.01')}
+            {field('Vehicle distance from target', 'vehicleDistanceCm', 'cm', '0.1')}
+            {field('Bottle distance from line', 'bottleDistanceCm', 'cm', '0.1')}
+            {field('Pusher opening width measured by ES', 'pusherOpeningWidthCm', 'cm', '0.1')}
+          </div>
+          <Collapsible summary={RULING_SUMMARY} defaultOpen={hasRulings} style={{ paddingTop: 0 }}>
+            <div style={{ display: 'grid', gap: 7 }}>
+              {check('Failed run', 'failedRun')}
+              {check('Bottle fully beyond Bottle Line (earns −20)', 'bottleFullyPastLine')}
+              {check('Bottle reached/passed Target Point', 'bottlePastTarget')}
+              {check('Moving-bottle requirements met', 'movingBottleRequirementsMet')}
+              {check('Competition violation recorded', 'competitionViolation')}
+              {check('Construction violation recorded', 'constructionViolation')}
+              {check('Non-modification penalty applies', 'nonModificationPenalty')}
+            </div>
+            <TextAreaField label="Notes" name="notes" rows={3} value={form.notes} onChange={update} />
+          </Collapsible>
+          {score && <StatusMessage>Calculated run score: <strong style={{ fontFamily: 'var(--font-mono)' }}>{score.totalScore.toFixed(2)}</strong></StatusMessage>}
+          {error && <StatusMessage tone="error">{error}</StatusMessage>}
+          {saved && <StatusMessage tone="success">Run saved in this browser.</StatusMessage>}
+          <Button type="submit" variant="primary" style={{ justifySelf: 'start', padding: '10px 14px' }}>Save run</Button>
+        </form>
       </Card>
 
       <Card style={{ display: 'grid', gap: 12 }}>
         <SectionHeading as="h3" style={{ fontSize: 15 }}>Saved runs ({runs.length})</SectionHeading>
-        {runs.length === 0 ? <EmptyState>No runs saved in this browser yet.</EmptyState> : runs.map((run, index) => (
-          <article key={index} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>
-              <div>
+        {runs.length === 0
+          ? <EmptyState>No runs saved in this browser yet.</EmptyState>
+          : recentRuns.map((run, index) => (
+            <article key={index} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>
                 <strong>{run.label || (run.failedRun ? 'Failed run' : 'Practice run')}</strong>
+                <strong style={{ fontFamily: 'var(--font-mono)' }}>{run.score.totalScore.toFixed(2)} pts</strong>
               </div>
-              <strong style={{ fontFamily: 'var(--font-mono)' }}>{run.score.totalScore.toFixed(2)} pts</strong>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8, color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
+                <span>time {run.failedRun ? 'failed' : `${run.runTimeSec} s`}</span><span>vehicle {run.vehicleDistanceCm === '' ? '—' : `${run.vehicleDistanceCm} cm`}</span><span>bottle {run.bottleDistanceCm === '' ? '—' : `${run.bottleDistanceCm} cm`}</span>
+              </div>
+              {run.notes && <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-text-secondary)' }}>{run.notes}</p>}
+              <Button
+                variant="danger"
+                onClick={() => { if (window.confirm('Delete this locally saved run?')) removeRun(index); }}
+                style={{ marginTop: 8, padding: '4px 8px', fontSize: 11 }}
+              >
+                Delete
+              </Button>
+            </article>
+          ))}
+        {olderRuns.length > 0 && (
+          <Collapsible summary={`Older runs (${olderRuns.length}) — expand to review`}>
+            <div style={{ display: 'grid', gap: 10 }}>
+              {olderRuns.map((run, offset) => {
+                const index = offset + 2;
+                return (
+                  <article key={index} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                      <strong>{run.label || 'Practice run'}</strong>
+                      <strong style={{ fontFamily: 'var(--font-mono)' }}>{run.score.totalScore.toFixed(2)} pts</strong>
+                    </div>
+                    <Button
+                      variant="danger"
+                      onClick={() => { if (window.confirm('Delete this locally saved run?')) removeRun(index); }}
+                      style={{ marginTop: 8, padding: '4px 8px', fontSize: 11 }}
+                    >
+                      Delete
+                    </Button>
+                  </article>
+                );
+              })}
             </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8, color: 'var(--color-text-secondary)', fontSize: 11, fontFamily: 'var(--font-mono)' }}>
-              <span>time {run.failedRun ? 'failed' : `${run.runTimeSec} s`}</span><span>vehicle {run.vehicleDistanceCm === '' ? '—' : `${run.vehicleDistanceCm} cm`}</span><span>bottle {run.bottleDistanceCm === '' ? '—' : `${run.bottleDistanceCm} cm`}</span>
-            </div>
-            {run.notes && <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-text-secondary)' }}>{run.notes}</p>}
-            <Button
-              variant="danger"
-              onClick={() => { if (window.confirm('Delete this locally saved run?')) removeRun(index); }}
-              style={{ marginTop: 8, padding: '4px 8px', fontSize: 11 }}
-            >
-              Delete
-            </Button>
-          </article>
-        ))}
+          </Collapsible>
+        )}
       </Card>
     </div>
   );

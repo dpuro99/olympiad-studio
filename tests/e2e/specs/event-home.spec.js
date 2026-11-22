@@ -58,7 +58,7 @@ test('the event guide lists the tools in order with one next step', async ({ pag
   // Exactly one next step. With nothing saved it points at the first step the
   // app can observe: calculators keep no saved work, so they can never be next.
   await expect(page.locator('.field-next')).toHaveCount(1);
-  await expect(rows.nth(2)).toContainText('Next');
+  await expect(rows.nth(2)).toContainText(/up next/i);
 
   // An empty browser is reported as empty, not as progress.
   const rail = page.getByRole('complementary', { name: 'Your saved work' });
@@ -94,7 +94,7 @@ test('saved work chips and the next step follow what is actually stored', async 
 
   // The only tracked step without work is the notes journal.
   await expect(page.locator('.field-next')).toHaveCount(1);
-  await expect(notes).toContainText('Next');
+  await expect(notes).toContainText(/up next/i);
 
   const rail = page.getByRole('complementary', { name: 'Your saved work' });
   await expect(rail.getByText('sheet saved')).toBeVisible();

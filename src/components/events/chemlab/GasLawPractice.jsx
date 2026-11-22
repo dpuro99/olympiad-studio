@@ -13,12 +13,20 @@ import {
   parseGasNotebook
 } from './gasLawNotebook';
 import {
-  Button, Card, ResultPanel, SectionHeading, StatusMessage, TextAreaField, ToolHeader
+  Button, Card, Collapsible, NumberField, ResultPanel, SectionHeading,
+  SelectField, StatusMessage, Stepper, TextAreaField, TextField, ToolHeader
 } from '../../general/ui/primitives';
 import { LEGACY_STORAGE_KEYS, readStorageWithLegacy } from '../../../seasons/storageKeys.js';
 import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
 const STORAGE_WARNING = 'Save explicitly to this browser profile; changes are not auto-saved or uploaded and may be visible to others sharing this profile. CSV export downloads only entered data and calculated results.';
+const WORKFLOW = [
+  { label: 'Choose a law' },
+  { label: 'Enter values' },
+  { label: 'Save or export' }
+];
+const DALTON_SUMMARY = 'Dalton’s law of partial pressures';
+const GRAHAM_SUMMARY = 'Graham’s law of diffusion and effusion';
 
 function toNumber(value) {
   const number = Number(value);
@@ -209,6 +217,11 @@ export default function GasLawPractice() {
     }
   };
 
+  const hasKnownValues = knownVariables.some((variable) => String(notebook.values[variable] ?? '').trim() !== '');
+  const currentStep = gasResult ? 2 : (hasKnownValues ? 1 : 0);
+  const daltonStarted = String(notebook.dalton.totalPressure).trim() !== '' || String(notebook.dalton.knownPressures).trim() !== '';
+  const grahamStarted = String(notebook.graham.molarMass1).trim() !== '' || String(notebook.graham.molarMass2).trim() !== '';
+
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 760 }}>
       <ToolHeader
@@ -217,6 +230,7 @@ export default function GasLawPractice() {
         manualReference={`${ACTIVE_SEASON.year} Division C Rules Manual §3.e, p. C14`}
         steps={[
           'Pick a gas law, choose which quantity to solve for, and enter the known values — the answer updates as you type.',
+          'Expand Dalton’s or Graham’s law below only when you are using it; its result also updates as you type.',
           'The piston diagram scales the gas volumes so you can compare the before and after states.',
           'Save the notebook to this browser, export it as CSV, or clear it at any time.'
         ]}
@@ -224,23 +238,19 @@ export default function GasLawPractice() {
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>{STORAGE_WARNING}</p>
       </ToolHeader>
 
+      <Card style={{ display: 'grid', gap: 4 }}>
+        <Stepper steps={WORKFLOW} currentStep={currentStep} />
+      </Card>
+
       <Card style={{ display: 'grid', gap: 14 }}>
         <SectionHeading>Gas-law unknown solver</SectionHeading>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
-          <label style={{ display: 'grid', gap: 5, color: 'var(--color-text-secondary)', fontSize: 12 }}>
-            Gas law
-            <select value={notebook.gasLaw} onChange={handleLawChange} aria-label="Gas law"
-              style={{ width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)', border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)', borderRadius: 6, fontSize: 13 }}>
-              {Object.entries(GAS_LAW_DEFINITIONS).map(([key, item]) => <option key={key} value={key}>{item.name}</option>)}
-            </select>
-          </label>
-          <label style={{ display: 'grid', gap: 5, color: 'var(--color-text-secondary)', fontSize: 12 }}>
-            Solve for
-            <select value={notebook.target} onChange={(event) => updateNotebook('target', event.target.value)} aria-label="Solve for"
-              style={{ width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)', border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)', borderRadius: 6, fontSize: 13 }}>
-              {variables.map((variable) => <option key={variable} value={variable}>{GAS_VARIABLE_LABELS[variable]} ({definition.units[variable]})</option>)}
-            </select>
-          </label>
+          <SelectField label="Gas law" value={notebook.gasLaw} onChange={handleLawChange}>
+            {Object.entries(GAS_LAW_DEFINITIONS).map(([key, item]) => <option key={key} value={key}>{item.name}</option>)}
+          </SelectField>
+          <SelectField label="Solve for" value={notebook.target} onChange={(event) => updateNotebook('target', event.target.value)}>
+            {variables.map((variable) => <option key={variable} value={variable}>{GAS_VARIABLE_LABELS[variable]} ({definition.units[variable]})</option>)}
+          </SelectField>
         </div>
 
         <div style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
@@ -250,13 +260,13 @@ export default function GasLawPractice() {
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
           {knownVariables.map((variable) => (
-            <label key={variable} style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
-              {GAS_VARIABLE_LABELS[variable]} ({definition.units[variable]})
-              <input type="number" min="0" step="any" value={notebook.values[variable] || ''}
-                aria-label={`${GAS_VARIABLE_LABELS[variable]} (${definition.units[variable]})`}
-                onChange={(event) => handleValueChange(variable, event.target.value)}
-                style={{ width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)', border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)', borderRadius: 6, fontSize: 13, fontFamily: 'var(--font-mono)' }} />
-            </label>
+            <NumberField
+              key={variable}
+              label={GAS_VARIABLE_LABELS[variable]}
+              unit={definition.units[variable]}
+              value={notebook.values[variable] || ''}
+              onChange={(event) => handleValueChange(variable, event.target.value)}
+            />
           ))}
         </div>
 
@@ -273,57 +283,63 @@ export default function GasLawPractice() {
         {!gasError && !gasResult && <StatusMessage tone="status">Enter every known value to solve for {GAS_VARIABLE_LABELS[notebook.target]}.</StatusMessage>}
       </Card>
 
-      <Card style={{ display: 'grid', gap: 12 }}>
-        <SectionHeading>Dalton’s law of partial pressures</SectionHeading>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>Enter total pressure and comma-separated known partial pressures, all in kPa.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
-          <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
-            Total pressure (kPa)
-            <input type="number" min="0" step="any" value={notebook.dalton.totalPressure} aria-label="Total pressure (kPa)"
-              onChange={(event) => updateDalton('totalPressure', event.target.value)}
-              style={{ width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)', border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)', borderRadius: 6, fontSize: 13, fontFamily: 'var(--font-mono)' }} />
-          </label>
-          <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
-            Known partial pressures (comma-separated)
-            <input type="text" inputMode="decimal" value={notebook.dalton.knownPressures} aria-label="Known partial pressures (comma-separated)"
-              onChange={(event) => updateDalton('knownPressures', event.target.value)} placeholder="Enter measured values"
-              style={{ width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)', border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)', borderRadius: 6, fontSize: 13 }} />
-          </label>
-        </div>
-        {daltonError && <StatusMessage tone="error">{daltonError}</StatusMessage>}
-        {daltonResult && (
-          <ResultPanel>
-            <div>{daltonResult.equation}</div>
-            <div style={{ marginTop: 4 }}>Known pressures total: {Number(daltonResult.knownTotal.toPrecision(6))} kPa</div>
-            <strong style={{ display: 'block', marginTop: 4 }}>Remaining partial pressure: {Number(daltonResult.value.toPrecision(6))} kPa</strong>
-          </ResultPanel>
-        )}
+      <Card>
+        <Collapsible summary={DALTON_SUMMARY} defaultOpen={daltonStarted}>
+          <div style={{ display: 'grid', gap: 12 }}>
+            <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>Enter total pressure and comma-separated known partial pressures, all in kPa.</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
+              <NumberField
+                label="Total pressure"
+                unit="kPa"
+                value={notebook.dalton.totalPressure}
+                onChange={(event) => updateDalton('totalPressure', event.target.value)}
+              />
+              <TextField
+                label="Known partial pressures (comma-separated)"
+                value={notebook.dalton.knownPressures}
+                onChange={(event) => updateDalton('knownPressures', event.target.value)}
+                placeholder="Enter measured values"
+              />
+            </div>
+            {daltonError && <StatusMessage tone="error">{daltonError}</StatusMessage>}
+            {daltonResult && (
+              <ResultPanel>
+                <div>{daltonResult.equation}</div>
+                <div style={{ marginTop: 4 }}>Known pressures total: {Number(daltonResult.knownTotal.toPrecision(6))} kPa</div>
+                <strong style={{ display: 'block', marginTop: 4 }}>Remaining partial pressure: {Number(daltonResult.value.toPrecision(6))} kPa</strong>
+              </ResultPanel>
+            )}
+          </div>
+        </Collapsible>
       </Card>
 
-      <Card style={{ display: 'grid', gap: 12 }}>
-        <SectionHeading>Graham’s law of diffusion and effusion</SectionHeading>
-        <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>Enter molar masses in the same units to compare gas rates.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
-          <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
-            Gas 1 molar mass (same units)
-            <input type="number" min="0" step="any" value={notebook.graham.molarMass1} aria-label="Gas 1 molar mass (same units)"
-              onChange={(event) => updateGraham('molarMass1', event.target.value)}
-              style={{ width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)', border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)', borderRadius: 6, fontSize: 13, fontFamily: 'var(--font-mono)' }} />
-          </label>
-          <label style={{ display: 'grid', gap: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>
-            Gas 2 molar mass (same units)
-            <input type="number" min="0" step="any" value={notebook.graham.molarMass2} aria-label="Gas 2 molar mass (same units)"
-              onChange={(event) => updateGraham('molarMass2', event.target.value)}
-              style={{ width: '100%', padding: '9px 10px', background: 'var(--color-background-tertiary)', border: '1px solid var(--color-border-secondary)', color: 'var(--color-text-primary)', borderRadius: 6, fontSize: 13, fontFamily: 'var(--font-mono)' }} />
-          </label>
-        </div>
-        {grahamError && <StatusMessage tone="error">{grahamError}</StatusMessage>}
-        {grahamResult && (
-          <ResultPanel>
-            <div>{grahamResult.equation}</div>
-            <strong style={{ display: 'block', marginTop: 4 }}>r₁/r₂ = {Number(grahamResult.rateRatio.toPrecision(6))}</strong>
-          </ResultPanel>
-        )}
+      <Card>
+        <Collapsible summary={GRAHAM_SUMMARY} defaultOpen={grahamStarted}>
+          <div style={{ display: 'grid', gap: 12 }}>
+            <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>Enter molar masses in the same units to compare gas rates.</p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+              <NumberField
+                label="Gas 1 molar mass"
+                unit="same units"
+                value={notebook.graham.molarMass1}
+                onChange={(event) => updateGraham('molarMass1', event.target.value)}
+              />
+              <NumberField
+                label="Gas 2 molar mass"
+                unit="same units"
+                value={notebook.graham.molarMass2}
+                onChange={(event) => updateGraham('molarMass2', event.target.value)}
+              />
+            </div>
+            {grahamError && <StatusMessage tone="error">{grahamError}</StatusMessage>}
+            {grahamResult && (
+              <ResultPanel>
+                <div>{grahamResult.equation}</div>
+                <strong style={{ display: 'block', marginTop: 4 }}>r₁/r₂ = {Number(grahamResult.rateRatio.toPrecision(6))}</strong>
+              </ResultPanel>
+            )}
+          </div>
+        </Collapsible>
       </Card>
 
       <TextAreaField label="Notes about your own work" rows={3} value={notebook.notes} placeholder="Optional notes"

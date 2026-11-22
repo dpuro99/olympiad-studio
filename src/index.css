@@ -848,6 +848,12 @@ button.app-nav-brand:focus-visible {
   outline-offset: 2px;
 }
 
+.field-rail-next-gain {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
 .field-rail-foot {
   font-size: 11px;
   line-height: 1.4;

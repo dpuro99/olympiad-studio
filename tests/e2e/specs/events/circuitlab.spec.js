@@ -20,9 +20,11 @@ test('circuit practice calculator solves series, parallel and Ohm\u2019s law', a
   await expect(resistanceStatus).toContainText('54.5455');
   await expect(page.getByRole('img', { name: /Series and parallel schematic/ })).toBeVisible();
 
+  // One calculation is on screen at a time; switch to the Ohm's-law panel.
+  await page.getByRole('combobox', { name: 'Calculation' }).selectOption('ohm');
   await page.getByLabel('Voltage (V)').fill('12');
   await page.getByLabel('Current (A)').fill('0.5');
-  await expect(page.locator('[role="status"]').nth(1)).toContainText('24 Ω');
+  await expect(page.locator('[role="status"]').first()).toContainText('24 Ω');
 
   await captureSnapshot(page, testInfo, 'circuitlab_practice');
   expect(errors).toEqual([]);
@@ -41,14 +43,12 @@ test('digital logic workbench builds truth tables and checks De Morgan equivalen
 
   await page.getByRole('tab', { name: 'Expression → truth table' }).click();
   await page.getByLabel('Boolean expression').fill('(A AND B) OR NOT C');
-  await page.getByRole('button', { name: 'Generate truth table' }).click();
   await expect(page.getByText('Canonical sum-of-products:')).toBeVisible();
   await expect(page.locator('caption').filter({ hasText: 'Truth table for' })).toBeVisible();
 
   await page.getByRole('tab', { name: 'Equivalence' }).click();
   await page.getByLabel('First expression').fill('NOT (A AND B)');
   await page.getByLabel('Second expression').fill('(NOT A) OR (NOT B)');
-  await page.getByRole('button', { name: 'Compare expressions' }).click();
   await expect(page.getByText(/Equivalent: the two expressions match/)).toBeVisible();
 
   await page.getByRole('tab', { name: 'Combinational circuits' }).click();

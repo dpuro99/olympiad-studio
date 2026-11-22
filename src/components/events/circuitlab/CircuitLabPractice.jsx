@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { calculateSeriesParallel, calculateOhmsLaw, parseResistanceRows } from './circuitUtils';
-import { Card, HelpText, ListField, NumberField, ResultPanel, SectionHeading, StatusMessage, ToolHeader } from '../../general/ui/primitives';
+import { Card, HelpText, ListField, NumberField, ResultPanel, SectionHeading, SelectField, StatusMessage, Stepper, ToolHeader } from '../../general/ui/primitives';
 import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 
 const SOURCE = `${ACTIVE_SEASON.year} Division C Rules Manual, pp. C16–C17`;
+const WORKFLOW = [
+  { label: 'Pick a calculation' },
+  { label: 'Enter your values' },
+  { label: 'Read the result' }
+];
 
 function formatNumber(value) {
   if (!Number.isFinite(value)) return '—';
@@ -112,6 +117,7 @@ function OhmsLawTriangle({ unknown, result }) {
 }
 
 export default function CircuitLabPractice() {
+  const [mode, setMode] = useState('resistance');
   const [resistanceRows, setResistanceRows] = useState(['']);
   const [ohmInputs, setOhmInputs] = useState({ voltage: '', current: '', resistance: '' });
 
@@ -138,6 +144,11 @@ export default function CircuitLabPractice() {
   const ohmResult = ohmComputation && !ohmComputation.error ? ohmComputation : null;
   const ohmError = ohmComputation && ohmComputation.error ? ohmComputation.error : null;
 
+  const resistanceStarted = resistanceRows.some((row) => String(row).trim() !== '');
+  const currentStep = mode === 'resistance'
+    ? (resistanceError || resistanceResult ? 2 : resistanceStarted ? 1 : 0)
+    : (ohmComputation ? 2 : providedOhm.length > 0 ? 1 : 0);
+
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 760 }}>
       <ToolHeader
@@ -145,49 +156,63 @@ export default function CircuitLabPractice() {
         purpose="A live learning calculator for Ohm’s law and series/parallel equivalent resistance. Readouts and the schematic update as you type; it is practice support, not an official event score or a substitute for the hands-on tasks."
         manualReference={SOURCE}
         steps={[
+          'Pick the calculation you want to work on — one at a time keeps the page focused.',
           'For equivalent resistance, add one row per resistor and enter each resistance in ohms; the series and parallel results update as you type.',
           'For Ohm’s law, enter exactly two of voltage, current, and resistance; the remaining value is solved live and highlighted on the triangle.'
         ]}
       />
 
-      <Card style={{ display: 'grid', gap: 12 }}>
-        <SectionHeading>Equivalent resistance</SectionHeading>
-        <HelpText>Resistances in ohms. The schematic and both equivalent values update as you type.</HelpText>
-        <ListField label="Resistance values" unit="Ω" values={resistanceRows} onChange={setResistanceRows} addLabel="Add resistor"
-          placeholder="e.g. 100" help="Leave unused rows blank." />
-        <ResistorNetworkDiagram values={parsed.error ? [] : parsed.values} />
-        {resistanceError && <StatusMessage tone="error">{resistanceError}</StatusMessage>}
-        {resistanceResult && (
-          <ResultPanel style={{ display: 'grid', gap: 4 }}>
-            <div>Series: <strong style={{ fontFamily: 'var(--font-mono)' }}>{formatNumber(resistanceResult.series)} {resistanceResult.seriesUnit}</strong> ({resistanceResult.equationSeries})</div>
-            <div>Parallel: <strong style={{ fontFamily: 'var(--font-mono)' }}>{formatNumber(resistanceResult.parallel)} {resistanceResult.parallelUnit}</strong> ({resistanceResult.equationParallel})</div>
-          </ResultPanel>
-        )}
-        {!resistanceError && !resistanceResult && <HelpText>Add at least one resistance to see the results.</HelpText>}
+      <Card style={{ display: 'grid', gap: 10 }}>
+        <Stepper steps={WORKFLOW} currentStep={currentStep} />
+        <SelectField label="Calculation" value={mode} onChange={(event) => setMode(event.target.value)}>
+          <option value="resistance">Resistance</option>
+          <option value="ohm">Ohm's law</option>
+        </SelectField>
+        <HelpText>Choose one calculation at a time. Your values stay in place when you switch.</HelpText>
       </Card>
 
-      <Card style={{ display: 'grid', gap: 12 }}>
-        <SectionHeading>Ohm’s law</SectionHeading>
-        <HelpText>Enter exactly two of voltage, current, and resistance. The third is solved live.</HelpText>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
-          <NumberField label="Voltage" unit="V" value={ohmInputs.voltage} onChange={(event) => setOhmInputs((current) => ({ ...current, voltage: event.target.value }))} />
-          <NumberField label="Current" unit="A" value={ohmInputs.current} onChange={(event) => setOhmInputs((current) => ({ ...current, current: event.target.value }))} />
-          <NumberField label="Resistance" unit="Ω" value={ohmInputs.resistance} onChange={(event) => setOhmInputs((current) => ({ ...current, resistance: event.target.value }))} />
-        </div>
-        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-          <OhmsLawTriangle unknown={unknown} result={ohmResult} />
-          <div style={{ flex: '1 1 220px', minWidth: 200 }}>
-            {ohmError && <StatusMessage tone="error">{ohmError}</StatusMessage>}
-            {ohmResult && (
-              <ResultPanel>
-                <strong style={{ fontFamily: 'var(--font-mono)' }}>{formatNumber(ohmResult.value)} {ohmResult.unit}</strong>
-                <div style={{ marginTop: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>{ohmResult.equation}</div>
-              </ResultPanel>
-            )}
-            {!ohmError && !ohmResult && <HelpText>Enter two known values to solve the third.</HelpText>}
+      {mode === 'resistance' && (
+        <Card style={{ display: 'grid', gap: 12 }}>
+          <SectionHeading>Equivalent resistance</SectionHeading>
+          <HelpText>Resistances in ohms. The schematic and both equivalent values update as you type.</HelpText>
+          <ListField label="Resistance values" unit="Ω" values={resistanceRows} onChange={setResistanceRows} addLabel="Add resistor"
+            placeholder="e.g. 100" help="Leave unused rows blank." />
+          <ResistorNetworkDiagram values={parsed.error ? [] : parsed.values} />
+          {resistanceError && <StatusMessage tone="error">{resistanceError}</StatusMessage>}
+          {resistanceResult && (
+            <ResultPanel style={{ display: 'grid', gap: 4 }}>
+              <div>Series: <strong style={{ fontFamily: 'var(--font-mono)' }}>{formatNumber(resistanceResult.series)} {resistanceResult.seriesUnit}</strong> ({resistanceResult.equationSeries})</div>
+              <div>Parallel: <strong style={{ fontFamily: 'var(--font-mono)' }}>{formatNumber(resistanceResult.parallel)} {resistanceResult.parallelUnit}</strong> ({resistanceResult.equationParallel})</div>
+            </ResultPanel>
+          )}
+          {!resistanceError && !resistanceResult && <HelpText>Add at least one resistance to see the results.</HelpText>}
+        </Card>
+      )}
+
+      {mode === 'ohm' && (
+        <Card style={{ display: 'grid', gap: 12 }}>
+          <SectionHeading>Ohm’s law</SectionHeading>
+          <HelpText>Enter exactly two of voltage, current, and resistance. The third is solved live.</HelpText>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 10 }}>
+            <NumberField label="Voltage" unit="V" value={ohmInputs.voltage} onChange={(event) => setOhmInputs((current) => ({ ...current, voltage: event.target.value }))} />
+            <NumberField label="Current" unit="A" value={ohmInputs.current} onChange={(event) => setOhmInputs((current) => ({ ...current, current: event.target.value }))} />
+            <NumberField label="Resistance" unit="Ω" value={ohmInputs.resistance} onChange={(event) => setOhmInputs((current) => ({ ...current, resistance: event.target.value }))} />
           </div>
-        </div>
-      </Card>
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+            <OhmsLawTriangle unknown={unknown} result={ohmResult} />
+            <div style={{ flex: '1 1 220px', minWidth: 200 }}>
+              {ohmError && <StatusMessage tone="error">{ohmError}</StatusMessage>}
+              {ohmResult && (
+                <ResultPanel>
+                  <strong style={{ fontFamily: 'var(--font-mono)' }}>{formatNumber(ohmResult.value)} {ohmResult.unit}</strong>
+                  <div style={{ marginTop: 4, color: 'var(--color-text-secondary)', fontSize: 11 }}>{ohmResult.equation}</div>
+                </ResultPanel>
+              )}
+              {!ohmError && !ohmResult && <HelpText>Enter two known values to solve the third.</HelpText>}
+            </div>
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

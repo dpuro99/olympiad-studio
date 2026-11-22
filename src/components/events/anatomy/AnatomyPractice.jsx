@@ -5,13 +5,21 @@ import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 import {
   Button,
   Card,
+  Collapsible,
   SectionHeading,
   SelectField,
   StatusMessage,
+  Stepper,
   TextAreaField,
   TextField,
   ToolHeader
 } from '../../general/ui/primitives';
+
+const WORKFLOW = [
+  { label: 'Choose a system' },
+  { label: 'Write the note' },
+  { label: 'Save & export' }
+];
 
 export default function AnatomyPractice() {
   const [systemId, setSystemId] = useState('respiratory');
@@ -56,6 +64,9 @@ export default function AnatomyPractice() {
   }, []);
 
   const systemLabel = (id) => SYSTEMS.find((s) => s.id === id)?.label || id;
+  const currentStep = notesText.trim() ? 2 : (label.trim() || focus.trim() ? 1 : 0);
+  const recentNotes = savedNotes.slice(0, 2);
+  const olderNotes = savedNotes.slice(2);
 
   const saveNotes = () => {
     const entry = { systemId, label, focus, notes: notesText };
@@ -114,8 +125,10 @@ export default function AnatomyPractice() {
         ]}
       />
 
-      <Card as="form" onSubmit={(e) => { e.preventDefault(); if (loaded) saveNotes(); }} style={{ display: 'grid', gap: 14 }}>
-        <SectionHeading style={{ fontSize: 15 }}>Add a note</SectionHeading>
+      <Card style={{ display: 'grid', gap: 0 }}>
+        <Stepper steps={WORKFLOW} currentStep={currentStep} />
+        <form onSubmit={(e) => { e.preventDefault(); if (loaded) saveNotes(); }} style={{ display: 'grid', gap: 14 }}>
+        <SectionHeading as="h3" style={{ fontSize: 15 }}>Add a note</SectionHeading>
         <SelectField label="System" value={systemId} onChange={(event) => { setSystemId(event.target.value); setMessage(''); }}>
           {SYSTEMS.map((system) => <option key={system.id} value={system.id}>{system.label}</option>)}
         </SelectField>
@@ -128,11 +141,12 @@ export default function AnatomyPractice() {
           <Button type="button" variant="danger" onClick={clearNotes} style={{ padding: '9px 12px' }}>Clear notes</Button>
         </div>
         {message && <StatusMessage tone={messageIsError ? 'error' : 'status'}>{message}</StatusMessage>}
+        </form>
       </Card>
 
       <Card style={{ display: 'grid', gap: 12 }}>
-        <SectionHeading style={{ fontSize: 15 }}>Saved notes ({savedNotes.length})</SectionHeading>
-        {savedNotes.length === 0 ? <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12 }}>No notes saved in this browser yet.</p> : savedNotes.map((note, index) => (
+        <SectionHeading as="h3" style={{ fontSize: 15 }}>Saved notes ({savedNotes.length})</SectionHeading>
+        {savedNotes.length === 0 ? <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 12 }}>No notes saved in this browser yet.</p> : recentNotes.map((note, index) => (
           <article key={index} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)', background: 'var(--color-background-primary)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center' }}>
               <div>
@@ -146,6 +160,19 @@ export default function AnatomyPractice() {
             {note.notes && <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-text-secondary)' }}>{note.notes}</p>}
           </article>
         ))}
+        {olderNotes.length > 0 && (
+          <Collapsible summary={`Older notes (${olderNotes.length}) — expand to review`}>
+            <div style={{ display: 'grid', gap: 10 }}>
+              {olderNotes.map((note, offset) => (
+                <article key={offset + 2} style={{ padding: 12, border: '1px solid var(--color-border-secondary)', borderRadius: 'var(--border-radius-md)' }}>
+                  <strong>{note.label || 'Note'}</strong>
+                  <div style={{ color: 'var(--color-text-secondary)', fontSize: 11, marginTop: 3 }}>{systemLabel(note.systemId)} · Focus: {note.focus || '—'}</div>
+                  {note.notes && <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--color-text-secondary)' }}>{note.notes}</p>}
+                </article>
+              ))}
+            </div>
+          </Collapsible>
+        )}
       </Card>
     </div>
   );

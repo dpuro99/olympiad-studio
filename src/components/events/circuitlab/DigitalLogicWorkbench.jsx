@@ -17,12 +17,14 @@ import CircuitCanvas from './CircuitCanvas';
 import {
   Button,
   Card,
+  Collapsible,
   Eyebrow,
   HelpText,
   ResultPanel,
   SectionHeading,
   SelectField,
   StatusMessage,
+  Stepper,
   TextField,
   ToolHeader
 } from '../../general/ui/primitives';
@@ -41,44 +43,47 @@ const MODES = [
   { id: 'drill', label: 'Practice drill' }
 ];
 
+const WORKFLOW = [
+  { label: 'Pick a tool' },
+  { label: 'Enter or wire' },
+  { label: 'Read the result' }
+];
+const REFERENCE_SUMMARY = 'Manual scope and reference (expand for details)';
+
+const MODULE_STEP = {
+  gates: 0, expression: 0, multi: 0,
+  kmap: 1, circuits: 1, builder: 1,
+  equivalence: 2, drill: 2
+};
+
 export default function DigitalLogicWorkbench() {
   const [mode, setMode] = useState('gates');
   const [gateId, setGateId] = useState('AND');
   const [expression, setExpression] = useState('');
-  const [expressionResult, setExpressionResult] = useState(null);
-  const [expressionError, setExpressionError] = useState('');
   const [equivA, setEquivA] = useState('');
   const [equivB, setEquivB] = useState('');
-  const [equivResult, setEquivResult] = useState(null);
-  const [equivError, setEquivError] = useState('');
   const [circuitId, setCircuitId] = useState(GUIDED_CIRCUIT_IDS[0]);
 
   const gateTable = gateTruthTable(gateId);
   const circuit = guidedCircuit(circuitId);
 
-  const generate = (event) => {
-    event.preventDefault();
-    const result = generateTruthTable(expression);
-    if (result.error) {
-      setExpressionError(result.error);
-      setExpressionResult(null);
-    } else {
-      setExpressionError('');
-      setExpressionResult({ ...result, canonical: canonicalSumOfProducts(expression) });
-    }
-  };
+  // Live derivations: results follow the expression as it is typed; an incomplete
+  // expression gets a neutral hint instead of a parse error.
+  const expressionComputation = expression.trim()
+    ? generateTruthTable(expression)
+    : null;
+  const expressionResult = expressionComputation && !expressionComputation.error
+    ? { ...expressionComputation, canonical: canonicalSumOfProducts(expression) }
+    : null;
+  const expressionError = expressionComputation && expressionComputation.error
+    ? expressionComputation.error
+    : '';
 
-  const compare = (event) => {
-    event.preventDefault();
-    const result = expressionsEquivalent(equivA, equivB);
-    if (result.error) {
-      setEquivError(result.error);
-      setEquivResult(null);
-    } else {
-      setEquivError('');
-      setEquivResult(result);
-    }
-  };
+  const equivComputation = equivA.trim() && equivB.trim()
+    ? expressionsEquivalent(equivA, equivB)
+    : null;
+  const equivResult = equivComputation && !equivComputation.error ? equivComputation : null;
+  const equivError = equivComputation && equivComputation.error ? equivComputation.error : '';
 
   return (
     <div style={{ display: 'grid', gap: 16, maxWidth: 860 }}>
@@ -97,6 +102,10 @@ export default function DigitalLogicWorkbench() {
           This is a learning tool, not an official score. Clock signals, timing diagrams, propagation delay, and flip-flops are State/National-only topics and are not covered here.
         </p>
       </ToolHeader>
+
+      <Card style={{ display: 'grid', gap: 4 }}>
+        <Stepper steps={WORKFLOW} currentStep={MODULE_STEP[mode]} />
+      </Card>
 
       <div role="tablist" aria-label="Digital logic modes" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {MODES.map((entry) => (
@@ -132,12 +141,12 @@ export default function DigitalLogicWorkbench() {
       )}
 
       {mode === 'expression' && (
-        <Card as="form" onSubmit={generate} noValidate style={{ display: 'grid', gap: 14 }}>
+        <Card style={{ display: 'grid', gap: 14 }}>
           <SectionHeading>Expression truth table</SectionHeading>
           <TextField
             label="Boolean expression"
             value={expression}
-            onChange={(event) => { setExpression(event.target.value); setExpressionError(''); setExpressionResult(null); }}
+            onChange={(event) => { setExpression(event.target.value); }}
             placeholder="e.g. (A AND B) OR NOT C"
             help="Variables A–D; operators AND, OR, NOT, XOR and parentheses."
           />
@@ -160,21 +169,21 @@ export default function DigitalLogicWorkbench() {
               />
             </>
           )}
-          <Button type="submit" variant="primary" style={{ justifySelf: 'start' }}>Generate truth table</Button>
+          {!expression.trim() && <HelpText>Type a Boolean expression above to see its truth table as you type.</HelpText>}
         </Card>
       )}
 
       {mode === 'kmap' && <KMapMinimizer />}
 
       {mode === 'equivalence' && (
-        <Card as="form" onSubmit={compare} noValidate style={{ display: 'grid', gap: 14 }}>
+        <Card style={{ display: 'grid', gap: 14 }}>
           <SectionHeading>Expression equivalence</SectionHeading>
           <HelpText>
             Two expressions are equivalent when they produce the same output for every input combination — the basis of De Morgan&rsquo;s Law and Boolean simplification.
           </HelpText>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
-            <TextField label="First expression" value={equivA} onChange={(event) => { setEquivA(event.target.value); setEquivError(''); setEquivResult(null); }} placeholder="e.g. NOT (A AND B)" />
-            <TextField label="Second expression" value={equivB} onChange={(event) => { setEquivB(event.target.value); setEquivError(''); setEquivResult(null); }} placeholder="e.g. (NOT A) OR (NOT B)" />
+            <TextField label="First expression" value={equivA} onChange={(event) => setEquivA(event.target.value)} placeholder="e.g. NOT (A AND B)" />
+            <TextField label="Second expression" value={equivB} onChange={(event) => setEquivB(event.target.value)} placeholder="e.g. (NOT A) OR (NOT B)" />
           </div>
           {equivError && <StatusMessage tone="error">{equivError}</StatusMessage>}
           {equivResult && (
@@ -199,7 +208,9 @@ export default function DigitalLogicWorkbench() {
               />
             </>
           )}
-          <Button type="submit" variant="primary" style={{ justifySelf: 'start' }}>Compare expressions</Button>
+          {!equivA.trim() || !equivB.trim()
+            ? <HelpText>Fill in both expressions to compare them as you type.</HelpText>
+            : null}
         </Card>
       )}
 
@@ -232,11 +243,15 @@ export default function DigitalLogicWorkbench() {
 
       {mode === 'drill' && <LogicDrill />}
 
-      <Card style={{ display: 'grid', gap: 6 }}>
-        <Eyebrow>Reference</Eyebrow>
-        <HelpText>
-          Covered by manual §3.c.viii (digital logic gates, truth tables, universal gate sets, Boolean expressions, De Morgan&rsquo;s Law, combinational logic circuits) and §3.e.iv. Binary representation and addition (§3.e.iii) underpin the adder circuits. This does not replace the official Rules Manual.
-        </HelpText>
+      <Card>
+        <Collapsible summary={REFERENCE_SUMMARY} style={{ borderTop: 'none', paddingTop: 0 }}>
+          <div style={{ display: 'grid', gap: 6 }}>
+            <Eyebrow>Reference</Eyebrow>
+            <HelpText>
+              Covered by manual §3.c.viii (digital logic gates, truth tables, universal gate sets, Boolean expressions, De Morgan&rsquo;s Law, combinational logic circuits) and §3.e.iv. Binary representation and addition (§3.e.iii) underpin the adder circuits. This does not replace the official Rules Manual.
+            </HelpText>
+          </div>
+        </Collapsible>
       </Card>
     </div>
   );

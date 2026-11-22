@@ -94,7 +94,7 @@ export default function EventHome({ eventId, event, onNav }) {
                           {isNext && (
                             <span className="field-next">
                               <i className="ti ti-arrow-narrow-right" aria-hidden="true" />
-                              Next
+                              Up next
                             </span>
                           )}
                           {!step.live && <span className="field-step-soon">Coming soon</span>}
@@ -140,11 +140,12 @@ export default function EventHome({ eventId, event, onNav }) {
 
               {nextStep ? (
                 <div className="field-rail-next">
-                  <span className="field-rail-next-label">Next step</span>
+                  <span className="field-rail-next-label">Up next</span>
                   <button type="button" className="field-rail-next-button" onClick={() => onNav(nextStep.id)}>
                     {nextStep.module.label}
                     <i className="ti ti-arrow-right" aria-hidden="true" />
                   </button>
+                  {nextStep.gain && <span className="field-rail-next-gain">{nextStep.gain}</span>}
                 </div>
               ) : summary.withWork > 0 ? (
                 <p className="field-rail-note">Every step with saved work has something in it. Keep going.</p>

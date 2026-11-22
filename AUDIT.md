@@ -1,101 +1,72 @@
 # Olympiad Studio — Browser Audit Report
 
-**Date:** 2026-10-14 (Boomilever Build/Test Log + shared event-tool UI primitives)
-**Scope:** Full sweep. This pass also re-ran the complete suite after the Boomilever Build/Test Log and the shared UI-primitives refactor landed.
-**Audited commit:** based on `aee83bc` (working tree includes the Boomilever Build/Test Log + shared UI primitives batch below, not yet committed)
-**Tooling:** Playwright + headless Chromium ("chromium-headless-shell" 156), driven by `tests/e2e/`; guest mode only (no OAuth).
+**Date:** 2026-11-21 (Phase 2.5 exit sweep — intuitive workflows + tool simplification)
+**Scope:** Full sweep (all 13 spec files), forced with `npm run test:e2e:changed -- full`.
+**Audited state:** `HEAD` = `ca3b54e`; working tree includes all uncommitted Phase 2.5 work (B1–B4 + Track A). Baseline stamped to `ca3b54e` on success.
+**Tooling:** Playwright + headless Chromium, driven by the repo's `tests/e2e/` harness; guest mode only (no OAuth). `.env` present and loaded by the dev server.
 
 ## Summary
 
 | Gate | Result |
 | --- | --- |
-| Playwright E2E (`npm run test:e2e`) | **85 / 85 passed** |
-| Unit tests (`npm test`) | 60 / 60 passed |
+| Playwright E2E — full sweep | **116 / 116 passed** (4.6 min, 1 worker) |
+| Unit tests (`npm test`) | 191 / 191 passed |
 | Lint (`npm run lint`) | clean |
-| Build (`npm run build`) | success |
-| Console errors / failed requests during E2E | none (beyond filtered analytics/Supabase noise) |
+| Build (`npm run build`) | success (pre-existing >600 kB main-chunk advisory) |
+| Console / page errors / failed requests during E2E | none beyond filtered analytics noise |
+| Baseline | stamped to `ca3b54e` |
 
-Every registered event workspace and module was opened, visually captured, and checked for console errors. Interactive tools were exercised with real input, not just rendered.
+Every registered event workspace and module was opened, visually captured (139 screenshots + DOM snapshots in `test-results/screenshots/`), and checked for console errors. Interactive tools were exercised with real input, not just rendered.
 
 ### Coverage
 
-- **Core / navigation:** landing page → guest entry, lobby → event workspace → module click-through, light/dark theme toggle + persistence.
-- **All 9 events, all 24 registered modules** rendered and matched their expected content (`test-results/screenshots/module_*.png` + `.txt` DOM snapshots).
-- **Responsive:** every module rendered at **375 px** with a horizontal-overflow assertion and a screenshot (`mobile_*.png`), plus a **720 px breakpoint** test proving the shell is `row` at 721 px and `column` at 720 px.
+- **Core / navigation:** landing → guest entry, lobby → workspace → module click-through, theme toggle + persistence, persistent top nav, breadcrumbs, skip link.
+- **All 9 events, all registered modules** rendered and matched expected content, including the field guide's folded-in rule summary and the "Up next" step.
+- **Responsive:** every module at **375 px** with a horizontal-overflow assertion, plus the **720 px** breakpoint test (`row` at 721 px, `column` at 720 px).
 - **Theme actually applies:** computed `body` background differs between light and dark (not just the `data-theme` attribute).
-- **A11y:** every visible heading must have a unique accessible name (duplicate-name guard wired into every module render).
-- **Print/PDF:** the print stylesheet is exercised with `emulateMedia({ media: 'print' })` (visibility + non-zero box), and the compilers emit a real PDF via `page.pdf()` whose extracted text must contain the authored block (blank-printout regression guard).
-- **Resilience:** disabled `localStorage` (compiler still exports), corrupt `localStorage` for the compiler + anatomy notes + gas laws + kinetics + run logger (each shows `role="alert"`, no page error), corrupt `sessionStorage` navigation (falls back to landing), cancelling the Clear/Delete confirmations leaves data intact, and a JSON import rehydrates the editor.
-- **Interactive flows driven:**
-  - EV score calculator — reproduces both 2027 manual example runs (**118.17** and **109.79**, final 109.79).
-  - EV practice run logger — save, `localStorage` persistence, delete-with-confirmation.
-  - Anatomy & Physiology practice notes — save, CSV export, clear.
-  - Gas-law workbook — unknown solver, notebook save, CSV export, clear.
-  - Circuit practice — series (600 Ω), parallel (54.5455 Ω), Ohm's law (24 Ω).
-  - Freshwater workbench — discharge (3 m³/s) and water-budget (net +500 m³).
-  - Boomilever estimator — load score, efficiency, bonus/tier text.
-  - Boomilever Build/Test Log — save a tested prototype (bonus + 15 kg), best-efficiency highlight, CSV export.
-  - **All 6 Reference & Study Compilers** (anatomy, designer genes, chemistry lab, circuit lab, dynamic planet, rocks & minerals) — mark objective confident, author a block, prune confident objectives, change density preset, save + verify `localStorage`, JSON export (filename verified), clear with confirmation.
+- **A11y:** every visible heading has a unique accessible name (duplicate-name guard on every module render).
+- **Print/PDF:** print stylesheet exercised with `emulateMedia({ media: 'print' })` (visibility + non-zero box); compilers emit a real PDF via `page.pdf()` whose extracted text must contain the authored block.
+- **Resilience:** disabled and corrupt `localStorage` per tool, corrupt navigation payload, cancelling Clear/Delete confirmations, JSON import/rehydration, and cross-manual sheet notices.
+- **Interactive flows driven:** EV score (manual examples 118.17 / 109.79), EV run logger, EV course geometry, boomilever estimator + build log, gas laws / kinetics / stoichiometry, circuit practice + digital logic workbench + drag canvas (wire deletion, tidy-up, persistence, corrupt recovery), freshwater tools + toolbox + map/hydrograph cases, designer genes workbench, mineral ID key + specimen practice, and all 6 Reference & Study Compilers.
 
 ## Findings
 
-### HIGH — "Print sheet" produced a blank page (found post-run, now fixed)
+No new functional defects found in this sweep. All 116 tests passed, including the regression guards for previously fixed issues:
 
-Reported by the user after the first sweep. The `@media print` block in `src/index.css` hid the app **including `#root`** with `display: none`, but `.reference-print-area` is rendered *inside* `#root` (`ReferenceCompiler.jsx:364`, nested under `.dashboard-shell` → `.dashboard-content`). A descendant cannot override an ancestor's `display: none`, so `display: block !important` on the print area had no effect and every printout was empty.
-
-- **Root cause:** `src/index.css` print rules — `#root, .dashboard-shell, .dashboard-sidebar, .dashboard-content, .reference-print-area { display: none; }`.
-- **Fix:** hide the app with `visibility: hidden` (which descendants *can* override) and re-reveal `.reference-print-area, .reference-print-area *`, positioning it at the page origin. No `display: none` on ancestors.
-- **Regression guard:** `expectPrintSheetRenders()` in `tests/e2e/helpers.js` now runs `page.emulateMedia({ media: 'print' })`, asserts the print area is visible with a non-zero box, and checks real content is present — wired into the shared compiler flow (a blank printout now fails the suite).
-
-### MEDIUM — Mobile dashboard overflowed the viewport by ~11 px (found this pass, now fixed)
-
-Every module failed the new 375 px overflow assertion: `document.documentElement.scrollWidth` was **386** against a **375** viewport. Root cause was the mobile sidebar: at ≤720 px `.dashboard-sidebar` becomes a horizontal `row`, but `.dashboard-sidebar .dashboard-brand-button` kept `width: 100%` (the desktop value from `src/index.css:96`) while being `flex-shrink: 0`, so the brand button occupied the entire 375 px and pushed the tool `<nav>` past the right edge.
-
-- **Root cause:** `src/index.css` mobile media query — brand button missing `width: auto`.
-- **Fix:** `src/index.css` `.dashboard-sidebar .dashboard-brand-button { width: auto; }` inside the `@media (max-width: 720px)` block; the sidebar is now 375 px with no document-level overflow.
-- **Regression guard:** `expectNoHorizontalOverflow(page, 375)` in `tests/e2e/helpers.js`, applied to all 24 modules in `core.spec.js`.
-
-### LOW — Duplicate accessible heading names (module label + tool title) — fixed
-
-`App.jsx:413` renders an `<h1>` with the module label, and several tool components rendered a near-identical `<h2>`, producing two headings with the same accessible name (e.g. `<h1>Reference & Study Compiler</h1>` + `<h2>Reference & Study Compiler</h2>`; `<h1>Circuit Practice Calculator</h1>` + `<h2>Circuit practice calculator</h2>`; `<h1>Practice Notes</h1>` + `<h2>Practice notes</h2>`). Screen-reader heading navigation listed the title twice and heading-based automation was ambiguous.
-
-- **Fix:** removed the redundant in-tool `<h2>` titles (the page `<h1>` already carries them) and promoted the section headings `h3`→`h2` in `ReferenceCompiler.jsx`, `AnatomyPractice.jsx`, and `CircuitLabPractice.jsx`.
-- **Regression guard:** `expectUniqueHeadingNames(page)` in `tests/e2e/helpers.js`, wired into every module render; a duplicate visible heading name now fails the suite.
-
-### LOW — EV run logger's custom validation message was unreachable — fixed
-
-`RunLogger.jsx` set the numeric inputs `required`, so the browser's native constraint validation blocked submit before `saveRun` ran, making the component's own clearer message ("Enter target/run times, both ES-measured distances, and the pusher opening width.") unreachable for a normal run.
-
-- **Fix (this pass):** the shared-primitives refactor switched the form to `noValidate` and dropped the `required` attributes, so the custom `role="alert"` message now shows. Covered by `tests/e2e/specs/events/electricvehicle.spec.js` → "run logger blocks an incomplete run".
+- **HIGH (fixed earlier, still guarded)** — blank printed page from `#root { display: none }` in print CSS; `expectPrintSheetRenders()` + real `page.pdf()` text assertion prevent recurrence.
+- **MEDIUM (fixed earlier, still guarded)** — ~11 px mobile sidebar overflow at 375 px; `expectNoHorizontalOverflow(page, 375)` runs on every module.
+- **LOW (fixed earlier, still guarded)** — duplicate accessible heading names; `expectUniqueHeadingNames(page)` runs on every module.
+- **LOW (fixed earlier, still guarded)** — EV run-logger native validation shadowing its custom message; e2e drives the incomplete-run path.
 
 ### INFO — No error boundary around lazy tool modules
 
-`App.jsx:417–423` renders lazy modules in `<Suspense>` (loading fallback) but there is no error boundary. A thrown render error in any tool would blank the whole app rather than degrade to one panel. Not observed during this audit; the resilience suite confirms malformed *stored data* is handled, but a render-time throw is still unguarded. Noted as a robustness gap.
+`App.jsx` renders lazy modules in `<Suspense>` but without an error boundary. A thrown render error in any tool would blank the whole app rather than degrade to one panel. Not observed in this audit; the resilience suite confirms malformed *stored data* is handled, but a render-time throw is still unguarded. Robustness gap, not a defect found.
 
 ### INFO — Print pagination beyond content presence
 
-The compilers' "Print sheet" button calls `window.print()`. The harness now proves the sheet renders under print media **and** that `page.pdf()` output contains the authored content (see coverage). What remains unverified is exact pagination/paging (page-break placement, physical margins) in a real print dialog; a manual print preview is still worthwhile before relying on printed sheets.
+The harness proves the sheet renders under print media and that `page.pdf()` output contains authored content. Exact pagination (page-break placement, physical margins) in a real print dialog remains unverified; a manual print preview is worthwhile before relying on printed sheets.
 
 ### INFO — Single-run final score requires marking Run 2 failed
 
-`calculateFinalScore` needs exactly two completed run scores; a team with one successful run must mark Run 2 as failed to see a final score. This matches the manual and is documented in the tool copy (`ScoreCalc.jsx:179`), but is worth confirming is acceptable UX.
+`calculateFinalScore` needs two completed run scores; a team with one successful run must mark Run 2 as failed to see a final score. This matches the manual and is documented in `ScoreCalc.jsx`, but is worth confirming as acceptable UX.
 
 ## Not verified / limitations
 
-Each of these was deliberately reproduced in the harness or is genuinely external; do not treat "headless" as a reason to skip an observable behavior.
+Each item was either reproduced in the harness or is genuinely external; "headless" is not treated as a reason to skip an observable behavior.
 
-- **Google OAuth sign-in** and any `requiresAuth` gating — no module currently requires auth, so guest mode covers all registered modules.
+- **Google OAuth sign-in** and `requiresAuth` gating — no module currently requires auth, so guest mode covers all registered modules.
 - **Real Supabase network behavior** beyond session init; no backend reads/writes exist.
 - **Cross-browser:** Chromium only.
-- **Real print dialog / OS-level pagination** (content presence and print-media visibility *are* now covered).
+- **Real print dialog / OS-level pagination** (content presence and print-media visibility *are* covered).
 
 ## How to run
 
 ```bash
-npm run test:e2e            # full sweep
-npm run test:e2e:changed    # only what changed since the last audit (baseline-aware)
-npm run audit               # alias for the changed-only run
-npx playwright show-report  # open the HTML report (playwright-report/)
+npm run test:e2e                    # full sweep
+npm run test:e2e:changed            # only what changed since the last audit (baseline-aware)
+npm run test:e2e:changed -- full    # force a full sweep and stamp the baseline
+npm run audit                       # alias for the changed-only run
+npx playwright show-report          # open the HTML report (playwright-report/)
 ```
 
 Artifacts: full-page screenshots + DOM text snapshots in `test-results/screenshots/`, HTML report in `playwright-report/`, traces on failure in `test-results/`.

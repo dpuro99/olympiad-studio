@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   Card,
+  Collapsible,
   Eyebrow,
   HelpText,
   RangeField,
@@ -8,6 +9,7 @@ import {
   SectionHeading,
   SelectField,
   StatusMessage,
+  Stepper,
   ToolHeader,
   ToggleSwitch
 } from '../../general/ui/primitives';
@@ -26,6 +28,11 @@ import {
 } from './courseUtils';
 
 const STORAGE_KEY = storageKey('electricvehicle', 'course-geometry');
+const WORKFLOW = [
+  { label: 'Set the level' },
+  { label: 'Shape the course' },
+  { label: 'Read the score' }
+];
 
 const DEFAULT_SCENARIO = {
   levelId: 'regional',
@@ -210,9 +217,13 @@ export default function CourseGeometry() {
         ]}
       >
         <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11, lineHeight: 1.5 }}>
-          `This is an educational geometry and pacing tool. It uses the verified ${ACTIVE_SEASON.year} scoring formula, but it is not an official prediction or an Event Supervisor ruling.`
+          {`This is an educational geometry and pacing tool. It uses the verified ${ACTIVE_SEASON.year} scoring formula, but it is not an official prediction or an Event Supervisor ruling.`}
         </p>
       </ToolHeader>
+
+      <Card style={{ display: 'grid', gap: 0 }}>
+        <Stepper steps={WORKFLOW} currentStep={summary.runScore ? 2 : 1} />
+      </Card>
 
       {storageError && <StatusMessage tone="error">{storageError}</StatusMessage>}
 
@@ -236,12 +247,18 @@ export default function CourseGeometry() {
           <RangeField label="Bottle line distance" unit="m" value={scenario.bottleLineM} onChange={setNumber('bottleLineM')} min={COURSE.minM} max={COURSE.maxM} step={0.1} format={(value) => value.toFixed(1)} help={`${level.label} default: ${level.bottleLineM} m`} />
           <RangeField label="Target time" unit="s" value={scenario.targetTimeSec} onChange={setNumber('targetTimeSec')} min={3} max={30} step={0.5} format={(value) => value.toFixed(1)} />
           <RangeField label="Run time achieved" unit="s" value={scenario.runTimeSec} onChange={setNumber('runTimeSec')} min={3} max={30} step={0.5} format={(value) => value.toFixed(1)} />
-          <RangeField label="Vehicle distance" unit="cm" value={scenario.vehicleDistanceCm} onChange={setNumber('vehicleDistanceCm')} min={0} max={1000} step={5} />
-          <RangeField label="Bottle distance past line" unit="cm" value={scenario.bottleDistanceCm} onChange={setNumber('bottleDistanceCm')} min={0} max={200} step={5} />
-          <RangeField label="Pusher opening width" unit="cm" value={scenario.pusherOpeningWidthCm} onChange={setNumber('pusherOpeningWidthCm')} min={30} max={45} step={0.1} format={(value) => value.toFixed(1)} help={`Bonus ${PUSHER_BONUS_RATE_PT_PER_CM} pt/cm above 35.0 cm, as measured by the ES.`} />
         </div>
 
-        <ToggleSwitch label="Bottle finished fully past the bottle line (−20 bonus)" checked={scenario.bottleFullyPastLine} onChange={setFlag('bottleFullyPastLine')} />
+        <Collapsible summary="Measured distances & bonuses (expand only if needed)">
+          <div style={{ display: 'grid', gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+              <RangeField label="Vehicle distance" unit="cm" value={scenario.vehicleDistanceCm} onChange={setNumber('vehicleDistanceCm')} min={0} max={1000} step={5} />
+              <RangeField label="Bottle distance past line" unit="cm" value={scenario.bottleDistanceCm} onChange={setNumber('bottleDistanceCm')} min={0} max={200} step={5} />
+              <RangeField label="Pusher opening width" unit="cm" value={scenario.pusherOpeningWidthCm} onChange={setNumber('pusherOpeningWidthCm')} min={30} max={45} step={0.1} format={(value) => value.toFixed(1)} help={`Bonus ${PUSHER_BONUS_RATE_PT_PER_CM} pt/cm above 35.0 cm, as measured by the ES.`} />
+            </div>
+            <ToggleSwitch label="Bottle finished fully past the bottle line (−20 bonus)" checked={scenario.bottleFullyPastLine} onChange={setFlag('bottleFullyPastLine')} />
+          </div>
+        </Collapsible>
       </Card>
 
       <Card style={{ display: 'grid', gap: 10 }}>
@@ -286,17 +303,20 @@ export default function CourseGeometry() {
         </Card>
       )}
 
-      <Card style={{ display: 'grid', gap: 10 }}>
-        <SectionHeading>Timing sensitivity</SectionHeading>
-        <LineChart
-          points={sweepPoints}
-          caption="Run score versus run time across a four-second window centred on the target time"
-          xLabel="Run time (s)"
-          yLabel="Run score"
-        />
-        <HelpText>
-          Lower is better. The curve bottoms out at the target time, where the time term is zero; the steepness shows how much a timing error costs.
-        </HelpText>
+      <Card>
+        <Collapsible summary="Timing sensitivity chart (expand for the score curve)">
+          <div style={{ display: 'grid', gap: 10 }}>
+            <LineChart
+              points={sweepPoints}
+              caption="Run score versus run time across a four-second window centred on the target time"
+              xLabel="Run time (s)"
+              yLabel="Run score"
+            />
+            <HelpText>
+              Lower is better. The curve bottoms out at the target time, where the time term is zero; the steepness shows how much a timing error costs.
+            </HelpText>
+          </div>
+        </Collapsible>
       </Card>
     </div>
   );
