@@ -13,6 +13,7 @@ const FreshwaterToolbox = lazy(() => import('./dynamicplanet/FreshwaterToolbox')
 const MapPractice = lazy(() => import('./dynamicplanet/MapPractice'));
 const CircuitLabPractice = lazy(() => import('./circuitlab/CircuitLabPractice'));
 const DigitalLogicWorkbench = lazy(() => import('./circuitlab/DigitalLogicWorkbench'));
+const LedCalculator = lazy(() => import('./circuitlab/LedCalculator'));
 const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'));
 const BoomileverBuildLog = lazy(() => import('./boomilever/BoomileverBuildLog'));
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
@@ -273,6 +274,22 @@ export const EVENT_REGISTRY = {
       requiresAuth: false,
       component: DigitalLogicWorkbench,
       desc: 'Build and check digital logic gates, truth tables, Boolean expressions, De Morgan’s Law equivalences, and combinational circuits such as adders and multiplexers.',
+      eventName: 'Circuit Lab',
+      manualReference: 'Division C Rules Manual, pp. C16–C17',
+      eventUrl: 'https://www.soinc.org/circuit-lab-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
+      id: 'led-calculator',
+      stage: 'practice',
+      gain: 'supply, forward drop and target current you enter → a series resistor and its power',
+      ti: 'ti-bolt',
+      label: 'PN-Junction / LED Calculator',
+      cat: 'Event',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: LedCalculator,
+      desc: 'Size a series resistor for a single LED, check orientation and forward-drop assumptions, and read resistor and LED power as you type.',
       eventName: 'Circuit Lab',
       manualReference: 'Division C Rules Manual, pp. C16–C17',
       eventUrl: 'https://www.soinc.org/circuit-lab-c',

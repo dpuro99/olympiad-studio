@@ -1,22 +1,22 @@
 # Olympiad Studio — Browser Audit Report
 
-**Date:** 2026-11-21 (Phase 2.5 exit sweep — intuitive workflows + tool simplification)
+**Date:** 2026-11-21 (Phase 2 item 6 sweep — Anatomy Respiratory Data Practice)
 **Scope:** Full sweep (all 13 spec files), forced with `npm run test:e2e:changed -- full`.
-**Audited state:** `HEAD` = `ca3b54e`; working tree includes all uncommitted Phase 2.5 work (B1–B4 + Track A). Baseline stamped to `ca3b54e` on success.
+**Audited state:** `HEAD` = `301ef7d` (clean tree; Phase 2.5 + Respiratory Data Practice all committed locally, nothing pushed). Baseline stamped to `301ef7d` on success.
 **Tooling:** Playwright + headless Chromium, driven by the repo's `tests/e2e/` harness; guest mode only (no OAuth). `.env` present and loaded by the dev server.
 
 ## Summary
 
 | Gate | Result |
 | --- | --- |
-| Playwright E2E — full sweep | **116 / 116 passed** (4.6 min, 1 worker) |
-| Unit tests (`npm test`) | 191 / 191 passed |
+| Playwright E2E — full sweep | **119 / 119 passed** (3.5 min, 1 worker) |
+| Unit tests (`npm test`) | 201 / 201 passed |
 | Lint (`npm run lint`) | clean |
 | Build (`npm run build`) | success (pre-existing >600 kB main-chunk advisory) |
 | Console / page errors / failed requests during E2E | none beyond filtered analytics noise |
-| Baseline | stamped to `ca3b54e` |
+| Baseline | stamped to `301ef7d` |
 
-Every registered event workspace and module was opened, visually captured (139 screenshots + DOM snapshots in `test-results/screenshots/`), and checked for console errors. Interactive tools were exercised with real input, not just rendered.
+Every registered event workspace and module was opened, visually captured (144 screenshots + DOM snapshots in `test-results/screenshots/`), and checked for console errors. Interactive tools were exercised with real input, not just rendered.
 
 ### Coverage
 
@@ -27,11 +27,11 @@ Every registered event workspace and module was opened, visually captured (139 s
 - **A11y:** every visible heading has a unique accessible name (duplicate-name guard on every module render).
 - **Print/PDF:** print stylesheet exercised with `emulateMedia({ media: 'print' })` (visibility + non-zero box); compilers emit a real PDF via `page.pdf()` whose extracted text must contain the authored block.
 - **Resilience:** disabled and corrupt `localStorage` per tool, corrupt navigation payload, cancelling Clear/Delete confirmations, JSON import/rehydration, and cross-manual sheet notices.
-- **Interactive flows driven:** EV score (manual examples 118.17 / 109.79), EV run logger, EV course geometry, boomilever estimator + build log, gas laws / kinetics / stoichiometry, circuit practice + digital logic workbench + drag canvas (wire deletion, tidy-up, persistence, corrupt recovery), freshwater tools + toolbox + map/hydrograph cases, designer genes workbench, mineral ID key + specimen practice, and all 6 Reference & Study Compilers.
+- **Interactive flows driven:** EV score (manual examples 118.17 / 109.79), EV run logger, EV course geometry, boomilever estimator + build log, gas laws / kinetics / stoichiometry, anatomy respiratory data practice (reading a generated flow-volume loop and a shifted O₂–Hb curve, then grading both), circuit practice + digital logic workbench + drag canvas (wire deletion, tidy-up, persistence, corrupt recovery), freshwater tools + toolbox + map/hydrograph cases, designer genes workbench, mineral ID key + specimen practice, and all 6 Reference & Study Compilers.
 
 ## Findings
 
-No new functional defects found in this sweep. All 116 tests passed, including the regression guards for previously fixed issues:
+No new functional defects found in this sweep. All 119 tests passed, including the regression guards for previously fixed issues:
 
 - **HIGH (fixed earlier, still guarded)** — blank printed page from `#root { display: none }` in print CSS; `expectPrintSheetRenders()` + real `page.pdf()` text assertion prevent recurrence.
 - **MEDIUM (fixed earlier, still guarded)** — ~11 px mobile sidebar overflow at 375 px; `expectNoHorizontalOverflow(page, 375)` runs on every module.

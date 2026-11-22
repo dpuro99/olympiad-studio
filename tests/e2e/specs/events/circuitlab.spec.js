@@ -30,6 +30,49 @@ test('circuit practice calculator solves series, parallel and Ohm\u2019s law', a
   expect(errors).toEqual([]);
 });
 
+test('LED calculator sizes a series resistor live and checks assumptions', async ({ page }, testInfo) => {
+  const errors = await openModule(page, testInfo, { eventId: 'circuitlab', moduleId: 'led-calculator' });
+  await expect(page.getByRole('heading', { name: 'PN-Junction / LED Calculator', level: 1 })).toBeVisible();
+  await expect(page.getByRole('img', { name: /Series circuit: a 9 volt supply/ })).toBeVisible();
+
+  // Defaults: red LED (Vf 1.8 V), 9 V supply, 20 mA -> 360 ohm target, 390 ohm E12 pick.
+  // Scope to the result panel: the schematic draws the same R text as SVG.
+  const result = page.getByRole('status').filter({ hasText: 'Ideal-model breakdown' });
+  await expect(result).toContainText('R = 360 Ω');
+  await expect(result).toContainText('390 Ω');
+  await expect(result).toContainText('0.144 W');
+  await expect(result).toContainText('18.46 mA');
+  await expect(page.getByText(/Forward-biased with enough voltage/)).toBeVisible();
+
+  // Editing a single input re-derives everything without a Calculate button.
+  await page.getByRole('spinbutton', { name: /Target current/ }).fill('10');
+  await expect(result).toContainText('R = 720 Ω');
+  await expect(result).toContainText('820 Ω');
+  await page.getByRole('spinbutton', { name: /Target current/ }).fill('20');
+
+  // Reversing the device blocks current in the ideal model.
+  await page.getByRole('radio', { name: 'Reverse biased (cathode to +)' }).check();
+  await expect(page.getByText(/Reverse-biased: in the ideal model the device blocks current/)).toBeVisible();
+  await page.getByRole('radio', { name: 'Forward biased (anode to +)' }).check();
+
+  // An out-of-family forward drop is flagged, not silently accepted.
+  await page.getByRole('spinbutton', { name: 'LED forward voltage (V)' }).fill('3.3');
+  await expect(page.getByRole('alert')).toContainText(/outside the typical Red range \(1\.6–2\.0 V\)/);
+  await expect(result).toContainText('R = 285 Ω');
+
+  // Supply at or below Vf is an error rather than a negative resistor.
+  await page.getByRole('spinbutton', { name: 'Supply voltage (V)' }).fill('2');
+  await expect(page.getByText(/must exceed the LED forward voltage/)).toBeVisible();
+  await expect(page.getByText(/Enter valid circuit values to check orientation/)).toBeVisible();
+
+  await page.getByRole('spinbutton', { name: 'Supply voltage (V)' }).fill('9');
+  await page.getByRole('combobox', { name: /LED colour/ }).selectOption('white');
+  await expect(page.getByRole('spinbutton', { name: 'LED forward voltage (V)' })).toHaveValue('3.2');
+
+  await captureSnapshot(page, testInfo, 'circuitlab_led_calculator');
+  expect(errors).toEqual([]);
+});
+
 test('reference compiler: full author/save/prune/export/clear flow', async ({ page }, testInfo) => {
   await flowReferenceCompiler(page, testInfo, { eventId: 'circuitlab', pdfText: 'Audit block title' });
 });

@@ -29,7 +29,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C16–C17. Separate written-t
 - **Open questions:** whether to add clocked/sequential elements (excluded at Regional); confirm the exact set of combinational elements emphasized in the 2027 manual.
 
 ## Tool: PN-Junction / LED Calculator
-- **Status:** Planned
+- **Status:** Live — `src/components/events/circuitlab/LedCalculator.jsx` (logic in `ledUtils.js`)
 - **Category:** Calculator
 - **Goal:** Size LED series resistors and analyze silicon PN-junction devices (diodes/LEDs).
 - **Core interaction loop:** 1) Enter supply voltage, LED forward voltage, and target current. 2) Read the required series resistor and dissipated power. 3) Check diode/LED orientation and forward-drop assumptions.
