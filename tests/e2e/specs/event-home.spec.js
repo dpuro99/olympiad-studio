@@ -42,18 +42,20 @@ test('the event guide lists the tools in order with one next step', async ({ pag
   }
   await expect(page.locator('.field-guide-cite')).not.toBeEmpty();
 
-  // The verified rule summary is folded into the guide, not a fourth tool.
+  // The verified rule summary is folded into the guide, not another tool.
   await expect(page.getByRole('heading', { name: 'Event rules at a glance', level: 2 })).toBeVisible();
   await expect(page.getByText(/pushes a water bottle past a line/i)).toBeVisible();
 
   // The spine follows the event's own journey, not the registry's file order.
   const rows = page.locator('.field-step');
-  await expect(rows).toHaveCount(3);
+  await expect(rows).toHaveCount(4);
   await expect(rows.nth(0)).toContainText('Score Calculator');
   await expect(rows.nth(1)).toContainText('Course & Geometry');
   await expect(rows.nth(2)).toContainText('Practice Run Logger');
+  await expect(rows.nth(3)).toContainText('Kit & Program Compliance');
   await expect(rows.nth(0)).toHaveAttribute('data-stage', 'reference');
   await expect(rows.nth(2)).toHaveAttribute('data-stage', 'record');
+  await expect(rows.nth(3)).toHaveAttribute('data-stage', 'practice');
 
   // Exactly one next step. With nothing saved it points at the first step the
   // app can observe: calculators keep no saved work, so they can never be next.
