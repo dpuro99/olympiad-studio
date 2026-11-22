@@ -22,6 +22,7 @@ const RespiratoryDataPractice = lazy(() => import('./anatomy/RespiratoryDataPrac
 const SystemDiagramDrill = lazy(() => import('./anatomy/SystemDiagramDrill'));
 const ProcessPractice = lazy(() => import('./anatomy/ProcessPractice'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
+const GeneticsWorkbench = lazy(() => import('./designergenes/GeneticsWorkbench'));
 const MolecularSequenceWorkbench = lazy(() => import('./designergenes/MolecularSequenceWorkbench'));
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
 const CircuitLabReferenceCompiler = lazy(() => import('./circuitlab/CircuitLabReferenceCompiler'));
@@ -358,6 +359,22 @@ export const EVENT_REGISTRY = {
       `${ACTIVE_SEASON.year} molecular-expression scope is eukaryotic; specified tournament levels add gene mapping, heritability and techniques.`
     ],
     additionalModules: [{
+      id: 'genetics-workbench',
+      stage: 'practice',
+      gain: 'genotypes or allele counts → Punnett squares, equilibrium, mapping and heritability',
+      ti: 'ti-calculator',
+      label: 'Genetics Workbench',
+      cat: 'Practice',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: GeneticsWorkbench,
+      desc: `Work mono-/di-/trihybrid crosses, Hardy–Weinberg frequencies, two-/three-point mapping and heritability with steps shown live; ${ACTIVE_SEASON.year} scope with tournament-level gates.`,
+      eventName: 'Designer Genes',
+      manualReference: ACTIVE_DATA.designergenes.manualReference,
+      eventUrl: 'https://www.soinc.org/designer-genes-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
       id: 'molecular-sequences',
       stage: 'practice',
       gain: 'a DNA sequence → reading frames, translation, and mutation calls',

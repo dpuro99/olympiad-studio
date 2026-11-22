@@ -3,17 +3,17 @@
 Source: supplied 2027 Division C Rules Manual, pp. C20–C21. 2027 focus is genetics plus standard molecular biology (eukaryotic expression). No prior-year-only topics. Writing utensils, two Class II calculators, and one two-sided 8.5 × 11 in notes sheet are allowed; no clipboard-only restriction exists. The event emphasizes quantitative reasoning and data interpretation, which makes generator tools the strongest fit.
 
 ## Tool: Genetics Workbench
-- **Status:** Planned
+- **Status:** Live — `src/components/events/designergenes/GeneticsWorkbench.jsx` (logic in `geneticsUtils.js`)
 - **Category:** Calculator
-- **Goal:** Work through 2027 genetics problems that show work: Mendelian/classical genetics, molecular biology of a gene (DNA/RNA/protein), gene expression, crosses/pedigrees, population genetics, plus the manual's level-tagged topics.
-- **Core interaction loop:** 1) Enter the given genotypes/allele data or a cross. 2) Generate/hold the Punnett-square, pedigree, or allele-frequency calculation with shown steps. 3) Review results against the manual §3 topic list (pp. C20–C21).
-- **Content & data:** Manual §3 topics (Mendelian crosses incl. mono/di/trihybrid Punnett squares, pedigrees, allele frequencies and genetic drift, quantitative trait estimation, chromosomal gene mapping, Hardy–Weinberg); user-entered values only.
-- **UI components:** Topic selector, input fields, step-by-step result panel.
-- **Interactivity:** Live: the step-by-step result recomputes as genotypes/allele inputs change.
-- **Scoring & feedback:** Formulas and results shown as work; labeled practice, not official scoring.
-- **Level gating:** core Regional; two-gene mapping and heritability at State; three-gene mapping, PCR/sequencing techniques, RNAi, CRISPR, ChIP-seq/Hi-C/RNA-seq at State and Nationals.
-- **Persistence:** none.
-- **Open questions:** Students may use scratch paper at some sites; decide whether work should be auto-saved.
+- **Goal:** Work through 2027 genetics problems that show work: Mendelian/classical crosses, population genetics and gene mapping, plus the manual's level-tagged topics. (DNA/RNA/protein manipulation lives in the separate Molecular Sequence Workbench.)
+- **Core interaction loop:** 1) Pick a topic tab and enter genotypes, allele data or progeny counts. 2) Read the derived Punnett square, equilibrium frequencies, map distances or heritability estimates live. 3) Review the cited manual scope and basis note beneath each result.
+- **Content & data:** Manual §3 topics (§3.i.2–3 mono-/di-/trihybrid Punnett squares and probability; §3.i.6 two-/three-gene mapping at tournament levels; §3.iii.1 Hardy–Weinberg; §3.iii.2 allele-frequency mechanisms; §3.iii.3 additive traits; §3.iii.6 heritability at State/National); user-entered values only. No pedigree or genetic-drill case is shipped: the manual names those topics but prints no datasets, and a fabricated key would invent rules content.
+- **UI components:** Topic tabs, compact "what you know" inputs, one fixed live result panel per tab, live-derived outcome tables, and a basis/citation note; tournament-level topics stay behind a level switch.
+- **Interactivity:** Live: every result recomputes during render as genotypes/allele inputs change; there is no Calculate button because nothing is being recomputed on demand.
+- **Scoring & feedback:** Formulas and results shown as work; labeled practice, not official scoring. Each result names the manual section and states which relationships are standard teaching conventions rather than printed rules.
+- **Level gating:** core Regional; two-gene mapping and heritability at State; three-gene mapping at National.
+- **Persistence:** none — the workbench is a live scratchpad; nothing is auto-saved.
+- **Implementation notes:** `geneticsUtils.js` owns the invariant logic (gamete generation, Punnett grids, Hardy–Weinberg from p or phenotype counts, two-/three-point mapping with DCO interference, heritability ratios); it carries no year literal and takes no season data. `src/seasons/2027/designergenes.js` owns the citations, level gates and basis strings, which the UI prints verbatim. Gene order is derived by comparing the two smallest progeny classes with the two largest; if the data are not a valid testcross the engine returns an error rather than guessing.
 
 ## Tool: Molecular Sequence Workbench
 - **Status:** Live — `src/components/events/designergenes/MolecularSequenceWorkbench.jsx` (logic in `sequenceUtils.js`)
