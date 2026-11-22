@@ -15,6 +15,7 @@ const MapPractice = lazy(() => import('./dynamicplanet/MapPractice'));
 const CircuitLabPractice = lazy(() => import('./circuitlab/CircuitLabPractice'));
 const DigitalLogicWorkbench = lazy(() => import('./circuitlab/DigitalLogicWorkbench'));
 const LedCalculator = lazy(() => import('./circuitlab/LedCalculator'));
+const SafeHandsOnSimulator = lazy(() => import('./circuitlab/SafeHandsOnSimulator'));
 const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'));
 const BoomileverBuildLog = lazy(() => import('./boomilever/BoomileverBuildLog'));
 const StructureComplianceWorksheet = lazy(() => import('./boomilever/StructureComplianceWorksheet'));
@@ -347,6 +348,22 @@ export const EVENT_REGISTRY = {
       desc: 'Size a series resistor for a single LED, check orientation and forward-drop assumptions, and read resistor and LED power as you type.',
       eventName: 'Circuit Lab',
       manualReference: 'Division C Rules Manual, pp. C16–C17',
+      eventUrl: 'https://www.soinc.org/circuit-lab-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
+      id: 'hands-on-simulator',
+      stage: 'practice',
+      gain: 'a generated low-voltage case and your probes → a checked hands-on task',
+      ti: 'ti-tool',
+      label: 'Hands-on Task Simulator',
+      cat: 'Event',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: SafeHandsOnSimulator,
+      desc: 'Guided teaching simulations of three manual-listed hands-on tasks: voltage-only mystery resistor, SPDT three-way switch and troubleshooting. Low-voltage DC only.',
+      eventName: 'Circuit Lab',
+      manualReference: 'Division C Rules Manual, pp. C16–C17 (§3.b–d)',
       eventUrl: 'https://www.soinc.org/circuit-lab-c',
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }, {

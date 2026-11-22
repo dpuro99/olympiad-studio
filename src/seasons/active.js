@@ -1,6 +1,7 @@
 import { anatomy2027 } from './2027/anatomy.js';
 import { boomilever2027 } from './2027/boomilever.js';
 import { chemlab2027 } from './2027/chemlab.js';
+import { circuitlab2027 } from './2027/circuitlab.js';
 import { designergenes2027 } from './2027/designergenes.js';
 import { dynamicplanet2027 } from './2027/dynamicplanet.js';
 import { electricvehicle2027 } from './2027/electricvehicle.js';
@@ -14,6 +15,7 @@ export const ACTIVE_DATA = Object.freeze({
   anatomy: anatomy2027,
   boomilever: boomilever2027,
   chemlab: chemlab2027,
+  circuitlab: circuitlab2027,
   designergenes: designergenes2027,
   dynamicplanet: dynamicplanet2027,
   electricvehicle: electricvehicle2027,

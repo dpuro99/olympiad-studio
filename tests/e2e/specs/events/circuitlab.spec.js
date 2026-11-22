@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { captureSnapshot, flowReferenceCompiler, openModule } from '../../helpers.js';
 import { storageKey } from '../../../../src/seasons/storageKeys.js';
+import { generateFaultCase, generateMysteryCase, generateSwitchCase, lampIsLit, toggleSwitch } from '../../../../src/components/events/circuitlab/handsOnUtils.js';
 
 const CANVAS_KEY = storageKey('circuitlab', 'logic-canvas');
 
@@ -193,5 +194,44 @@ test('circuit canvas recovers from corrupt saved data', async ({ page }, testInf
   await page.getByRole('tab', { name: 'Circuit canvas' }).click();
   await expect(page.getByRole('alert')).toBeVisible();
   await expect(page.locator('[data-node="A"]')).toBeVisible();
+  expect(errors).toEqual([]);
+});
+test('hands-on simulator probes a mystery resistor, wires a 3-way switch and finds a fault', async ({ page }, testInfo) => {
+  const errors = await openModule(page, testInfo, { eventId: 'circuitlab', moduleId: 'hands-on-simulator' });
+  await expect(page.getByText('Low-voltage DC teaching models only', { exact: false })).toBeVisible();
+
+  const mystery = generateMysteryCase(42);
+  await page.getByRole('button', { name: 'Measure voltage across R1 known' }).click();
+  await expect(page.getByText(`${mystery.readings.known} V`, { exact: true }).first()).toBeVisible();
+  await page.getByLabel('Your resistance for RX (Ω)').fill(String(mystery.unknown));
+  await page.getByRole('button', { name: 'Check my value' }).click();
+  await expect(page.getByText('Correct — value matches the simulated resistor.')).toBeVisible();
+
+  await page.getByRole('tab', { name: 'SPDT three-way switch' }).click();
+  const switchCase = generateSwitchCase(42);
+  let positions = switchCase.positions;
+  const litSwitch = lampIsLit(positions) ? null : 'a';
+  if (litSwitch) {
+    await page.getByRole('button', { name: 'Activate switch A' }).click();
+    positions = toggleSwitch(positions, 'a');
+  }
+  await expect(page.getByText('LAMP ON', { exact: true })).toBeVisible();
+  const other = litSwitch === 'a' ? 'b' : 'a';
+  await page.getByRole('button', { name: other === 'a' ? 'Activate switch A' : 'Activate switch B' }).click();
+  positions = toggleSwitch(positions, other);
+  expect(lampIsLit(positions)).toBe(false);
+  await page.getByRole('button', { name: litSwitch === 'a' ? 'Activate switch A' : 'Activate switch B' }).click();
+  await expect(page.getByText('Sequence complete — either switch can change the lamp.')).toBeVisible();
+
+  await page.getByRole('tab', { name: 'Troubleshooting' }).click();
+  const fault = generateFaultCase(42);
+  const faultLabel = fault.fault.at === 'r1' ? 'R1' : fault.fault.at === 'r2' ? 'R2' : 'R3';
+  await page.getByRole('button', { name: new RegExp(`^Measure voltage across ${faultLabel}`) }).click();
+  await page.getByRole('combobox', { name: /Faulty component/ }).selectOption(fault.fault.at);
+  await page.getByRole('combobox', { name: /Fault type/ }).selectOption(fault.fault.type);
+  await page.getByRole('button', { name: 'Check my diagnosis' }).click();
+  await expect(page.getByText('Correct diagnosis.')).toBeVisible();
+
+  await captureSnapshot(page, testInfo, 'circuitlab_hands_on_simulator');
   expect(errors).toEqual([]);
 });

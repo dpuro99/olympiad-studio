@@ -37,6 +37,7 @@
         { "id": "circuit-practice", "label": "Circuit Practice Calculator", "expectText": "Equivalent resistance" },
         { "id": "digital-logic", "label": "Digital Logic Workbench", "expectText": "Gate truth tables" },
         { "id": "led-calculator", "label": "PN-Junction / LED Calculator", "expectText": "Series circuit" },
+        { "id": "hands-on-simulator", "label": "Hands-on Task Simulator", "expectText": "Low-voltage DC teaching models only" },
         { "id": "circuitlab-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
       ]
     },

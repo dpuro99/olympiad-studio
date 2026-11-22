@@ -41,16 +41,16 @@ Source: supplied 2027 Division C Rules Manual, pp. C16–C17. Separate written-t
 - **Persistence:** none.
 
 ## Tool: Safe Hands-on Task Simulator
-- **Status:** Planned
+- **Status:** Live — `src/components/events/circuitlab/SafeHandsOnSimulator.jsx` (engine in `handsOnUtils.js`)
 - **Category:** Practice
-- **Goal:** Train breadboard/multimeter basics and practice rule-listed hands-on task types.
-- **Core interaction loop:** 1) Choose a task type (voltage-only mystery resistor, power, equally bright LEDs, charger-label analysis, truth-table circuit, troubleshooting, SPDT 3-way switch, equivalent resistance). 2) Walk through a guided simulation using manual-listed requirements. 3) Review the underlying rule/technique.
-- **Content & data:** Manual hands-on task list (manual §2/§4, pp. C16–C17); low-voltage supplied components only. Rescoped from an open-ended breadboard sim to these concrete, manual-listed tasks.
-- **UI components:** Task chooser, guided simulation, reference panel.
-- **Interactivity:** Direct manipulation: a guided interactive simulation of the manual-listed task types (keyboard-accessible steps).
-- **Scoring & feedback:** Practice feedback; never simulate prohibited hazardous exposure as an event procedure.
-- **Level gating:** none.
-- **Persistence:** none.
+- **Goal:** Train breadboard/multimeter habits and practice rule-listed hands-on task types.
+- **Core interaction loop:** 1) Choose one of the three implemented manual-listed tasks (voltage-only mystery resistor §3.c.i, SPDT 3-way switch §3.c.vii, troubleshooting §3.c.vi) and note its printed citation. 2) Generate or reuse a seeded low-voltage DC case, probe components by clicking or pressing Enter on the labelled circuit nodes, and work out the answer. 3) Check the answer and read the stated teaching convention behind the simulation.
+- **Content & data:** The task list is manual §3.c.i–viii (p. C17) — the earlier §2/§4 pointer was wrong, since §2 is event parameters and §4 is scoring. Season data (`src/seasons/2027/circuitlab.js`) owns §3.b (breadboard/multimeter familiarity), §3.d (no soldering, high-power or AC exposure) and §4.a–c (hands-on is 25–50%). The manual prints no circuits, component values, fault models or task rubric, so values/cases are labelled teaching simulations, never official apparatus. Rescoped from an open-ended breadboard sim to concrete manual-listed tasks; v1 implements the three roadmap-named tasks; the other five are listed with citations but explicitly not simulated so no fabricated task key ships.
+- **UI components:** Task tabs, seed control, responsive SVG circuit boards with focusable probe/switch nodes, labelled duplicate controls for keyboard and headless use, live measurement legend, answer fields, feedback panel and a collapsible list of the unsimulated tasks.
+- **Interactivity:** Direct manipulation: circuit nodes are focusable buttons (pointer click plus Enter/Space); voltages, lamp state and task milestones derive live from the case and the student's probes/toggles. `New case`, `Check`, `Activate switch` and `Restart wiring` are explicit side-effect actions.
+- **Scoring & feedback:** Practice-only feedback with the worked divider derivation or revealed simulated fault; no official score, task time or ES ruling. The tool states that no prohibited hazardous exposure is simulated.
+- **Level gating:** none — hands-on tasks are core.
+- **Persistence:** none; the case seed is shown so a case can be revisited.
 
 ## Tool: Reference & Study Compiler
 - **Status:** Live — `src/components/events/circuitlab/CircuitLabReferenceCompiler.jsx` (shared engine `src/components/general/ReferenceCompiler.jsx`)

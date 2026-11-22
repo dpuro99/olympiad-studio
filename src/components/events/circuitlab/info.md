@@ -13,7 +13,7 @@ At least one question from each listed topic: historical figures Ampere, Coulomb
 - Explicit exclusions: semiconductor topics beyond listed devices; AC circuit theory/frequency analysis; capacitance; inductance; unlisted nonlinear devices; three-phase power; Thevenin/Norton equivalents; oscilloscopes. Math excludes complex numbers, matrices and calculus.
 
 ## Hands-on and scoring
-Possible tasks include voltage-only mystery-resistor measurement, power, equally bright LEDs, USB charger analysis, logic circuit construction, troubleshooting, 3-way switches and equivalent resistance. High score wins; written work is 50–75%, hands-on is the remaining 25–50%; preselected questions break ties.
+Participants must know breadboard and multimeter operation and may ask the ES about breadboard internal wiring (§3.b). Possible tasks (§3.c.i–viii) include voltage-only mystery-resistor measurement, power, equally bright LEDs, USB charger analysis, logic circuit construction, troubleshooting, 3-way switches and equivalent resistance. No participant may be exposed to soldering, high-power circuits or AC circuits (§3.d). High score wins; written work is 50–75%, hands-on is the remaining 25–50% (§4); preselected questions break ties. The manual prints no circuit diagrams, component values or task key, so any simulation is a labelled teaching model rather than event apparatus.
 
 ## Official sources
 - Science Olympiad, 2027 Division C Rules Manual, pp. C16–C17.
