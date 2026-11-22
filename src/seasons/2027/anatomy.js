@@ -52,5 +52,120 @@ export const anatomy2027 = Object.freeze({
         Object.freeze({ id: 'skin', name: 'Skin', note: 'Anatomical barrier of the innate immune system.' })
       ])
     })
+  ]),
+  // Process cases use only terms and processes the manual itself names. The
+  // ordering/classification is a study aid derived from the manual's topic
+  // sequence, not an official answer key the manual prints.
+  processCases: Object.freeze([
+    Object.freeze({
+      id: 'canal-route',
+      label: 'Alimentary canal route',
+      level: 'base',
+      kind: 'order',
+      citation: 'Division C Rules Manual, §3.b.i & §3.b.iv',
+      prompt: 'Put these named parts of the alimentary canal in the order food travels through them.',
+      steps: Object.freeze([
+        Object.freeze({ id: 'esophagus', label: 'Esophagus', detail: 'Muscular canal carrying the bolus toward the stomach.' }),
+        Object.freeze({ id: 'stomach', label: 'Stomach', detail: 'Muscular chamber that churns food and begins protein digestion.' }),
+        Object.freeze({ id: 'smallIntestine', label: 'Small intestine', detail: 'Main site of nutrient absorption.' }),
+        Object.freeze({ id: 'largeIntestine', label: 'Large intestine', detail: 'Reclaims water and electrolytes.' })
+      ])
+    }),
+    Object.freeze({
+      id: 'digestion-stages',
+      label: 'Digestion to absorption',
+      level: 'base',
+      kind: 'order',
+      citation: 'Division C Rules Manual, §3.b.vi–viii',
+      prompt: 'Trace the manual’s progression from mechanical digestion through chemical digestion to absorption.',
+      steps: Object.freeze([
+        Object.freeze({ id: 'mechanical', label: 'Mechanical digestion', detail: 'Physical breakdown of food (§3.b.vi).' }),
+        Object.freeze({ id: 'chemical', label: 'Chemical digestion of proteins, fats and carbohydrates', detail: 'Enzymatic breakdown (§3.b.vii).' }),
+        Object.freeze({ id: 'absorption', label: 'Absorption of nutrients, vitamins, minerals and water', detail: 'Including the role of fiber (§3.b.viii).' })
+      ])
+    }),
+    Object.freeze({
+      id: 'canal-vs-accessory',
+      label: 'Canal or accessory organ',
+      level: 'base',
+      kind: 'classify',
+      citation: 'Division C Rules Manual, §3.b.ii',
+      prompt: 'Sort each named organ into the alimentary canal or the accessory organs of digestion.',
+      groups: Object.freeze([
+        Object.freeze({ id: 'canal', label: 'Alimentary canal' }),
+        Object.freeze({ id: 'accessory', label: 'Accessory organ' })
+      ]),
+      items: Object.freeze([
+        Object.freeze({ id: 'salivaryGlands', label: 'Salivary glands', groupId: 'accessory' }),
+        Object.freeze({ id: 'esophagus', label: 'Esophagus', groupId: 'canal' }),
+        Object.freeze({ id: 'liver', label: 'Liver', groupId: 'accessory' }),
+        Object.freeze({ id: 'stomach', label: 'Stomach', groupId: 'canal' }),
+        Object.freeze({ id: 'gallbladder', label: 'Gallbladder', groupId: 'accessory' }),
+        Object.freeze({ id: 'smallIntestine', label: 'Small intestine', groupId: 'canal' }),
+        Object.freeze({ id: 'pancreas', label: 'Pancreas', groupId: 'accessory' }),
+        Object.freeze({ id: 'largeIntestine', label: 'Large intestine', groupId: 'canal' })
+      ])
+    }),
+    Object.freeze({
+      id: 'innate-vs-adaptive',
+      label: 'Innate or adaptive',
+      level: 'base',
+      kind: 'classify',
+      citation: 'Division C Rules Manual, §3.c.ii–iii',
+      prompt: 'Sort each named component or process into the innate or adaptive immune system.',
+      groups: Object.freeze([
+        Object.freeze({ id: 'innate', label: 'Innate' }),
+        Object.freeze({ id: 'adaptive', label: 'Adaptive' })
+      ]),
+      items: Object.freeze([
+        Object.freeze({ id: 'barriers', label: 'Anatomical barriers', groupId: 'innate' }),
+        Object.freeze({ id: 'complement', label: 'Complement system', groupId: 'innate' }),
+        Object.freeze({ id: 'tlr', label: 'Toll-like receptors', groupId: 'innate' }),
+        Object.freeze({ id: 'inflammation', label: 'Inflammation', groupId: 'innate' }),
+        Object.freeze({ id: 'bCells', label: 'B cells', groupId: 'adaptive' }),
+        Object.freeze({ id: 'tCells', label: 'T cells', groupId: 'adaptive' }),
+        Object.freeze({ id: 'presentation', label: 'Antigen presentation', groupId: 'adaptive' }),
+        Object.freeze({ id: 'memory', label: 'Memory', groupId: 'adaptive' })
+      ])
+    }),
+    Object.freeze({
+      id: 'transplant',
+      label: 'Transplant terms',
+      level: 'state',
+      kind: 'classify',
+      citation: 'Division C Rules Manual, §3.c.ix (State & National)',
+      prompt: 'Sort each named term into a transplant type or a mechanism of rejection.',
+      groups: Object.freeze([
+        Object.freeze({ id: 'type', label: 'Transplant type' }),
+        Object.freeze({ id: 'rejection', label: 'Rejection mechanism' })
+      ]),
+      items: Object.freeze([
+        Object.freeze({ id: 'allograft', label: 'Allograft', groupId: 'type' }),
+        Object.freeze({ id: 'autograft', label: 'Autograft', groupId: 'type' }),
+        Object.freeze({ id: 'hyperacute', label: 'Hyperacute rejection', groupId: 'rejection' }),
+        Object.freeze({ id: 'acute', label: 'Acute rejection', groupId: 'rejection' }),
+        Object.freeze({ id: 'chronic', label: 'Chronic rejection', groupId: 'rejection' })
+      ])
+    }),
+    Object.freeze({
+      id: 'tumor-immunology',
+      label: 'Tumor immunology',
+      level: 'national',
+      kind: 'classify',
+      citation: 'Division C Rules Manual, §3.c.xi (National)',
+      prompt: 'Sort each named term into a tumor–immune process or a cancer immunotherapy.',
+      groups: Object.freeze([
+        Object.freeze({ id: 'process', label: 'Tumor–immune process' }),
+        Object.freeze({ id: 'therapy', label: 'Immunotherapy' })
+      ]),
+      items: Object.freeze([
+        Object.freeze({ id: 'surveillance', label: 'Immune surveillance', groupId: 'process' }),
+        Object.freeze({ id: 'evasion', label: 'Tumor evasion', groupId: 'process' }),
+        Object.freeze({ id: 'vaccines', label: 'Therapeutic cancer vaccines', groupId: 'therapy' }),
+        Object.freeze({ id: 'cytokines', label: 'Cytokine therapies', groupId: 'therapy' }),
+        Object.freeze({ id: 'antibody', label: 'Antibody therapies', groupId: 'therapy' }),
+        Object.freeze({ id: 'cart', label: 'CAR T-cell therapy', groupId: 'therapy' })
+      ])
+    })
   ])
 });

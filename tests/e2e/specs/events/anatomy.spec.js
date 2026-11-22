@@ -56,6 +56,46 @@ test('system diagram drill labels targets and reveals the manual-cited key', asy
   expect(errors).toEqual([]);
 });
 
+test('process practice orders the alimentary canal and sorts immune terms', async ({ page }, testInfo) => {
+  const errors = await openModule(page, testInfo, { eventId: 'anatomy', moduleId: 'process-practice' });
+  await expect(page.getByRole('heading', { name: 'Digestive/Immune Process Practice', level: 1 })).toBeVisible();
+  const caseSelect = page.getByRole('combobox', { name: 'Case', exact: true });
+  await expect(caseSelect.locator('option')).toHaveCount(4);
+
+  // The default case is an ordering task; place the canal parts in manual order.
+  for (const label of ['Esophagus', 'Stomach', 'Small intestine', 'Large intestine']) {
+    await page.getByRole('button', { name: `Add ${label} to sequence` }).click();
+  }
+  await expect(page.getByRole('status').filter({ hasText: '4 of 4 steps placed.' })).toBeVisible();
+  await page.getByRole('button', { name: 'Check answers' }).click();
+  await expect(page.getByRole('status').filter({ hasText: '4 of 4 correct' })).toBeVisible();
+  await captureSnapshot(page, testInfo, 'anatomy_process_order_key');
+
+  // Switching cases resets the round; classify the innate/adaptive terms.
+  await caseSelect.selectOption('innate-vs-adaptive');
+  await expect(page.getByRole('button', { name: 'Check answers' })).toBeDisabled();
+  const sorted = {
+    'Anatomical barriers': 'Innate',
+    'Complement system': 'Innate',
+    'Toll-like receptors': 'Innate',
+    Inflammation: 'Innate',
+    'B cells': 'Adaptive',
+    'T cells': 'Adaptive',
+    'Antigen presentation': 'Adaptive',
+    Memory: 'Adaptive'
+  };
+  for (const [term, group] of Object.entries(sorted)) {
+    await page.getByRole('button', { name: `${term}: ${group}`, exact: true }).click();
+  }
+  await page.getByRole('button', { name: 'Check answers' }).click();
+  await expect(page.getByRole('status').filter({ hasText: '8 of 8 correct' })).toBeVisible();
+
+  // National level reveals the advanced cases in the case list.
+  await page.getByRole('combobox', { name: 'Level', exact: true }).selectOption('national');
+  await expect(caseSelect.locator('option')).toHaveCount(6);
+  expect(errors).toEqual([]);
+});
+
 test('respiratory data practice grades a generated loop and a shifted gas curve', async ({ page }, testInfo) => {
   const errors = await openModule(page, testInfo, { eventId: 'anatomy', moduleId: 'respiratory-data' });
   await expect(page.getByRole('heading', { name: 'Respiratory Data Practice', level: 1 })).toBeVisible();

@@ -1,22 +1,22 @@
 # Olympiad Studio — Browser Audit Report
 
-**Date:** 2026-11-21 (Circuit Lab PN-junction/LED calculator sweep)
+**Date:** 2026-11-21 (Anatomy System Diagram Drill sweep)
 **Scope:** Full sweep (all 13 spec files), forced with `npm run test:e2e:changed -- full`.
-**Audited state:** `HEAD` = `51c5141` (clean tree; Phase 2.5 + Respiratory Data Practice + LED calculator all committed locally, nothing pushed). Baseline stamped to `51c5141` on success.
+**Audited state:** `HEAD` = `dde017c` (clean tree; Phase 2.5 + Respiratory Data Practice + LED calculator + System Diagram Drill all committed locally, nothing pushed). Baseline stamped to `dde017c` on success.
 **Tooling:** Playwright + headless Chromium, driven by the repo's `tests/e2e/` harness; guest mode only (no OAuth). `.env` present and loaded by the dev server.
 
 ## Summary
 
 | Gate | Result |
 | --- | --- |
-| Playwright E2E — full sweep | **122 / 122 passed** (10.6 min, 1 worker) |
-| Unit tests (`npm test`) | 209 / 209 passed |
+| Playwright E2E — full sweep | **125 / 125 passed** (11.7 min, 1 worker) |
+| Unit tests (`npm test`) | 214 / 214 passed |
 | Lint (`npm run lint`) | clean |
 | Build (`npm run build`) | success (pre-existing >600 kB main-chunk advisory) |
 | Console / page errors / failed requests during E2E | none beyond filtered analytics noise |
-| Baseline | stamped to `51c5141` |
+| Baseline | stamped to `dde017c` |
 
-Every registered event workspace and module was opened, visually captured (149 screenshots + DOM snapshots in `test-results/screenshots/`), and checked for console errors. Interactive tools were exercised with real input, not just rendered.
+Every registered event workspace and module was opened, visually captured (154 screenshots + DOM snapshots in `test-results/screenshots/`), and checked for console errors. Interactive tools were exercised with real input, not just rendered.
 
 ### Coverage
 
@@ -27,11 +27,11 @@ Every registered event workspace and module was opened, visually captured (149 s
 - **A11y:** every visible heading has a unique accessible name (duplicate-name guard on every module render).
 - **Print/PDF:** print stylesheet exercised with `emulateMedia({ media: 'print' })` (visibility + non-zero box); compilers emit a real PDF via `page.pdf()` whose extracted text must contain the authored block.
 - **Resilience:** disabled and corrupt `localStorage` per tool, corrupt navigation payload, cancelling Clear/Delete confirmations, JSON import/rehydration, and cross-manual sheet notices.
-- **Interactive flows driven:** EV score (manual examples 118.17 / 109.79), EV run logger, EV course geometry, boomilever estimator + build log, gas laws / kinetics / stoichiometry, anatomy respiratory data practice (reading a generated flow-volume loop and a shifted O₂–Hb curve, then grading both), circuit practice + PN-junction/LED calculator (live resistor/power readouts, orientation and forward-drop checks) + digital logic workbench + drag canvas (wire deletion, tidy-up, persistence, corrupt recovery), freshwater tools + toolbox + map/hydrograph cases, designer genes workbench, mineral ID key + specimen practice, and all 6 Reference & Study Compilers.
+- **Interactive flows driven:** EV score (manual examples 118.17 / 109.79), EV run logger, EV course geometry, boomilever estimator + build log, gas laws / kinetics / stoichiometry, anatomy respiratory data practice (reading a generated flow-volume loop and a shifted O₂–Hb curve, then grading both), anatomy system diagram drill (labelling SVG targets, the keyboard path, check/reveal and a system switch), circuit practice + PN-junction/LED calculator (live resistor/power readouts, orientation and forward-drop checks) + digital logic workbench + drag canvas (wire deletion, tidy-up, persistence, corrupt recovery), freshwater tools + toolbox + map/hydrograph cases, designer genes workbench, mineral ID key + specimen practice, and all 6 Reference & Study Compilers.
 
 ## Findings
 
-No new functional defects found in this sweep. All 122 tests passed, including the regression guards for previously fixed issues:
+No new functional defects found in this sweep. All 125 tests passed, including the regression guards for previously fixed issues:
 
 - **HIGH (fixed earlier, still guarded)** — blank printed page from `#root { display: none }` in print CSS; `expectPrintSheetRenders()` + real `page.pdf()` text assertion prevent recurrence.
 - **MEDIUM (fixed earlier, still guarded)** — ~11 px mobile sidebar overflow at 375 px; `expectNoHorizontalOverflow(page, 375)` runs on every module.

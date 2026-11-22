@@ -20,6 +20,7 @@ const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
 const RespiratoryDataPractice = lazy(() => import('./anatomy/RespiratoryDataPractice'));
 const SystemDiagramDrill = lazy(() => import('./anatomy/SystemDiagramDrill'));
+const ProcessPractice = lazy(() => import('./anatomy/ProcessPractice'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
 const MolecularSequenceWorkbench = lazy(() => import('./designergenes/MolecularSequenceWorkbench'));
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
@@ -72,6 +73,22 @@ export const EVENT_REGISTRY = {
       requiresAuth: false,
       component: SystemDiagramDrill,
       desc: 'Label numbered targets on respiratory, digestive, and immune schematics, then check your work against manual-cited names.',
+      eventName: 'Anatomy and Physiology',
+      manualReference: 'Division C Rules Manual, pp. C3–C5',
+      eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
+      id: 'process-practice',
+      stage: 'practice',
+      gain: 'a chosen case and your ordering/sorting → a checked, manual-cited key',
+      ti: 'ti-list-details',
+      label: 'Digestive/Immune Process Practice',
+      cat: 'Event',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: ProcessPractice,
+      desc: 'Trace digestive and immune processes and sort the manual-listed terms, then check your work against a cited key.',
       eventName: 'Anatomy and Physiology',
       manualReference: 'Division C Rules Manual, pp. C3–C5',
       eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c',

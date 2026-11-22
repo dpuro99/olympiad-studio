@@ -44,15 +44,15 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Open questions:** resolved by the roadmap — the generator models only the respiratory topics the manual names (lung volumes, spirometry, flow-volume loops, gas exchange, oxygen transport) and labels its math an educational simulation, not clinical data or an official answer.
 
 ## Tool: Digestive/Immune Process Practice
-- **Status:** Planned
+- **Status:** Live — `src/components/events/anatomy/ProcessPractice.jsx` + `processPracticeUtils.js`
 - **Category:** Practice
-- **Goal:** Work through case-based process chains for digestion/absorption, motility, immunity, immunization, antibody classes, and listed disorders.
-- **Core interaction loop:** 1) Choose a case. 2) Order/trace the process or classify the response (step ordering / classification controls). 3) Get manual-cited feedback.
-- **Content & data:** Manual-listed disorders and processes only, presented as interactive ordering/classification rather than a fixed question-and-answer bank.
-- **UI components:** Case prompt, sequence/classification inputs, references.
-- **Interactivity:** Live: ordering/classification feedback updates as the student works; explicit reveal of the manual-cited answer.
-- **Scoring & feedback:** Evaluates the ordering/classification against manual objectives; practice only.
-- **Level gating:** liver/pancreas pathways (State/National); immunoglobulin constant-region variation, detailed immunoglobulin structure/function, and organ-transplant immunology (State/National); tumor immunology (National) — all level-tagged per the manual.
+- **Goal:** Trace manual-listed digestive and immune processes by ordering steps and sorting named terms, then check against a cited key.
+- **Core interaction loop:** 1) Choose a competition level and one of the manual-listed cases. 2) Place the steps in order or sort the terms into groups; the progress counter updates live. 3) Check to reveal the cited key and the short reason beside each item.
+- **Content & data:** Six cases transcribed into `src/seasons/2027/anatomy.js`: alimentary canal route (§3.b.i & iv), digestion → absorption (§3.b.vi–viii), canal vs accessory organs (§3.b.ii), innate vs adaptive (§3.c.ii–iii), transplant terms (§3.c.ix, State/National) and tumor immunology (§3.c.xi, National). Only names and processes the manual itself prints are used; the sequence/grouping is a study aid derived from the manual's topic order, not an official answer key. Immunization and the five immunoglobulin classes (§3.c.v–vi) stay in the Reference Compiler objectives — the manual names them but prints no distinguishing detail, so no answer-key case is fabricated for them.
+- **UI components:** Level and Case selects, Stepper, ordering buttons with undo, classification button groups, live progress counter, Check/Start over actions, and a result table with a manual-scope note.
+- **Interactivity:** Live: placed steps, sorted terms and the progress counter update as the student works; Check/reveal is explicit because grading is a side effect.
+- **Scoring & feedback:** Per-step and per-term correct/wrong/unsorted feedback against the manual-listed key; practice only, session-only.
+- **Level gating:** Regional/Invitational cases first; State/National transplantation and National tumor immunology appear only when the level selector is raised. Liver/pancreas cellular detail and detailed immunoglobulin structure (§3.b.xi–xii, §3.c.viii) remain level notes, since the manual prints no sortable terms for them.
 - **Persistence:** none.
 
 ## Tool: System Diagram Drill
