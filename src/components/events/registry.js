@@ -17,6 +17,7 @@ const DigitalLogicWorkbench = lazy(() => import('./circuitlab/DigitalLogicWorkbe
 const LedCalculator = lazy(() => import('./circuitlab/LedCalculator'));
 const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'));
 const BoomileverBuildLog = lazy(() => import('./boomilever/BoomileverBuildLog'));
+const StructureComplianceWorksheet = lazy(() => import('./boomilever/StructureComplianceWorksheet'));
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
 const RespiratoryDataPractice = lazy(() => import('./anatomy/RespiratoryDataPractice'));
@@ -153,7 +154,7 @@ export const EVENT_REGISTRY = {
   boomilever: overview({
     name: 'Boomilever', code: 'BOOM', division: 'C',
     description: 'Build a cantilevered structure to support a load from a testing wall.',
-    journey: ['boomilever-estimator', 'boomilever-build-log'],
+    journey: ['boomilever-estimator', 'boomilever-build-log', 'structure-compliance'],
     manualReference: 'Division C Rules Manual, pp. C7–C12',
     ruleSummary: [
       'One prebuilt wood-and-adhesive structure; Eye Protection B; no impound; six-minute setup/testing window.',
@@ -191,6 +192,22 @@ export const EVENT_REGISTRY = {
       desc: 'Track each prototype\'s build details and test results, compare efficiencies, and export CSV.',
       eventName: 'Boomilever',
       manualReference: 'Division C Rules Manual, pp. C7–C12',
+      eventUrl: 'https://www.soinc.org/boomilever-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
+      id: 'structure-compliance',
+      stage: 'practice',
+      gain: 'measured geometry and build confirmations → per-rule self-check summary',
+      ti: 'ti-list-check',
+      label: 'Structure Compliance',
+      cat: 'Event',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: StructureComplianceWorksheet,
+      desc: 'Measure the manual’s chain and contact geometry and confirm each construction rule with citations; a self-check, not an ES ruling.',
+      eventName: 'Boomilever',
+      manualReference: 'Division C Rules Manual, pp. C7–C12 (§2.d, §3, §6.b, §7)',
       eventUrl: 'https://www.soinc.org/boomilever-c',
       rulesUrl: ACTIVE_SEASON.rulesUrl
     }],

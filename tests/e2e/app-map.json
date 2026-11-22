@@ -16,7 +16,8 @@
       "label": "Boomilever",
       "modules": [
         { "id": "boomilever-estimator", "label": "Efficiency Estimator", "expectText": "Structure efficiency estimator" },
-        { "id": "boomilever-build-log", "label": "Build/Test Log", "expectText": "Log a build" }
+        { "id": "boomilever-build-log", "label": "Build/Test Log", "expectText": "Log a build" },
+        { "id": "structure-compliance", "label": "Structure Compliance", "expectText": "Self-check only" }
       ]
     },
     {

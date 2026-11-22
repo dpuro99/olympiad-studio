@@ -52,3 +52,40 @@ test('build/test log requires a positive structure mass before saving', async ({
   await expect(page.getByRole('alert')).toContainText('positive structure mass');
   await expect(page.getByRole('heading', { name: 'Saved builds (0)' })).toBeVisible();
 });
+
+test('structure compliance derives geometry checks and the contact-depth consequence live', async ({ page }, testInfo) => {
+  const errors = await openModule(page, testInfo, { eventId: 'boomilever', moduleId: 'structure-compliance' });
+  await expect(page.getByText('Self-check only', { exact: false })).toBeVisible();
+  await expect(page.getByText('0 of 12 checkable items pass.')).toBeVisible();
+
+  const distance = page.getByLabel('Chain centerline distance from wall (cm)');
+  const offset = page.getByLabel('Chain centerline offset from wall centerline (cm)');
+  const depth = page.getByLabel('Deepest wall contact below the bolt centerline (cm)');
+
+  // Exact text: the summary's "n out of range" is a substring match otherwise.
+  await distance.fill('39');
+  await expect(page.getByText('Out of range', { exact: true })).toHaveCount(1);
+  await distance.fill('42');
+  await expect(page.getByText('In range', { exact: true })).toHaveCount(1);
+  await offset.fill('1');
+  await expect(page.getByText('In range', { exact: true })).toHaveCount(2);
+
+  await depth.fill('14');
+  await expect(page.getByText('No contact-depth Tier 2 trigger')).toBeVisible();
+  await depth.fill('16');
+  await expect(page.getByText('Tier 2 trigger')).toBeVisible();
+  await expect(page.getByText(/placed in Tier 2/)).toBeVisible();
+
+  // The bonus option adds the 15 kg gate and the 10 cm contact line.
+  await page.getByRole('combobox', { name: 'Base option' }).selectOption('bonus');
+  const heldSwitch = page.getByRole('switch', { name: /15 kg was held/ });
+  await expect(heldSwitch).toBeVisible();
+  await depth.fill('9');
+  await heldSwitch.check();
+  await expect(page.getByText('Bonus requirements recorded')).toBeVisible();
+  await depth.fill('12');
+  await expect(page.getByText('Bonus not earned — scored under §3.h')).toBeVisible();
+
+  await captureSnapshot(page, testInfo, 'boomilever_structure_compliance');
+  expect(errors).toEqual([]);
+});

@@ -29,7 +29,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C7–C12. Prior checks using 
 - **Open questions:** none.
 
 ## Tool: Structure Compliance Worksheet
-- **Status:** Planned
+- **Status:** Live — `src/components/events/boomilever/StructureComplianceWorksheet.jsx` (engine in `complianceUtils.js`)
 - **Category:** Worksheet
 - **Goal:** Record material/adhesive, wall-contact lines, chain position, loading-block height, and check explicit manual constraints.
 - **Core interaction loop:** 1) Enter each measured/observed value. 2) Check the explicit constraints: wood bonded by adhesive; chain 40–45 cm horizontal from wall and within 2.5 cm of centerline; contact outside vertical width lines; loading block above bolt centerline before sand; base contacts above 15 cm (or 10 cm bonus). 3) Read the pass/warn result per rule with its section citation.
