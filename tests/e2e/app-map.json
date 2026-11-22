@@ -80,7 +80,9 @@
     {
       "code": "writeitdoit",
       "label": "Write It, Do It",
-      "modules": []
+      "modules": [
+        { "id": "timed-relay", "label": "Timed Relay", "expectText": "Synthetic target" }
+      ]
     }
   ]
 }

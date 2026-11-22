@@ -1,6 +1,6 @@
 # Write It, Do It B — 2027 Rules Summary
 
-**Status:** Verified against the supplied Division B Rules Manual, p. B61 (PDF p. 66), checked October 8, 2026.
+**Status:** Verified against the supplied Division B Rules Manual, p. B62 (PDF p. 66), checked October 8, 2026.
 
 ## Format and resources
 - Exactly 2 participants; approximately 50 minutes.
@@ -15,5 +15,5 @@
 The team must build the closest object and comply with the no-drawing rule. Pieces can score for size, color, location, orientation and/or connection. Correct connections beyond an incorrectly connected piece still count; unused parts are not penalized. Drawing a subsection places the team in Tier 2; drawing a picture of the model results in disqualification. Construction-phase time is the tiebreaker. The rules do not specify “faster wins”; do not assume direction beyond the manual’s wording.
 
 ## Official sources
-- Science Olympiad, 2027 Division B Rules Manual, p. B61.
+- Science Olympiad, 2027 Division B Rules Manual, p. B62.
 - [Official event page](https://www.soinc.org/write-it-do-it-b) · [2027 rules](https://www.soinc.org/rules-2027) · [Corrections](https://www.soinc.org/events/rules-clarifications)

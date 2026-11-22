@@ -31,6 +31,7 @@ const DynamicPlanetReferenceCompiler = lazy(() => import('./dynamicplanet/Dynami
 const RocksAndMineralsReferenceCompiler = lazy(() => import('./rocksandminerals/RocksAndMineralsReferenceCompiler'));
 const MineralIdKey = lazy(() => import('./rocksandminerals/MineralIdKey'));
 const SpecimenPractice = lazy(() => import('./rocksandminerals/SpecimenPractice'));
+const TimedRelay = lazy(() => import('./writeitdoit/TimedRelay'));
 
 function overview({ name, code, division, description, eventUrl, manualReference, ruleSummary, journey = [], additionalModules = [] }) {
   // The manual-verified summary is event-level data now: the field guide shows
@@ -624,12 +625,29 @@ export const EVENT_REGISTRY = {
   writeitdoit: overview({
     name: 'Write It, Do It', code: 'WIDI', division: 'B',
     description: 'One participant writes instructions for an object; a teammate builds from that description.',
-    manualReference: 'Division B Rules Manual, p. B61',
+    manualReference: 'Division B Rules Manual, p. B62',
     ruleSummary: [
       'Exactly two participants; writer has 25 minutes and builder has 20 minutes. Only the writer may bring a writing utensil; no other resources.',
       'Drawings/diagrams of the model or subsections are prohibited; subsection drawing ranks Tier 2 and a picture of the model disqualifies.',
       'Pieces score for size, color, location, orientation and/or connection; build-phase time breaks ties.'
     ],
+    additionalModules: [{
+      id: 'timed-relay',
+      stage: 'practice',
+      gain: 'a generated target and a written description → a timed build and a rubric-guided practice review',
+      ti: 'ti-clock',
+      label: 'Timed Relay',
+      cat: 'Practice',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: TimedRelay,
+      desc: `Run the write → build → review phases against a reproducible synthetic object, with the manual's phase timers, a gated target and a per-piece rubric review (${ACTIVE_SEASON.year} scope).`,
+      eventName: 'Write It, Do It',
+      manualReference: ACTIVE_DATA.writeitdoit.manualReference,
+      eventUrl: 'https://www.soinc.org/write-it-do-it-b',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }],
     eventUrl: 'https://www.soinc.org/write-it-do-it-b'
   })
 };

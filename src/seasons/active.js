@@ -5,6 +5,7 @@ import { designergenes2027 } from './2027/designergenes.js';
 import { dynamicplanet2027 } from './2027/dynamicplanet.js';
 import { electricvehicle2027 } from './2027/electricvehicle.js';
 import { rocksandminerals2027 } from './2027/rocksandminerals.js';
+import { writeitdoit2027 } from './2027/writeitdoit.js';
 
 // Per-event season data for the active manual. Add each season's data module
 // here when a new manual lands; engines take constants as parameters with the
@@ -16,5 +17,6 @@ export const ACTIVE_DATA = Object.freeze({
   designergenes: designergenes2027,
   dynamicplanet: dynamicplanet2027,
   electricvehicle: electricvehicle2027,
-  rocksandminerals: rocksandminerals2027
+  rocksandminerals: rocksandminerals2027,
+  writeitdoit: writeitdoit2027
 });
