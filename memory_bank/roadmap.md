@@ -10,7 +10,7 @@
 - **Sizing legend:** S ≤ half session · M ≈ one session · L ≈ multiple sessions.
 - **Roadmap maintenance:** when work is completed, move Current position and strike the item's status. Substantive scope/decision changes get a dated changelog line at the bottom of this file and a version bump (e.g. 1.1) — append, never rewrite history.
 
-**Current position:** Phase 0 complete (2026-10-19) · Phase 1 complete (2026-10-27) · Phase 2 items 1–5 (DG Molecular Sequence Workbench, DP Freshwater Calculator Toolbox, DP Map & Hydrograph Practice, R&M Mineral ID Key, R&M Specimen Practice) complete (2026-10-27 → 2026-11-01) · **Phase 2.5 complete (2026-11-21): Track B batches B1–B4 and Track A all done and fully verified; all uncommitted on `ca3b54e`** · next = Phase 2 item 6 (Anatomy Respiratory Data Practice).
+**Current position:** Phase 0 complete (2026-10-19) · Phase 1 complete (2026-10-27) · Phase 2 items 1–5 (DG Molecular Sequence Workbench, DP Freshwater Calculator Toolbox, DP Map & Hydrograph Practice, R&M Mineral ID Key, R&M Specimen Practice) complete (2026-10-27 → 2026-11-01) · **Phase 2.5 complete (2026-11-21): Track B batches B1–B4 and Track A all done, fully verified, committed locally as `78c2baa` (not pushed)** · Phase 2 item 6 (Anatomy Respiratory Data Practice) built and verified (2026-11-21, uncommitted) · next = Phase 2 item 7 (Circuit Lab PN-junction/LED calculator).
 
 ## Invariants (apply to every phase)
 

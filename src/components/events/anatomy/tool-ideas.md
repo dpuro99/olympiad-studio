@@ -31,7 +31,7 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Open questions:** shared engine with per-event config (this is sheet mode); binder mode ships later for Circuit/DP/R&M.
 
 ## Tool: Respiratory Data Practice
-- **Status:** Planned
+- **Status:** Live — `src/components/events/anatomy/RespiratoryDataPractice.jsx` (engine in `respiratoryDataUtils.js`)
 - **Category:** Practice
 - **Goal:** Interpret lung volumes/capacities, spirometry, flow-volume loops, obstructive-vs-restrictive patterns, gas exchange, and oxygen-hemoglobin curves.
 - **Core interaction loop:** 1) Choose or randomize a case type (normal, obstructive, restrictive). 2) Read the generated flow-volume loop and lung-volume table. 3) Classify the pattern and compute the listed values (e.g., FEV1/FVC). 4) Reveal the case and the manual-cited reasoning.
@@ -41,7 +41,7 @@ The event is recall-heavy and allows exactly one double-sided 8.5 × 11 in sheet
 - **Scoring & feedback:** Checks the classification and computed ratios; practice feedback only; higher-level regulation and extra disorders level-gated.
 - **Level gating:** higher-level regulation and extra disorders gated to State/National.
 - **Persistence:** none.
-- **Open questions:** confirm which manual-listed respiratory parameters may be modeled for the generated curves.
+- **Open questions:** resolved by the roadmap — the generator models only the respiratory topics the manual names (lung volumes, spirometry, flow-volume loops, gas exchange, oxygen transport) and labels its math an educational simulation, not clinical data or an official answer.
 
 ## Tool: Digestive/Immune Process Practice
 - **Status:** Planned

@@ -17,6 +17,7 @@ const BoomileverEstimator = lazy(() => import('./boomilever/BoomileverEstimator'
 const BoomileverBuildLog = lazy(() => import('./boomilever/BoomileverBuildLog'));
 const AnatomyPractice = lazy(() => import('./anatomy/AnatomyPractice'));
 const AnatomyReferenceCompiler = lazy(() => import('./anatomy/AnatomyReferenceCompiler'));
+const RespiratoryDataPractice = lazy(() => import('./anatomy/RespiratoryDataPractice'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
 const MolecularSequenceWorkbench = lazy(() => import('./designergenes/MolecularSequenceWorkbench'));
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
@@ -58,6 +59,22 @@ export const EVENT_REGISTRY = {
       'Content is respiratory, digestive, and immune systems, with tournament-level additions listed in the manual.'
     ],
     additionalModules: [{
+      id: 'respiratory-data',
+      stage: 'practice',
+      gain: 'a generated case and its plot → a classified pattern with checked reasoning',
+      ti: 'ti-activity',
+      label: 'Respiratory Data Practice',
+      cat: 'Event',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: RespiratoryDataPractice,
+      desc: 'Read generated flow-volume loops and oxygen–haemoglobin curves, then classify the pattern and check your reasoning.',
+      eventName: 'Anatomy and Physiology',
+      manualReference: 'Division C Rules Manual, pp. C3–C5',
+      eventUrl: 'https://www.soinc.org/anatomy-and-physiology-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
       id: 'anatomy-notes',
       stage: 'record',
       gain: 'observations while you study → saved notes and a CSV export',
