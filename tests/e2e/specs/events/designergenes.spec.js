@@ -42,6 +42,45 @@ test('genetics workbench derives crosses, equilibrium, gated mapping and heritab
   await captureSnapshot(page, testInfo, 'designergenes_genetics_workbench');
 });
 
+test('karyotype & meiosis drill grades generated stages, nondisjunction and synthetic karyotypes', async ({ page }, testInfo) => {
+  await openModule(page, testInfo, { eventId: 'designergenes', moduleId: 'karyotype-meiosis' });
+
+  // Seed 1031 fixes every case. The stage cue set classifies uniquely.
+  await expect(page.getByText('Which stage fits every cue?')).toBeVisible();
+  await expect(page.getByText('Four nuclei form.')).toBeVisible();
+  await page.getByRole('button', { name: 'Telophase II — meiosis' }).click();
+  await page.getByRole('button', { name: 'Check answer' }).click();
+  await expect(page.getByText(/Correct — Telophase II/)).toBeVisible();
+  await expect(page.getByText(/\(Meiosis II\)/)).toBeVisible();
+  await expect(page.getByText(/Case seed 1031 · Score 1\/1/)).toBeVisible();
+
+  // The gamete pattern distinguishes the failed division, and zygotes derive live.
+  await page.getByRole('tab', { name: 'Nondisjunction' }).click();
+  await expect(page.getByRole('list', { name: 'Gamete chromosome complements' })).toContainText('n+1');
+  await page.getByRole('button', { name: 'Meiosis II' }).click();
+  await page.getByRole('button', { name: 'Check answer' }).click();
+  await expect(page.getByText(/the failure was in Meiosis II/)).toBeVisible();
+  await expect(page.getByText(/2n — euploid/)).toBeVisible();
+
+  // The karyotype row is a direct-manipulation button; the grade comes from counts.
+  await page.getByRole('tab', { name: 'Karyotypes' }).click();
+  await page.getByRole('button', { name: 'Sex chromosomes, XYY' }).click();
+  await page.getByRole('button', { name: 'Check answer' }).click();
+  await expect(page.getByText(/Sex-chromosome complement XYY/)).toBeVisible();
+  await expect(page.getByText(/47,XYY/).first()).toBeVisible();
+
+  // Somatic recombination is gated and deliberately has no fabricated cases.
+  await expect(page.getByText(/Somatic recombination \(V\(D\)J recombination/)).toBeVisible();
+  await page.getByRole('switch', { name: 'Show State/National topics' }).check();
+  await expect(page.getByRole('heading', { name: 'State & National: somatic recombination' })).toBeVisible();
+  await expect(page.getByText(/ships no graded cases for them/)).toBeVisible();
+
+  // A new seed rebuilds the case without losing the running score.
+  await page.getByRole('button', { name: 'New case' }).click();
+  await expect(page.getByText(/Case seed 1032 · Score 3\/3/)).toBeVisible();
+  await captureSnapshot(page, testInfo, 'designergenes_karyotype_meiosis');
+});
+
 test('molecular sequence workbench derives translation, frames, mutations, and gated sites', async ({ page }, testInfo) => {
   await openModule(page, testInfo, { eventId: 'designergenes', moduleId: 'molecular-sequences' });
 

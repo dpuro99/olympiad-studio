@@ -38,5 +38,25 @@ export const designergenes2027 = {
       mapping: 'Recombination frequency is used here as a map distance in centiMorgans, the standard teaching convention. The manual asks for two-gene (State) and three-gene (National) mapping from recombination data but prints no mapping algorithm.',
       heritability: 'Broad sense H² = V_G / V_P, narrow sense h² = V_A / V_P and realized h² = R / S are standard quantitative-genetics definitions. The manual names the three quantities at State/National but prints no formulas.'
     }
+  },
+  // Karyotype & Meiosis Drill scope. The manual names these topics but prints no
+  // labelled diagram, outcome table or karyotype dataset, so every case is a
+  // synthetic derivation and every basis string says what the manual does not.
+  cellGenetics: {
+    citations: {
+      stages: 'Division C Rules Manual, §3.ii.1',
+      nondisjunction: 'Division C Rules Manual, §3.ii.2',
+      karyotype: 'Division C Rules Manual, §3.ii.3',
+      somaticRecombination: 'Division C Rules Manual, §3.ii.4 (State & National)'
+    },
+    levels: {
+      somaticRecombination: 'state-national'
+    },
+    bases: {
+      stages: 'The manual asks that the major stages and key structures of mitosis and meiosis be compared and contrasted but prints no labelled diagram or per-stage list. The stage cues here are standard biology study aids, not manual-printed content.',
+      nondisjunction: 'Gamete and zygote chromosome counts are derived from which meiotic division fails. The manual asks for the effects of nondisjunction but prints no outcome table.',
+      karyotype: 'Karyotype notation and the abnormality call are derived from the chromosome counts using standard cytogenetics conventions. The manual asks that abnormalities be detected from karyotype data but prints no dataset, image or syndrome list; cases here are synthetic.',
+      somaticRecombination: 'The manual names V(D)J recombination and immunoglobulin class switching as State/National somatic-recombination topics but prints no distinguishing detail, so no graded cases are shipped for them.'
+    }
   }
 };

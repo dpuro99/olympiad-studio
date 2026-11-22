@@ -23,6 +23,7 @@ const SystemDiagramDrill = lazy(() => import('./anatomy/SystemDiagramDrill'));
 const ProcessPractice = lazy(() => import('./anatomy/ProcessPractice'));
 const DesignerGenesReferenceCompiler = lazy(() => import('./designergenes/DesignerGenesReferenceCompiler'));
 const GeneticsWorkbench = lazy(() => import('./designergenes/GeneticsWorkbench'));
+const KaryotypeMeiosisDrill = lazy(() => import('./designergenes/KaryotypeMeiosisDrill'));
 const MolecularSequenceWorkbench = lazy(() => import('./designergenes/MolecularSequenceWorkbench'));
 const ChemistryLabReferenceCompiler = lazy(() => import('./chemlab/ChemistryLabReferenceCompiler'));
 const CircuitLabReferenceCompiler = lazy(() => import('./circuitlab/CircuitLabReferenceCompiler'));
@@ -370,6 +371,22 @@ export const EVENT_REGISTRY = {
       requiresAuth: false,
       component: GeneticsWorkbench,
       desc: `Work mono-/di-/trihybrid crosses, Hardy–Weinberg frequencies, two-/three-point mapping and heritability with steps shown live; ${ACTIVE_SEASON.year} scope with tournament-level gates.`,
+      eventName: 'Designer Genes',
+      manualReference: ACTIVE_DATA.designergenes.manualReference,
+      eventUrl: 'https://www.soinc.org/designer-genes-c',
+      rulesUrl: ACTIVE_SEASON.rulesUrl
+    }, {
+      id: 'karyotype-meiosis',
+      stage: 'practice',
+      gain: 'observable cues or chromosome counts → a graded stage, nondisjunction or karyotype call',
+      ti: 'ti-dna',
+      label: 'Karyotype & Meiosis Drill',
+      cat: 'Practice',
+      live: true,
+      year: ACTIVE_SEASON.year,
+      requiresAuth: false,
+      component: KaryotypeMeiosisDrill,
+      desc: `Classify generated mitosis/meiosis stages, derive nondisjunction gamete outcomes and detect abnormalities in synthetic karyotypes; ${ACTIVE_SEASON.year} scope with a State/National note.`,
       eventName: 'Designer Genes',
       manualReference: ACTIVE_DATA.designergenes.manualReference,
       eventUrl: 'https://www.soinc.org/designer-genes-c',

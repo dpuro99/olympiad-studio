@@ -29,7 +29,7 @@ Source: supplied 2027 Division C Rules Manual, pp. C20–C21. 2027 focus is gene
 - **Implementation notes:** the standard genetic code (64 codons, three stops) and the 14 screened restriction-enzyme recognition sites live in `sequenceUtils.js` because they are invariant facts, not Science Olympiad rules; season scope/citations come from `src/seasons/2027/designergenes.js`. Restriction mapping sits behind the State/National switch per that season file. Mutation mode classifies silent / missense / nonsense / stop-loss / frameshift / in-frame indel from the reference-vs-variant comparison, and the generator never emits an internal stop so the peptide stays readable.
 
 ## Tool: Karyotype and Meiosis Drill
-- **Status:** Planned
+- **Status:** Live — `src/components/events/designergenes/KaryotypeMeiosisDrill.jsx`
 - **Category:** Practice
 - **Goal:** Identify mitosis/meiosis stages, nondisjunction, and karyotype features.
 - **Core interaction loop:** 1) Pick a stage or a karyotype case. 2) Identify/classify the stage or the abnormality. 3) Reveal the manual-cited answer.

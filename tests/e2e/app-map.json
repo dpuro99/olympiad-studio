@@ -44,6 +44,7 @@
       "label": "Designer Genes",
       "modules": [
         { "id": "genetics-workbench", "label": "Genetics Workbench", "expectText": "Punnett square" },
+        { "id": "karyotype-meiosis", "label": "Karyotype & Meiosis Drill", "expectText": "Which stage fits every cue?" },
         { "id": "molecular-sequences", "label": "Molecular Sequence Workbench", "expectText": "DNA sequence" },
         { "id": "designergenes-reference-compiler", "label": "Reference & Study Compiler", "expectText": "Reference & Study Compiler" }
       ]
