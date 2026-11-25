@@ -6,6 +6,7 @@ import { fileStem, storageKey } from '../../src/seasons/storageKeys.js';
 
 export const BASE_PATH = '/olympiad-studio/';
 export const NAVIGATION_KEY = 'olympiad-studio-navigation';
+export const PROFILE_KEY = 'olympiad-studio.profile';
 export const SCREENSHOT_DIR = 'test-results/screenshots';
 // First paint after a source edit races Vite's dependency re-optimization on the
 // OneDrive mount: the app shell can take >20 s even though the bundle is tiny.
@@ -33,18 +34,67 @@ export const COMPILER_FILE_STEMS = Object.fromEntries(
   Object.entries(COMPILER_MODULES).map(([event, moduleId]) => [event, fileStem(event, moduleId)])
 );
 
-export function seedNavigation(page, { eventId = null, moduleId, theme = 'light' } = {}) {
+/**
+ * Seed the browser-local profile and the session navigation in one init script.
+ *
+ * `eventId`/`moduleId` map to the tool overlay used by every event spec. An
+ * `eventId` with no module means the All Tools page, where that event's tools
+ * are grouped with every other event. `page` selects the workspace page when
+ * no tool is open. Stars are seeded so the profile and page agree.
+ */
+export function seedNavigation(page, {
+  eventId = null,
+  moduleId,
+  theme = 'light',
+  page: workspacePage,
+  activeTool,
+  profile,
+  rawProfile
+} = {}) {
+  const tool = activeTool || (eventId && moduleId
+    ? (moduleId.endsWith('-reference-compiler')
+      ? { kind: 'compiler', eventId }
+      : { kind: 'module', eventId, moduleId })
+    : null);
+  const resolvedPage = workspacePage || (tool ? 'dashboard' : (eventId ? 'all-tools' : 'dashboard'));
+  const autoStars = [tool?.eventId, eventId].filter(Boolean);
+  const seededProfile = profile
+    ? {
+      displayName: profile.displayName ?? 'Guest',
+      level: profile.level ?? 'regional',
+      starredEventIds: [...new Set([...(profile.starredEventIds || []), ...autoStars])]
+    }
+    : {
+      displayName: 'Guest',
+      level: 'regional',
+      starredEventIds: [...new Set(autoStars)]
+    };
   const nav = {
     currentView: 'dashboard',
     isGuest: true,
-    selectedEventId: eventId,
-    page: moduleId || 'home',
-    theme
+    theme,
+    page: resolvedPage,
+    activeTool: tool
   };
   return page.addInitScript((payload) => {
-    sessionStorage.setItem(payload.key, JSON.stringify(payload.nav));
-  }, { key: NAVIGATION_KEY, nav });
+    sessionStorage.setItem(payload.navKey, JSON.stringify(payload.nav));
+    // Seeding is an initial state, not a reset on every reload: an edited
+    // profile must survive navigation (the profile popover test depends on it).
+    if (payload.rawProfile !== undefined) {
+      localStorage.setItem(payload.profileKey, payload.rawProfile);
+    } else if (!localStorage.getItem(payload.profileKey)) {
+      localStorage.setItem(payload.profileKey, JSON.stringify(payload.profile));
+    }
+  }, {
+    navKey: NAVIGATION_KEY,
+    profileKey: PROFILE_KEY,
+    nav,
+    profile: seededProfile,
+    rawProfile
+  });
 }
+
+const TELEMETRY_RE = /supabase|auth-js|AuthRetryableFetchError|SessionMissingError|analytics|react-ga|google|gapi|favicon|google-analytics|googletagmanager/i;
 
 export function trackConsoleIssues(page) {
   const issues = [];
@@ -54,15 +104,41 @@ export function trackConsoleIssues(page) {
   page.on('console', (msg) => {
     if (msg.type() !== 'error') return;
     const text = msg.text();
-    // Benign noise expected in guest/mock analytics mode.
-    if (/supabase|auth-js|AuthRetryableFetchError|SessionMissingError|analytics|react-ga|google|gapi|favicon/i.test(text)) return;
+    const locationUrl = typeof msg.location === 'function' ? msg.location()?.url || '' : '';
+    // Benign noise expected in guest/mock analytics mode. The URL matters here:
+    // Chromium often omits it from the message text for a failed subresource.
+    if (TELEMETRY_RE.test(`${text} ${locationUrl}`)) return;
+    // A stalled telemetry beacon can surface as a bare network-status message.
+    // Only ignore it when it is not coming from an app-resource URL; a failed
+    // app bundle is a real error and will also break rendering assertions.
+    if (/ERR_NETWORK_IO_SUSPENDED/i.test(text) && !/\/olympiad-studio\//.test(locationUrl)) return;
     issues.push(`console.error: ${text}`);
   });
   page.on('requestfailed', (request) => {
-    if (/\.(png|jpg|jpeg|svg|webp|woff2?|gif|ico|css)/i.test(request.url())) return;
-    issues.push(`requestfailed: ${request.method()} ${request.url()} ${request.failure()?.errorText || ''}`);
+    const url = request.url();
+    if (/\.(png|jpg|jpeg|svg|webp|woff2?|gif|ico|css)/i.test(url)) return;
+    // Third-party telemetry can fail with transient network errors under the
+    // Windows interop browser; the console handler already ignores it.
+    if (/google-analytics|googletagmanager|google|gapi|analytics/i.test(url)) return;
+    issues.push(`requestfailed: ${request.method()} ${url} ${request.failure()?.errorText || ''}`);
   });
   return issues;
+}
+
+export async function expectStarConfirmation(page, eventName, action = 'add') {
+  const title = action === 'add'
+    ? `Add ${eventName} to My Events?`
+    : `Remove ${eventName} from My Events?`;
+  const dialog = page.getByRole('dialog', { name: title });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAttribute('aria-modal', 'true');
+  await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeFocused();
+  return dialog;
+}
+
+export async function confirmStar(page, action = 'add') {
+  const label = action === 'add' ? 'Add to My Events' : 'Remove from My Events';
+  await page.getByRole('dialog').getByRole('button', { name: label }).click();
 }
 
 export async function captureSnapshot(page, testInfo, name) {
@@ -79,7 +155,7 @@ export async function captureSnapshot(page, testInfo, name) {
 export async function openModule(page, testInfo, { eventId, moduleId, theme = 'light' }) {
   const errors = trackConsoleIssues(page);
   await seedNavigation(page, { eventId, moduleId, theme });
-  await page.goto(BASE_PATH);
+  await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
   await page.evaluate(() => window.scrollTo(0, 0));
   return errors;
@@ -89,7 +165,10 @@ export async function expectModuleRendered(page, { label, expectText }) {
   const h1 = page.locator('h1').filter({ hasText: label });
   await expect(h1).toBeVisible({ timeout: 20_000 });
   if (expectText) {
-    await expect(page.getByText(new RegExp(escapeRegExp(expectText))).first()).toBeVisible({ timeout: 20_000 });
+    // Scope to main content: the nav breadcrumb repeats the tool label but is
+    // hidden at 375px, so a page-wide getByText().first() would match it first.
+    await expect(page.locator('#main-content').getByText(new RegExp(escapeRegExp(expectText))).first())
+      .toBeVisible({ timeout: 20_000 });
   }
   await expectUniqueHeadingNames(page);
 }

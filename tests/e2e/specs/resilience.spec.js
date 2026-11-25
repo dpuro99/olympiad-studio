@@ -21,13 +21,13 @@ const OTHER_STORAGE_KEYS = [
 
 async function gotoModule(page, { eventId, moduleId }) {
   await seedNavigation(page, { eventId, moduleId });
-  await page.goto(BASE_PATH);
+  await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('header', { timeout: 20_000 });
 }
 
 test('theme changes rendered colors, not just the data-theme attribute', async ({ page }) => {
   await seedNavigation(page, { theme: 'light' });
-  await page.goto(BASE_PATH);
+  await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('header', { timeout: 20_000 });
   const light = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   await page.getByRole('button', { name: 'Switch to dark mode' }).click();
@@ -90,7 +90,7 @@ test('reference compiler announces a sheet saved under another manual', async ({
 test('a corrupt navigation payload falls back to the landing view', async ({ page }) => {
   const errors = trackConsoleIssues(page);
   await page.addInitScript(() => sessionStorage.setItem('olympiad-studio-navigation', '{ broken'));
-  await page.goto(BASE_PATH);
+  await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
   await expect(page.getByRole('button', { name: 'Continue as guest' })).toBeVisible({ timeout: 20_000 });
   expect(errors).toEqual([]);
 });

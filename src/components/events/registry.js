@@ -70,7 +70,7 @@ export const EVENT_REGISTRY = {
     additionalModules: [{
       id: 'system-diagram',
       stage: 'practice',
-      gain: 'a schematic target → the manual-listed structure name, checked against a cited key',
+      gain: 'Identify structures from schematic cues',
       ti: 'ti-diagram-2',
       label: 'System Diagram Drill',
       cat: 'Event',
@@ -86,7 +86,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'process-practice',
       stage: 'practice',
-      gain: 'a chosen case and your ordering/sorting → a checked, manual-cited key',
+      gain: 'Check your ordering and sorting',
       ti: 'ti-list-details',
       label: 'Digestive/Immune Process Practice',
       cat: 'Event',
@@ -102,7 +102,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'respiratory-data',
       stage: 'practice',
-      gain: 'a generated case and its plot → a classified pattern with checked reasoning',
+      gain: 'Read generated plots and patterns',
       ti: 'ti-activity',
       label: 'Respiratory Data Practice',
       cat: 'Event',
@@ -118,7 +118,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'anatomy-notes',
       stage: 'record',
-      gain: 'observations while you study → saved notes and a CSV export',
+      gain: 'Save study notes and export CSV',
       signal: 'notes',
       ti: 'ti-notebook',
       label: 'Practice Notes',
@@ -135,7 +135,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'anatomy-reference-compiler',
       stage: 'prepare',
-      gain: 'objectives you mark → one printable double-sided sheet',
+      gain: 'Print a curated study sheet',
       signal: 'sheet',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
@@ -165,7 +165,7 @@ export const EVENT_REGISTRY = {
     additionalModules: [{
       id: 'boomilever-estimator',
       stage: 'reference',
-      gain: 'load supported and structure mass → efficiency score',
+      gain: 'Score a load and structure mass',
       ti: 'ti-ruler',
       label: 'Efficiency Estimator',
       cat: 'Event',
@@ -181,7 +181,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'boomilever-build-log',
       stage: 'record',
-      gain: 'each prototype and test result → saved build history and CSV',
+      gain: 'Track builds, tests and CSV',
       signal: 'buildLog',
       ti: 'ti-clipboard-list',
       label: 'Build/Test Log',
@@ -198,7 +198,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'structure-compliance',
       stage: 'practice',
-      gain: 'measured geometry and build confirmations → per-rule self-check summary',
+      gain: 'Check geometry and build rules',
       ti: 'ti-list-check',
       label: 'Structure Compliance',
       cat: 'Event',
@@ -226,7 +226,7 @@ export const EVENT_REGISTRY = {
     additionalModules: [{
       id: 'gas-laws',
       stage: 'practice',
-      gain: 'known quantities in their units → the unknown, with the law shown',
+      gain: 'Solve gas-law unknowns with work shown',
       ti: 'ti-flask',
       label: 'Gas-Law Practice',
       cat: 'Event',
@@ -242,7 +242,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'kinetics',
       stage: 'practice',
-      gain: 'trial measurements → observed rate and a saved notebook',
+      gain: 'Compute rates and save trial notes',
       signal: 'kinetics',
       ti: 'ti-activity',
       label: 'Kinetics Practice',
@@ -259,7 +259,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'stoichiometry',
       stage: 'practice',
-      gain: 'a generated equation or compound → balanced work, step by step',
+      gain: 'Balance equations and name compounds',
       ti: 'ti-atom',
       label: 'Stoichiometry & Nomenclature',
       cat: 'Event',
@@ -275,7 +275,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'chemlab-reference-compiler',
       stage: 'prepare',
-      gain: 'objectives you mark → one printable sheet per participant',
+      gain: 'Print a per-participant study sheet',
       signal: 'sheet',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
@@ -304,7 +304,7 @@ export const EVENT_REGISTRY = {
     additionalModules: [{
       id: 'circuit-practice',
       stage: 'practice',
-      gain: 'resistance and voltage you enter → current, power, and equivalent resistance',
+      gain: 'Compute current, power and resistance',
       ti: 'ti-bulb',
       label: 'Circuit Practice Calculator',
       cat: 'Event',
@@ -320,7 +320,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'digital-logic',
       stage: 'practice',
-      gain: 'gates you wire or an expression you type → a live truth table',
+      gain: 'Turn gates into truth tables',
       signal: 'canvas',
       ti: 'ti-binary',
       label: 'Digital Logic Workbench',
@@ -337,7 +337,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'led-calculator',
       stage: 'practice',
-      gain: 'supply, forward drop and target current you enter → a series resistor and its power',
+      gain: 'Size a series resistor safely',
       ti: 'ti-bolt',
       label: 'PN-Junction / LED Calculator',
       cat: 'Event',
@@ -353,7 +353,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'hands-on-simulator',
       stage: 'practice',
-      gain: 'a generated low-voltage case and your probes → a checked hands-on task',
+      gain: 'Practise low-voltage measurements',
       ti: 'ti-tool',
       label: 'Hands-on Task Simulator',
       cat: 'Event',
@@ -369,7 +369,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'circuitlab-reference-compiler',
       stage: 'prepare',
-      gain: 'objectives you mark → a printable reference binder',
+      gain: 'Print a curated reference binder',
       signal: 'binder',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
@@ -398,7 +398,7 @@ export const EVENT_REGISTRY = {
     additionalModules: [{
       id: 'genetics-workbench',
       stage: 'practice',
-      gain: 'genotypes or allele counts → Punnett squares, equilibrium, mapping and heritability',
+      gain: 'Cross, map and estimate traits',
       ti: 'ti-calculator',
       label: 'Genetics Workbench',
       cat: 'Practice',
@@ -414,7 +414,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'karyotype-meiosis',
       stage: 'practice',
-      gain: 'observable cues or chromosome counts → a graded stage, nondisjunction or karyotype call',
+      gain: 'Identify stages and chromosome changes',
       ti: 'ti-dna',
       label: 'Karyotype & Meiosis Drill',
       cat: 'Practice',
@@ -430,7 +430,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'molecular-sequences',
       stage: 'practice',
-      gain: 'a DNA sequence → reading frames, translation, and mutation calls',
+      gain: 'Translate and compare DNA sequences',
       ti: 'ti-dna',
       label: 'Molecular Sequence Workbench',
       cat: 'Practice',
@@ -446,7 +446,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'designergenes-reference-compiler',
       stage: 'prepare',
-      gain: 'objectives you mark → one printable double-sided sheet',
+      gain: 'Print a curated study sheet',
       signal: 'sheet',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
@@ -476,7 +476,7 @@ export const EVENT_REGISTRY = {
     additionalModules: [{
       id: 'freshwater-tools',
       stage: 'reference',
-      gain: 'field measurements → discharge and a balanced water budget',
+      gain: 'Compute discharge and water budgets',
       ti: 'ti-ripple',
       label: 'Freshwater Measurement Tools',
       cat: 'Event',
@@ -492,7 +492,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'freshwater-toolbox',
       stage: 'reference',
-      gain: 'a quantity in mixed units → an SI answer with its basis',
+      gain: 'Convert field units with basis shown',
       ti: 'ti-calculator',
       label: 'Freshwater Calculator Toolbox',
       cat: 'Event',
@@ -508,7 +508,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'map-practice',
       stage: 'practice',
-      gain: 'a generated map or hydrograph → an answer and the worked reasoning',
+      gain: 'Read generated maps and hydrographs',
       ti: 'ti-map-2',
       label: 'Map & Hydrograph Practice',
       cat: 'Practice',
@@ -524,7 +524,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'dynamicplanet-reference-compiler',
       stage: 'prepare',
-      gain: 'topics you mark → a printable reference binder',
+      gain: 'Print a curated reference binder',
       signal: 'binder',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
@@ -564,7 +564,7 @@ export const EVENT_REGISTRY = {
       {
         id: 'score', ti: 'ti-trophy', label: 'Score Calculator', cat: 'Testing',
         stage: 'reference',
-        gain: 'target time and measured distances → two run scores and the final score',
+        gain: 'Score runs and the final total',
         live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: ScoreCalc,
         desc: `Calculate two EV run scores and the final score using the ${ACTIVE_SEASON.year} manual formula.`,
         eventName: 'Electric Vehicle',
@@ -574,7 +574,7 @@ export const EVENT_REGISTRY = {
       {
         id: 'course', ti: 'ti-map-2', label: 'Course & Geometry', cat: 'Testing',
         stage: 'reference',
-        gain: 'level distance and target time → pacing, sensitivity, and score tradeoffs',
+        gain: 'Compare pacing and score tradeoffs',
         live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: CourseGeometry,
         desc: `Drag the bottle line and explore set-time pacing, sensitivity, and the live ${ACTIVE_SEASON.year} run-score tradeoffs.`,
         eventName: 'Electric Vehicle',
@@ -584,7 +584,7 @@ export const EVENT_REGISTRY = {
       {
         id: 'log', ti: 'ti-file-analytics', label: 'Practice Run Logger', cat: 'Testing',
         stage: 'record',
-        gain: 'each measured run → saved history with the verified score',
+        gain: 'Save runs and export CSV',
         signal: 'runs',
         live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: RunLogger,
         desc: `Save measured practice runs locally with the verified ${ACTIVE_SEASON.year} score calculation.`,
@@ -595,7 +595,7 @@ export const EVENT_REGISTRY = {
       {
         id: 'compliance', ti: 'ti-list-check', label: 'Kit & Program Compliance', cat: 'Testing',
         stage: 'practice',
-        gain: 'per-clause review and notes → which checks still need attention',
+        gain: 'Review kit and program rules',
         live: true, year: ACTIVE_SEASON.year, requiresAuth: false, component: KitComplianceChecklist,
         desc: `Self-check the ${ACTIVE_SEASON.year} kit-modification and program rules clause by clause, with citations and the official FAQ clarification.`,
         eventName: 'Electric Vehicle',
@@ -617,7 +617,7 @@ export const EVENT_REGISTRY = {
     additionalModules: [{
       id: 'mineral-id-key',
       stage: 'reference',
-      gain: 'properties you observe → ranked candidates and why each is ruled out',
+      gain: 'Rank candidates from your observations',
       signal: 'cards',
       ti: 'ti-diamond',
       label: 'Mineral ID Key',
@@ -634,7 +634,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'specimen-practice',
       stage: 'practice',
-      gain: 'your recorded cards → a graded drill and a missed list',
+      gain: 'Drill your own specimen cards',
       ti: 'ti-cards',
       label: 'Specimen Practice',
       cat: 'Practice',
@@ -650,7 +650,7 @@ export const EVENT_REGISTRY = {
     }, {
       id: 'rocksandminerals-reference-compiler',
       stage: 'prepare',
-      gain: 'topics and specimens you mark → a printable reference binder',
+      gain: 'Print a specimen reference binder',
       signal: 'binder',
       ti: 'ti-notes',
       label: 'Reference & Study Compiler',
@@ -679,7 +679,7 @@ export const EVENT_REGISTRY = {
     additionalModules: [{
       id: 'timed-relay',
       stage: 'practice',
-      gain: 'a generated target and a written description → a timed build and a rubric-guided practice review',
+      gain: 'Practise timed write-build-review',
       ti: 'ti-clock',
       label: 'Timed Relay',
       cat: 'Practice',

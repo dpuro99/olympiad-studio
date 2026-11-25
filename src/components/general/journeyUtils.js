@@ -1,4 +1,4 @@
-// Turn an event's registry entry into the numbered field-guide spine.
+// Turn an event's registry entry into its ordered tool journey for the dashboard.
 //
 // Two rules matter here:
 //  - the registry is the only source of truth for which tools exist, and

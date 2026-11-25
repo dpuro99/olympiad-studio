@@ -12,22 +12,23 @@ import { writeitdoit2027 } from '../../../../src/seasons/2027/writeitdoit.js';
 
 const targetFor = (seed) => generateStructure(seed, writeitdoit2027.vocabulary);
 
-test('WIDI guide renders the official rule summary and its one registered tool', async ({ page }, testInfo) => {
+test('All Tools renders WIDI’s official rule summary and its one registered tool', async ({ page }, testInfo) => {
   const errors = trackConsoleIssues(page);
   await seedNavigation(page, { eventId: 'writeitdoit' });
-  await page.goto(BASE_PATH);
-  await page.waitForSelector('.field-guide', { timeout: SHELL_READY_TIMEOUT });
+  await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('.dashboard-shell', { timeout: SHELL_READY_TIMEOUT });
 
-  await expect(page.getByRole('heading', { name: 'Write It, Do It', level: 1 })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Event rules at a glance', level: 2 })).toBeVisible();
-  await expect(page.getByText('Exactly two participants')).toBeVisible();
-  // The verified summary is the guide; the relay is the only tool.
-  const rows = page.locator('.field-step');
-  await expect(rows).toHaveCount(1);
-  await expect(rows.first()).toContainText('Timed Relay');
-  await captureSnapshot(page, testInfo, 'writeitdoit_guide');
+  const section = page.locator('.event-section[aria-labelledby="event-writeitdoit-heading"]');
+  await expect(section.getByRole('heading', { name: 'Write It, Do It', level: 2 })).toBeVisible();
+  await section.locator('.event-rules summary').click();
+  await expect(section.getByText('Exactly two participants')).toBeVisible();
+  // The verified summary stays with the event section; the relay is its only tool.
+  const tools = section.locator('.dashboard-tool-card');
+  await expect(tools).toHaveCount(1);
+  await expect(tools.first()).toContainText('Timed Relay');
+  await captureSnapshot(page, testInfo, 'writeitdoit_event_view');
 
-  await rows.first().click();
+  await tools.first().click();
   await expect(page.getByRole('heading', { name: 'Timed Relay', level: 1 })).toBeVisible({ timeout: 20_000 });
   expect(errors).toEqual([]);
 });

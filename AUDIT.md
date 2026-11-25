@@ -1,28 +1,36 @@
 # Olympiad Studio — Browser Audit Report
 
-**Date:** 2026-11-22 (Circuit Lab Hands-on Task Simulator sweep)
-**Scope:** Full sweep (all 13 spec files), forced with `npm run test:e2e:changed -- full`.
-**Audited state:** `HEAD` = `adeeb4f` (Phase 2.5 + Respiratory Data Practice + LED calculator + System Diagram Drill + Digestive/Immune Process Practice + DG Genetics Workbench + DG Karyotype & Meiosis Drill + WIDI Timed Relay + Phase 3 items 1–2 committed locally, nothing pushed). Baseline stamped to `adeeb4f` on success.
+**Date:** 2026-11-25 (Dashboard `Choose events` refactor + All Tools filter-sidebar sweep)
+**Scope:** Full sweep (all 14 spec files, 150 tests), `CI=1 npm run test:e2e -- --reporter=line`.
+**Audited state:** `HEAD` = `8fb8441` (all roadmap tools through Phase 3 item 3 committed locally, nothing pushed), plus the uncommitted two-page dashboard restructure, two-column Dashboard refinement, All Tools catalog redesign with left filter sidebar / mobile drawer, and the new `Choose events` dropdown (whole-row buttons, filled star icons, in-app confirmation modal for both add and remove, no helper text). This run used the plain full-suite runner, so the baseline file remains `8fb8441`; it was not restamped.
 **Tooling:** Playwright + headless Chromium, driven by the repo's `tests/e2e/` harness; guest mode only (no OAuth). `.env` present and loaded by the dev server.
+
+## Current-run scope note
+
+This sweep includes the Dashboard `Choose events` dropdown refactor: the helper paragraph was removed; every row in `My Events` and `All events` is a single full-row button with star icon, event name, and division; starred events show a filled amber `ti-star-filled` icon; the whole row has a hover/focus state. Adding or removing an event opens a styled in-app `ConfirmDialog` (`role="dialog" aria-modal="true"`, warm minimalist styling, focus trap/return, Escape/backdrop close, Cancel autofocus) instead of `window.confirm`; cancelling leaves the profile untouched. The remove dialog says "Remove <event> from My Events?" with the button "Remove from My Events". All Tools catalog and Dashboard two-column layout (tools left, Objective Tracker right rail, 68/32 split, unclipped dropdown) are also covered. No registered module, rule citation, storage key or season data changed.
 
 ## Summary
 
 | Gate | Result |
 | --- | --- |
-| Playwright E2E — full sweep | **146 / 146 passed** (6.7 min, 1 worker) |
-| Unit tests (`npm test`) | 261 / 261 passed |
+| Playwright E2E — full sweep | **150 / 150 passed** (13.1 min, 1 worker) |
+| Playwright E2E — focused re-run after adding remove confirmation | **92 / 92 passed** (nav + core + multi-event, 12.9 min, 1 worker) |
+| Unit tests (`npm test`) | 290 / 290 passed |
 | Lint (`npm run lint`) | clean |
 | Build (`npm run build`) | success (pre-existing >600 kB main-chunk advisory) |
 | Console / page errors / failed requests during E2E | none beyond filtered analytics noise |
-| Baseline | stamped to `adeeb4f` |
+| Baseline | unchanged at `8fb8441` (plain full-suite run, not the baseline-stamping runner) |
 
-Every registered event workspace and module was opened, visually captured (189 screenshots + DOM snapshots in `test-results/screenshots/`), and checked for console errors. Interactive tools were exercised with real input, not just rendered.
+Every registered event workspace and module was opened, visually captured (200+ screenshot/DOM artifacts in `test-results/screenshots/`), and checked for console errors. Interactive tools were exercised with real input, not just rendered.
 
 ### Coverage
 
-- **Core / navigation:** landing → guest entry, lobby → workspace → module click-through, theme toggle + persistence, persistent top nav, breadcrumbs, skip link.
-- **All 9 events, all registered modules** rendered and matched expected content, including the field guide's folded-in rule summary and the "Up next" step.
-- **Responsive:** every module at **375 px** with a horizontal-overflow assertion, plus the **720 px** breakpoint test (`row` at 721 px, `column` at 720 px).
+- **Core / navigation:** landing → guest entry, full-screen workspace, Dashboard / All Tools page buttons, in-page `Choose events` dropdown (whole-row buttons, filled star, in-app confirmation for both add and remove), breadcrumb/back from an open tool, theme toggle + persistence, persistent top nav, skip link. The nav contains **no event picker** — starring happens in the Dashboard dropdown or in an All Tools section.
+- **Dashboard / All Tools:** starred events' tools sit in the left column and the Objective Tracker in a right rail at desktop width (asserted by bounding boxes); below 1040 px they stack with tools first. All Tools has a sticky left filter rail beside the event feed: its desktop geometry, live count, Reset / Clear all filters, search / scope / tool-type filtering, pastel stage badges, responsive card grid and phone-width drawer flow are all asserted. The drawer declares dialog semantics, moves focus to `Close filters`, traps Tab, covers the nav, and returns focus to `Filters` on Escape; a whitespace-only query leaves Reset/Clear disabled. All Tools still lists every registered event and tool. Starring and unstarring were exercised in both directions (including the add-confirmation cancel path); the full-screen compiler returns to the launching page and has no dedicated dashboard card or `Open compiler` shortcut.
+- **Objective Tracker:** a read-only right-rail panel over the six Reference & Study Compilers, using the same visual language as other tool panels; verified not-started totals, live Status/search filters, a saved sheet's status/notes rollup, corrupt and other-manual sheet notices, denied-`localStorage` announcement, opening the owning compiler from its rows, and 375 px fit.
+- **Choose events dropdown:** the hero no longer clips the absolutely positioned dialog; an `elementFromPoint` probe below the hero boundary confirms the panel is hit-testable; whole-row hover, filled star for starred events, in-app confirmation on both add and remove (including cancel on remove), and keyboard flows all pass.
+- **All 9 events, all registered modules** rendered and matched expected content, including the event sections' manual-verified rule summaries and tools in journey order.
+- **Responsive:** every module at **375 px** with a horizontal-overflow assertion, plus the **720 px** breakpoint test (`row` at 721 px, `column` at 720 px) and a full-viewport dashboard-shell check at desktop and phone widths.
 - **Theme actually applies:** computed `body` background differs between light and dark (not just the `data-theme` attribute).
 - **A11y:** every visible heading has a unique accessible name (duplicate-name guard on every module render).
 - **Print/PDF:** print stylesheet exercised with `emulateMedia({ media: 'print' })` (visibility + non-zero box); compilers emit a real PDF via `page.pdf()` whose extracted text must contain the authored block.
@@ -31,12 +39,18 @@ Every registered event workspace and module was opened, visually captured (189 s
 
 ## Findings
 
-No new functional defects found in this sweep. All 146 tests passed, including the regression guards for previously fixed issues:
+No new functional defects found in this sweep. All 150 tests passed, including the regression guards for previously fixed issues and the new picker/modal/catalog/drawer coverage:
 
 - **HIGH (fixed earlier, still guarded)** — blank printed page from `#root { display: none }` in print CSS; `expectPrintSheetRenders()` + real `page.pdf()` text assertion prevent recurrence.
 - **MEDIUM (fixed earlier, still guarded)** — ~11 px mobile sidebar overflow at 375 px; `expectNoHorizontalOverflow(page, 375)` runs on every module.
 - **LOW (fixed earlier, still guarded)** — duplicate accessible heading names; `expectUniqueHeadingNames(page)` runs on every module.
 - **LOW (fixed earlier, still guarded)** — EV run-logger native validation shadowing its custom message; e2e drives the incomplete-run path.
+- **LOW (fixed in the previous sweep, still guarded)** — the tracker's `sr-only` table-header span leaked into `document.documentElement.scrollWidth` at 375 px; the header now uses `aria-label` on `<th>`. Its 375 px fit is asserted on the embedded tracker too.
+- **LOW (fixed in this build, still guarded)** — the hidden 375 px nav breadcrumb won `expectModuleRendered`'s page-wide text match; the guard now scopes `expectText` to `#main-content`. Analytics `requestfailed` noise is filtered from both console and request handlers.
+- **MEDIUM (fixed in this build, still guarded)** — `.dashboard-hero { overflow: hidden }` clipped the `Choose events` dialog at the card border. The hero is now overflow-visible (with its accent stripe rounded instead of clipped), the hero sits above the right rail in the stacking order, and `elementFromPoint` must hit the dialog below the hero boundary.
+- **LOW (fixed during catalog verification, still guarded)** — the desktop geometry guard assumed the feed header touched `.catalog-main`'s outer edge; the container has a 28 px content inset, so the assertion now checks a 16–32 px inset against that box. The mobile drawer's `Close filters` button was not focused while CSS `visibility` was still transitioning; visibility now flips instantly on open (delayed only on close) and focus is deferred to the next animation frame. Both paths are asserted in `nav.spec.js`.
+- **LOW (fixed during catalog review, still guarded)** — Reset / `Clear all filters` treated a whitespace-only query as dirty although the pure filter trims it; `hasFilters` now uses `query.trim()`. The drawer had a dimming backdrop and Tab trap but exposed no dialog semantics, and the sticky nav painted above it and stayed clickable; the open drawer now declares `role="dialog"`/`aria-modal`, raises above the nav and pointer-disables it, with e2e assertions for the semantics and an `elementFromPoint` hit over the old nav strip.
+- **INFO — audit hygiene:** an earlier dashboard sweep failed with navigation/teardown timeouts because Playwright's `reuseExistingServer: true` kept using a stale project Vite server (PIDs 5776/23772, started 2026-11-23, ~3188 CPU seconds). Only those project-owned processes were stopped; no Chrome processes were touched. The reported 147/147 and 150/150 results are fresh-server sweeps.
 
 ### INFO — No error boundary around lazy tool modules
 
