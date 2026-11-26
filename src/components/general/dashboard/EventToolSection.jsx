@@ -35,6 +35,17 @@ export default function EventToolSection({
     else onOpenModule(eventId, step.id);
   };
 
+  const eventLinks = (
+    <div className="dashboard-event-links event-section-links">
+      {event.eventUrl && <EventLink href={event.eventUrl} icon="ti-external-link">Event page</EventLink>}
+      {event.rulesUrl && <EventLink href={event.rulesUrl} icon="ti-book">Rules manual</EventLink>}
+      {event.clarificationsUrl && <EventLink href={event.clarificationsUrl} icon="ti-info-circle">Clarifications</EventLink>}
+    </div>
+  );
+  const citation = event.manualReference && (
+    <span className="dashboard-event-cite">{event.manualReference}</span>
+  );
+
   return (
     <section
       className={`event-section${catalog ? ' event-section-catalog' : ''}`}
@@ -47,31 +58,27 @@ export default function EventToolSection({
           </div>
           <h2 id={`event-${eventId}-heading`} className="event-section-title">{event.name}</h2>
           <p className="event-section-desc">{event.description}</p>
+          {!catalog && <>{eventLinks}{citation}</>}
         </div>
-        <div className="event-section-actions">
-          {typeof onStar === 'function' && (
-            <button
-              type="button"
-              className={`event-star-button${catalog ? '' : ' event-star-icon-only'}`}
-              aria-label={`${starred ? 'Unstar' : 'Star'} ${event.name}`}
-              aria-pressed={starred}
-              onClick={() => onStar(eventId)}
-              title={starred ? 'Remove from My Events' : 'Add to My Events'}
-            >
-              <i
-                className={`ti ${starred ? 'ti-star-filled' : (catalog ? 'ti-plus' : 'ti-star')}`}
-                aria-hidden="true"
-              />
-              <span className="event-star-label">{starred ? 'In My Events' : 'Add to My Events'}</span>
-            </button>
-          )}
-          <div className="dashboard-event-links event-section-links">
-            {event.eventUrl && <EventLink href={event.eventUrl} icon="ti-external-link">Event page</EventLink>}
-            {event.rulesUrl && <EventLink href={event.rulesUrl} icon="ti-book">Rules manual</EventLink>}
-            {event.clarificationsUrl && <EventLink href={event.clarificationsUrl} icon="ti-info-circle">Clarifications</EventLink>}
+        {catalog && (
+          <div className="event-section-actions">
+            {typeof onStar === 'function' && (
+              <button
+                type="button"
+                className="event-star-button"
+                aria-label={`${starred ? 'Unstar' : 'Star'} ${event.name}`}
+                aria-pressed={starred}
+                onClick={() => onStar(eventId)}
+                title={starred ? 'Remove from My Events' : 'Add to My Events'}
+              >
+                <i className={`ti ${starred ? 'ti-star-filled' : 'ti-plus'}`} aria-hidden="true" />
+                <span className="event-star-label">{starred ? 'In My Events' : 'Add to My Events'}</span>
+              </button>
+            )}
+            {eventLinks}
+            {citation}
           </div>
-          {event.manualReference && <span className="dashboard-event-cite">{event.manualReference}</span>}
-        </div>
+        )}
       </header>
 
       {Array.isArray(event.ruleSummary) && event.ruleSummary.length > 0 && (

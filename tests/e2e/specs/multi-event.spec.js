@@ -88,10 +88,19 @@ test('dashboard cards use compact star controls, pastel stage pills and a one-pi
 
   const main = page.locator('.dashboard-main');
   await expect(main).not.toContainText('● Live');
-  await expect(main.locator('.event-star-button').first()).toHaveAttribute('aria-label', /^Unstar /);
-  const starWidth = await main.locator('.event-star-button').first()
-    .evaluate((node) => node.getBoundingClientRect().width);
-  expect(starWidth).toBeLessThan(40);
+  // Starring lives in Choose events; dashboard cards must not repeat a circular toggle.
+  await expect(main.locator('.event-star-button')).toHaveCount(0);
+
+  const firstHeader = main.locator('.event-section-head').first();
+  const description = firstHeader.locator('.event-section-desc');
+  const links = firstHeader.locator('.event-section-links');
+  const descBox = await description.boundingBox();
+  const linksBox = await links.boundingBox();
+  expect(descBox).toBeTruthy();
+  expect(linksBox).toBeTruthy();
+  // The links row follows the description instead of leaving a reserved star column.
+  expect(linksBox.y - (descBox.y + descBox.height)).toBeLessThan(12);
+  expect(linksBox.x).toBeCloseTo(descBox.x, 0);
 
   const heroHeight = (await page.locator('.dashboard-hero').boundingBox()).height;
   expect(heroHeight).toBeLessThan(120);

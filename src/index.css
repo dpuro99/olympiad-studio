@@ -2,6 +2,24 @@
    Inspired by palette #FFC15E #F7B05B #F7934C #CC5803 #1F1300 (adapted for UI contrast/accessibility).
    Polished, energetic, and student-friendly while keeping a practical workbench feel. */
 
+/* Tabler's outline webfont has no .ti-star-filled rule; its filled font uses
+   .ti-star with a different codepoint. Scope the filled font to this one class
+   so every other ti-* icon keeps using the outline webfont. */
+@font-face {
+  font-family: 'tabler-icons-filled';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.49.0/dist/fonts/tabler-icons-filled.woff2?v3.49.0') format('woff2');
+}
+
+.ti.ti-star-filled {
+  font-family: 'tabler-icons-filled' !important;
+}
+
+.ti.ti-star-filled::before {
+  content: '\f6a6';
+}
+
 /* 1. Design Tokens - Dark Mode (default) */
 :root, [data-theme="dark"] {
   /* Typography */
@@ -287,7 +305,7 @@ select {
 .app-nav {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: 50;
   background: var(--color-background-secondary);
   border-bottom: 1px solid var(--color-border-tertiary);
 }
@@ -295,7 +313,9 @@ select {
 .app-nav-inner {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 12px;
   height: var(--app-nav-height);
   padding: 0 20px;
   min-width: 0;
@@ -310,13 +330,15 @@ select {
   border: 0;
   border-radius: var(--radius-md);
   color: inherit;
+  text-decoration: none;
 }
 
-button.app-nav-brand:hover {
-  background: var(--color-background-hover);
+/* `a:hover` underlines every link; the brand is a click-only home target. */
+.app-nav .app-nav-brand {
+  text-decoration: none;
 }
 
-button.app-nav-brand:focus-visible {
+.app-nav-brand:focus-visible {
   outline: 2px solid var(--color-accent-primary);
   outline-offset: 2px;
 }
@@ -360,15 +382,17 @@ button.app-nav-brand:focus-visible {
 }
 
 .app-nav-actions {
-  margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .app-nav-season {
-  padding: 4px 9px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
   border: 1px solid var(--color-border-tertiary);
   border-radius: var(--radius-full);
   font-size: 11px;
@@ -379,38 +403,9 @@ button.app-nav-brand:focus-visible {
   color: var(--color-text-tertiary);
 }
 
-.app-nav-guest-hint {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border-radius: var(--radius-full);
-  color: var(--color-text-tertiary);
-  cursor: help;
-}
-
-.app-nav-guest-hint:hover {
-  color: var(--color-accent-primary);
-}
-
-.app-nav-guest-hint:focus-visible {
-  outline: 2px solid var(--color-accent-primary);
-  outline-offset: 2px;
-}
-
-.app-nav-email {
-  max-width: 200px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  color: var(--color-text-secondary);
-}
-
 .app-nav-icon {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -428,10 +423,12 @@ button.app-nav-brand:focus-visible {
 }
 
 .app-nav-btn {
+  height: 36px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 7px;
-  padding: 7px 12px;
+  padding: 0 14px;
   background: var(--color-background-tertiary);
   border: 1px solid var(--color-border-secondary);
   border-radius: var(--radius-md);
@@ -439,15 +436,28 @@ button.app-nav-brand:focus-visible {
   font-size: 12.5px;
   font-weight: 600;
   white-space: nowrap;
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .app-nav-btn:hover {
   border-color: var(--color-border-primary);
 }
 
+.app-nav-btn-primary {
+  background: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+  color: var(--color-text-inverse);
+  font-weight: 700;
+}
+
+.app-nav-btn-primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
 /* The only workspace navigation: two page buttons. Event choice lives on the Dashboard. */
 .app-nav-pages {
+  height: 36px;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -458,7 +468,10 @@ button.app-nav-brand:focus-visible {
 }
 
 .app-nav-page {
-  padding: 5px 10px;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
   border: 0;
   border-radius: var(--radius-sm);
   background: transparent;
@@ -932,7 +945,7 @@ button.app-nav-brand:focus-visible {
    from the nav edge instead of hiding behind the bar. */
 .dashboard-content.all-tools-content {
   max-width: none;
-  padding-inline: 0;
+  padding: 0;
 }
 
 .dashboard-page.all-tools-page {
@@ -947,19 +960,22 @@ button.app-nav-brand:focus-visible {
 .catalog-sidebar {
   grid-area: sidebar;
   position: sticky;
-  top: var(--app-nav-height);
-  height: calc(100dvh - var(--app-nav-height));
+  /* The nav token is its inner height; add its 1px bottom border so the rail
+     starts flush with the header edge and ends flush with the viewport. */
+  top: calc(var(--app-nav-height) + 1px);
+  height: calc(100dvh - var(--app-nav-height) - 1px);
   min-width: 0;
+  overflow-y: auto;
   border-right: 1px solid var(--color-border-tertiary);
   background: var(--catalog-surface);
+  scrollbar-width: thin;
   z-index: 4;
 }
 
 .catalog-sidebar-inner {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  overflow-y: auto;
+  min-height: 100%;
   padding: 22px 20px 20px;
 }
 
@@ -1160,28 +1176,6 @@ button.app-nav-brand:focus-visible {
   border-color: var(--color-accent-primary);
 }
 
-/* Dashboard events are already starred, so the control is just a pin toggle. */
-.event-star-icon-only {
-  gap: 0;
-  padding: 7px;
-}
-
-.event-star-icon-only i {
-  font-size: 15px;
-}
-
-.event-star-icon-only .event-star-label {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
 .event-star-button:focus-visible,
 .event-rules summary:focus-visible {
   outline: 2px solid var(--color-accent-primary);
@@ -1190,6 +1184,18 @@ button.app-nav-brand:focus-visible {
 
 .event-section-links {
   justify-content: flex-end;
+}
+
+/* Dashboard cards keep the links with the description; Choose events owns
+   starring there, so there is no reserved action column to space around. */
+.event-section:not(.event-section-catalog) .event-section-links {
+  justify-content: flex-start;
+  margin-top: 6px;
+}
+
+.event-section:not(.event-section-catalog) .dashboard-event-cite {
+  display: block;
+  margin-top: 3px;
 }
 
 .event-rules {
@@ -2085,6 +2091,15 @@ button.app-nav-brand:focus-visible {
   font-size: 14px;
 }
 
+/* Center the glyph in the slot itself: the filled and outlined Tabler icons
+   have different intrinsic widths and would otherwise start at different x. */
+.scope-row .scope-star i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+}
+
 .scope-row[aria-pressed='true'] .scope-star {
   color: var(--color-accent-primary);
 }
@@ -2102,18 +2117,9 @@ button.app-nav-brand:focus-visible {
   line-height: 1.4;
 }
 
-.profile-guest-hint {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  padding: 8px;
-  border-radius: var(--radius-md);
-  background: var(--color-accent-muted);
-  color: var(--color-text-secondary);
-}
-
-.profile-guest-hint i {
-  color: var(--color-accent-primary);
+.profile-auth-action {
+  width: calc(100% - 16px);
+  margin: 6px 8px 8px;
 }
 
 .profile-panel {
@@ -2313,23 +2319,18 @@ button.app-nav-brand:focus-visible {
 
   .app-nav-inner {
     padding: 0 12px;
-    gap: 8px;
+    gap: 6px;
   }
 
   .app-nav .logo-wordmark,
   .app-nav-season,
-  .app-nav-email,
   .app-nav-signin-text,
   .app-nav .profile-name {
     display: none;
   }
 
   .app-nav-btn {
-    padding: 7px 9px;
-  }
-
-  .app-nav-inner {
-    gap: 6px;
+    padding: 0 9px;
   }
 
   .app-nav-pages {

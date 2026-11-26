@@ -1,8 +1,8 @@
 import { LEVEL_OPTIONS } from '../dashboard/profileUtils.js';
 import NavPopover from './NavPopover.jsx';
 
-/** Profile settings stay in the nav; event stars are chosen on the Dashboard. */
-export default function ProfileMenu({ profile, isGuest = false, onProfileChange }) {
+/** The signed-in profile control; guests see the nav's sign-in button instead. */
+export default function ProfileMenu({ profile, onProfileChange, onLogout }) {
   const displayName = profile.displayName || 'Guest';
   const initial = displayName.trim().charAt(0).toUpperCase() || 'G';
 
@@ -33,12 +33,9 @@ export default function ProfileMenu({ profile, isGuest = false, onProfileChange 
             </select>
           </label>
           <p className="profile-hint">Saved in this browser. Star events from Choose events on the Dashboard.</p>
-          {isGuest && (
-            <p className="profile-hint profile-guest-hint">
-              <i className="ti ti-info-circle" aria-hidden="true" />
-              Sign in to sync saved build logs and study sheets across devices.
-            </p>
-          )}
+          <button type="button" className="app-nav-btn profile-auth-action" onClick={onLogout}>
+            Log out
+          </button>
         </div>
       )}
     </NavPopover>

@@ -241,15 +241,29 @@ export default function App() {
     });
   };
 
-  // Navigation is two pages plus a tool overlay. Closing a tool returns to
-  // whichever page launched it; the breadcrumb and page buttons agree.
+  // Navigation is two pages plus a tool overlay. The nav is visible on the
+  // landing page too, so its page buttons admit a guest before switching pages.
+  const enterWorkspace = () => {
+    if (!currentUser && !isGuest) {
+      trackEvent('guest_access');
+      setIsGuest(true);
+    }
+    setCurrentView('dashboard');
+  };
   const goDashboard = () => {
+    enterWorkspace();
     setPage('dashboard');
     setActiveTool(null);
   };
   const goAllTools = () => {
+    enterWorkspace();
     setPage('all-tools');
     setActiveTool(null);
+  };
+  const goHome = () => {
+    setCurrentView('landing');
+    setActiveTool(null);
+    setPage('dashboard');
   };
   const closeTool = () => setActiveTool(null);
 
@@ -379,7 +393,6 @@ export default function App() {
         authLoading={authLoading}
         theme={theme}
         toggleTheme={toggleTheme}
-        showLanding={showLanding}
         page={page}
         profile={profile}
         activeToolLabel={activeToolLabel}
@@ -389,6 +402,7 @@ export default function App() {
         onProfileChange={handleProfileChange}
         onLogin={handleGoogleLogin}
         onLogout={handleLogout}
+        onHome={goHome}
       />
       <AnimatePresence mode="wait">
         <PageTransition key={showLanding ? 'landing' : 'dashboard'}>

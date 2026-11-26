@@ -16,22 +16,41 @@ async function chooseEvents(page) {
 }
 
 test.describe('persistent top navigation', () => {
-  test('frames the landing page and owns the only theme and auth controls', async ({ page }, testInfo) => {
+  test('the same bar frames the landing page with one sign-in button', async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
 
     const nav = page.locator('header.app-nav');
     await expect(nav).toBeVisible();
     await expect(nav.locator('.logo-wordmark')).toContainText('Olympiad');
+    const brand = nav.getByRole('link', { name: 'Olympiad Studio home' });
+    await expect(brand).toHaveAttribute('href', BASE_PATH);
+    await expect(nav.getByRole('navigation', { name: 'Workspace pages' })).toBeVisible();
+    await expect(nav.locator('.app-nav-season')).toHaveText('2027');
+    await expect(nav.locator('.app-nav-season i')).toHaveCount(0);
 
     // Exactly one of each: duplicated accessible names break strict locators.
     await expect(page.getByRole('button', { name: 'Switch to dark mode' })).toHaveCount(1);
-    await expect(page.getByRole('button', { name: 'Sign in with Google' })).toHaveCount(1);
+    const signIn = page.getByRole('button', { name: 'Sign in', exact: true });
+    await expect(signIn).toHaveCount(1);
+    await expect(signIn).toHaveClass(/app-nav-btn-primary/);
+    await expect(signIn).toContainText('Sign in');
+    await expect(page.getByRole('button', { name: /^Profile: / })).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Continue as guest' })).toHaveCount(1);
 
-    // Workspace navigation and event selection belong to the workspace, not landing.
+    // Hovering the brand must not highlight or underline it; click is its only job.
+    const brandStyle = () => brand.evaluate((node) => {
+      const style = getComputedStyle(node);
+      return { background: style.backgroundColor, decoration: style.textDecorationLine };
+    });
+    const before = await brandStyle();
+    await brand.hover();
+    const after = await brandStyle();
+    expect(after.background).toBe(before.background);
+    expect(after.background).toBe('rgba(0, 0, 0, 0)');
+    expect(after.decoration).toBe('none');
+
     await expect(page.locator('.dashboard-sidebar')).toHaveCount(0);
-    await expect(page.getByRole('navigation', { name: 'Workspace pages' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /^Choose events/ })).toHaveCount(0);
 
     await captureSnapshot(page, testInfo, 'nav_landing_desktop');
@@ -48,18 +67,34 @@ test.describe('persistent top navigation', () => {
     await expect(nav.locator('.app-nav-page[aria-current="page"]')).toHaveText('Dashboard');
     await expect(nav.getByRole('navigation', { name: 'Breadcrumb' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: /^Choose events/ })).toBeVisible();
-    await expect(page.getByRole('button', { name: /^Profile: / })).toBeVisible();
+    // Guests keep the same sign-in button; the profile menu is signed-in only.
+    await expect(page.getByRole('button', { name: /^Profile: / })).toHaveCount(0);
+    const signIn = page.getByRole('button', { name: 'Sign in', exact: true });
+    await expect(signIn).toHaveCount(1);
+    await expect(signIn).toHaveClass(/app-nav-btn-primary/);
+    await expect(nav.locator('.app-nav-guest-hint')).toHaveCount(0);
+    await expect(nav.locator('.app-nav-season i')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Switch to dark mode' })).toHaveCount(1);
-    await expect(nav.locator('.app-nav-guest-hint'))
-      .toHaveAccessibleName(/Guest mode: saved build logs and study sheets/);
-    await expect(nav.locator('.app-nav-guest-hint')).toBeVisible();
 
-    await page.getByRole('button', { name: /^Profile: / }).click();
-    await expect(page.getByText('Sign in to sync saved build logs and study sheets across devices.'))
-      .toBeVisible();
-    await page.keyboard.press('Escape');
+    for (const selector of ['.app-nav-pages', '.app-nav-season', '.app-nav-icon', '.app-nav-btn-primary']) {
+      const height = await nav.locator(selector).first().evaluate((node) => node.getBoundingClientRect().height);
+      expect(height).toBeCloseTo(36, 0);
+    }
 
     await captureSnapshot(page, testInfo, 'nav_dashboard_guest_desktop');
+  });
+
+  test('the brand link returns to the landing page from the workspace', async ({ page }) => {
+    await seedNavigation(page, {});
+    await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('.dashboard-shell', { timeout: SHELL_READY_TIMEOUT });
+
+    const nav = page.locator('header.app-nav');
+    await nav.getByRole('link', { name: 'Olympiad Studio home' }).click();
+    await expect(page.getByRole('button', { name: 'Continue as guest' })).toBeVisible();
+    await expect(nav.getByRole('navigation', { name: 'Workspace pages' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: /^Profile: / })).toHaveCount(0);
   });
 
   test('page buttons switch Dashboard and All Tools, and the breadcrumb returns from a tool', async ({ page }, testInfo) => {
@@ -122,6 +157,36 @@ test.describe('persistent top navigation', () => {
     await crumb.getByRole('button', { name: 'Dashboard', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Open Score Calculator' })).toBeVisible();
     await expect(pages.locator('[aria-current="page"]')).toHaveText('Dashboard');
+  });
+
+  test('the catalog filter rail stays flush with the nav through a full-page scroll', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await seedNavigation(page, { page: 'all-tools' });
+    await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('.dashboard-shell', { timeout: SHELL_READY_TIMEOUT });
+
+    const sidebar = page.locator('.catalog-sidebar');
+    const navBottom = await page.locator('header.app-nav')
+      .evaluate((node) => node.getBoundingClientRect().bottom);
+    const geometry = () => sidebar.evaluate((node) => {
+      const box = node.getBoundingClientRect();
+      return { top: box.top, bottom: box.bottom, height: box.height };
+    });
+
+    const atTop = await geometry();
+    expect(atTop.top).toBeCloseTo(navBottom, 0);
+    expect(atTop.height).toBeCloseTo(800 - navBottom, 0);
+    await expect(sidebar).toHaveCSS('overflow-y', 'auto');
+    await expect(page.locator('.dashboard-page')).toHaveCSS('align-items', 'start');
+    await expect(page.locator('.dashboard-page')).not.toHaveCSS('overflow', 'hidden');
+
+    await page.evaluate(() => window.scrollTo(0, 250));
+    await expect.poll(async () => (await geometry()).top).toBeCloseTo(navBottom, 0);
+
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect.poll(async () => (await geometry()).top).toBeCloseTo(navBottom, 0);
+    const atBottom = await geometry();
+    expect(atBottom.bottom).toBeCloseTo(800, 0);
   });
 
   test('catalog search and filters narrow the same registry data', async ({ page }, testInfo) => {
@@ -271,6 +336,29 @@ test.describe('persistent top navigation', () => {
     await expect(page.getByRole('button', { name: /^Choose events \(1\)$/ })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Open Score Calculator' })).toBeVisible();
 
+    // My Events uses solid stars; All events keeps the outlined glyph in the
+    // same 18px slot so the two sections form one aligned column.
+    const filledStar = picker.locator('.scope-row[aria-pressed="true"] .scope-star i').first();
+    const outlinedStar = picker.locator('.scope-row[aria-pressed="false"] .scope-star i').first();
+    await expect(outlinedStar).toHaveClass(/^ti ti-star$/);
+    // The outline webfont has no .ti-star-filled rule; assert the filled glyph
+    // and font actually render, not just the class name and an empty icon slot.
+    const filledGlyph = await filledStar.evaluate((node) => {
+      const style = getComputedStyle(node, '::before');
+      return { content: style.content, fontFamily: style.fontFamily };
+    });
+    expect(filledGlyph.content).not.toBe('none');
+    expect(filledGlyph.fontFamily).toContain('tabler-icons-filled');
+    const filledBox = await filledStar.boundingBox();
+    const outlinedBox = await outlinedStar.boundingBox();
+    expect(filledBox).toBeTruthy();
+    expect(outlinedBox).toBeTruthy();
+    expect(filledBox.x).toBeCloseTo(outlinedBox.x, 0);
+    expect(filledBox.width).toBeCloseTo(outlinedBox.width, 0);
+    const filledColor = await filledStar.evaluate((node) => getComputedStyle(node).color);
+    const outlinedColor = await outlinedStar.evaluate((node) => getComputedStyle(node).color);
+    expect(filledColor).not.toBe(outlinedColor);
+
     // Unstarring is confirmed in-app before the tools leave the Dashboard.
     await unstar.click();
     const removeDialog = await expectStarConfirmation(page, 'Electric Vehicle', 'remove');
@@ -310,24 +398,21 @@ test.describe('persistent top navigation', () => {
     expect(hitDialog).toBe(true);
   });
 
-  test('profile popover edits name and level and the values persist', async ({ page }) => {
-    await seedNavigation(page, {});
+  test('guests get no profile popover, and their browser-local profile survives a reload', async ({ page }) => {
+    // The profile popover is signed-in only, so editing it cannot be driven
+    // headlessly without OAuth. Verify the storage contract it depends on.
+    await seedNavigation(page, { profile: { displayName: 'Ada', level: 'state' } });
     await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('.dashboard-shell', { timeout: SHELL_READY_TIMEOUT });
 
-    await page.getByRole('button', { name: 'Profile: Guest' }).click();
-    const panel = page.getByRole('dialog', { name: 'Profile settings' });
-    await expect(panel).toContainText('Saved in this browser');
-    await panel.getByPlaceholder('Guest').fill('Ada');
-    await panel.getByLabel('Competition level').selectOption('state');
-    await expect(page.getByRole('button', { name: 'Profile: Ada' })).toBeVisible();
-    await page.keyboard.press('Escape');
+    await expect(page.getByRole('button', { name: /^Profile: / })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
 
     await page.reload();
     await page.waitForSelector('.dashboard-shell', { timeout: SHELL_READY_TIMEOUT });
-    await expect(page.getByRole('button', { name: 'Profile: Ada' })).toBeVisible();
-    await page.getByRole('button', { name: 'Profile: Ada' }).click();
-    await expect(page.getByRole('dialog', { name: 'Profile settings' }).getByLabel('Competition level')).toHaveValue('state');
+    const storedProfile = await page.evaluate(() => JSON.parse(localStorage.getItem('olympiad-studio.profile')));
+    expect(storedProfile.displayName).toBe('Ada');
+    expect(storedProfile.level).toBe('state');
   });
 
   test('keyboard users reach the skip link before the navigation', async ({ page }) => {
