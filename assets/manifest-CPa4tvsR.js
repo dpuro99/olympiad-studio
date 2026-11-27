@@ -1,0 +1,1 @@
+var e=Object.freeze({year:2027,rulesUrl:`https://www.soinc.org/rules-2027`,manualLabel:`2027 Rules Manual`});export{e as t};

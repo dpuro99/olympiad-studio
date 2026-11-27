@@ -1,0 +1,1 @@
+import{$ as e,q as t}from"./index-631e-09j.js";import{t as n}from"./ReferenceCompiler-D8C5b0sL.js";var r=e();function i(){return(0,r.jsx)(n,{config:t})}export{i as default};
