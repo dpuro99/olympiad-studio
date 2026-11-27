@@ -7,6 +7,7 @@ import AppNav from './components/general/AppNav';
 import AuthRequired from './components/general/AuthRequired';
 import PageTransition from './PageTransition';
 import { EVENT_REGISTRY } from './components/events/registry.js';
+import { GENERAL_TOOL_REGISTRY } from './components/general/generalToolRegistry.js';
 import { OBJECTIVE_TRACKER_SOURCES } from './components/general/dashboard/objectiveTrackerSources.js';
 import Dashboard from './components/general/dashboard/Dashboard.jsx';
 import AllTools from './components/general/dashboard/AllTools.jsx';
@@ -17,6 +18,7 @@ import ConfirmDialog from './components/general/ui/ConfirmDialog.jsx';
 
 const NAVIGATION_STORAGE_KEY = 'olympiad-studio-navigation';
 const VALID_EVENT_IDS = Object.keys(EVENT_REGISTRY);
+const VALID_GENERAL_TOOL_IDS = Object.keys(GENERAL_TOOL_REGISTRY);
 const STUDY_EVENT_IDS = OBJECTIVE_TRACKER_SOURCES.map((source) => source.eventId);
 const VALID_PAGES = ['dashboard', 'all-tools'];
 
@@ -35,6 +37,11 @@ function validActiveTool(raw) {
   if (raw.kind === 'compiler') {
     return STUDY_EVENT_IDS.includes(raw.eventId)
       ? { kind: 'compiler', eventId: raw.eventId }
+      : null;
+  }
+  if (raw.kind === 'general') {
+    return VALID_GENERAL_TOOL_IDS.includes(raw.toolId)
+      ? { kind: 'general', toolId: raw.toolId }
       : null;
   }
   if (raw.kind === 'module') {
@@ -70,9 +77,12 @@ export default function App() {
   const activeModule = activeTool?.kind === 'module'
     ? EVENT_REGISTRY[activeTool.eventId]?.modules.find((item) => item.id === activeTool.moduleId)
     : null;
+  const activeGeneralTool = activeTool?.kind === 'general'
+    ? GENERAL_TOOL_REGISTRY[activeTool.toolId]
+    : null;
   const activeToolLabel = activeTool?.kind === 'compiler'
     ? 'Reference & Study Compiler'
-    : activeModule?.label || null;
+    : activeGeneralTool?.label || activeModule?.label || null;
 
   const showLanding = currentView === 'landing' || (!currentUser && !isGuest);
 
@@ -80,9 +90,11 @@ export default function App() {
     ? ''
     : activeTool?.kind === 'compiler'
       ? `/compiler/${encodeURIComponent(activeTool.eventId)}`
-      : activeModule
-        ? `/events/${encodeURIComponent(activeTool.eventId)}/${encodeURIComponent(activeTool.moduleId)}`
-        : page === 'all-tools' ? '/all-tools' : '/dashboard';
+      : activeGeneralTool
+        ? `/general/${encodeURIComponent(activeTool.toolId)}`
+        : activeModule
+          ? `/events/${encodeURIComponent(activeTool.eventId)}/${encodeURIComponent(activeTool.moduleId)}`
+          : page === 'all-tools' ? '/all-tools' : '/dashboard';
   const analyticsPage = `${import.meta.env.BASE_URL.replace(/\/$/, '')}${virtualPage || '/'}`;
   const analyticsPageTitle = activeToolLabel || (page === 'all-tools' ? 'All Tools' : 'Dashboard');
 
@@ -293,6 +305,18 @@ export default function App() {
     setActiveTool({ kind: 'module', eventId, moduleId });
   };
 
+  const openGeneralTool = (toolId) => {
+    const tool = GENERAL_TOOL_REGISTRY[toolId];
+    trackEvent('module_opened', {
+      event_id: 'general',
+      module_id: toolId,
+      module_name: tool?.label,
+      category: tool?.cat,
+      from: page
+    });
+    setActiveTool({ kind: 'general', toolId });
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', backgroundColor: 'var(--color-background-primary)', color: 'var(--color-text-secondary)', fontFamily: 'var(--font-sans)', fontSize: 14 }}>
@@ -313,7 +337,14 @@ export default function App() {
   );
 
   let RenderComponent;
-  if (activeTool?.kind === 'compiler') {
+  if (activeGeneralTool) {
+    if (isGuest && activeGeneralTool.requiresAuth) {
+      RenderComponent = <AuthRequired mod={activeGeneralTool} onLogin={handleGoogleLogin} />;
+    } else {
+      const Component = activeGeneralTool.component;
+      RenderComponent = <Component mod={activeGeneralTool} />;
+    }
+  } else if (activeTool?.kind === 'compiler') {
     RenderComponent = (
       <CompilerTool
         eventId={activeTool.eventId}
@@ -333,7 +364,7 @@ export default function App() {
       <div className="dashboard-empty" role="alert">
         <i className="ti ti-alert-circle" aria-hidden="true" style={{ fontSize: 22, color: 'var(--color-text-warning)' }} />
         <strong>That tool isn't available.</strong>
-        <span>The tool "{activeTool.moduleId}" is no longer registered. Choose another from your dashboard.</span>
+        <span>The tool "{activeTool.moduleId || activeTool.toolId || 'requested'}" is no longer registered. Choose another from your dashboard.</span>
         <button type="button" className="breadcrumb-link dashboard-inline-action" onClick={closeTool}>Back to your page</button>
       </div>
     );
@@ -343,6 +374,7 @@ export default function App() {
         profile={profile}
         onStar={handleStar}
         onOpenModule={openModule}
+        onOpenGeneral={openGeneralTool}
         onOpenCompiler={openCompiler}
         onDashboard={goDashboard}
       />
@@ -355,6 +387,7 @@ export default function App() {
         sources={OBJECTIVE_TRACKER_SOURCES}
         onStar={handleStar}
         onOpenModule={openModule}
+        onOpenGeneral={openGeneralTool}
         onOpenCompiler={openCompiler}
         onAllTools={goAllTools}
       />
@@ -368,7 +401,13 @@ export default function App() {
           <h1 className="dashboard-title dashboard-tool-title" style={{ marginBottom: 18 }}>{activeToolLabel}</h1>
         )}
         <AnimatePresence mode="wait" initial={false}>
-          <PageTransition key={showLanding ? 'landing' : `${page}-${activeTool ? `${activeTool.kind}-${activeTool.eventId}${activeTool.moduleId || ''}` : 'page'}`}>
+          <PageTransition key={showLanding
+            ? 'landing'
+            : `${page}-${activeTool
+              ? activeTool.kind === 'general'
+                ? `general-${activeTool.toolId}`
+                : `${activeTool.kind}-${activeTool.eventId}${activeTool.moduleId || ''}`
+              : 'page'}`}>
             <Suspense fallback={
               <div style={{ display: 'grid', placeItems: 'center', minHeight: 260, padding: 24, color: 'var(--color-text-tertiary)', fontFamily: 'var(--font-sans)' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, textAlign: 'center' }}>

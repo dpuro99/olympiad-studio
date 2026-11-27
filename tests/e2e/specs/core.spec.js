@@ -8,6 +8,7 @@ import {
   confirmStar,
   expectModuleRendered,
   expectNoHorizontalOverflow,
+  openGeneralTool,
   openModule,
   SEASON_YEAR,
   seedNavigation,
@@ -27,6 +28,11 @@ const appMap = {
       label: withSeason(module.label),
       expectText: withSeason(module.expectText)
     }))
+  })),
+  generalTools: rawAppMap.generalTools.map((tool) => ({
+    ...tool,
+    label: withSeason(tool.label),
+    expectText: withSeason(tool.expectText)
   }))
 };
 
@@ -103,6 +109,29 @@ for (const event of appMap.events) {
       await context.close();
     });
   }
+}
+
+for (const tool of appMap.generalTools) {
+  test(`general/${tool.id} renders ("${tool.label}")`, async ({ page }, testInfo) => {
+    const errors = await openGeneralTool(page, { toolId: tool.id });
+    await expectModuleRendered(page, { label: tool.label, expectText: tool.expectText });
+    await captureSnapshot(page, testInfo, `general_${tool.id}`);
+    expect(errors).toEqual([]);
+  });
+
+  test(`general/${tool.id} fits a 375px phone viewport`, async ({ browser }) => {
+    const context = await browser.newContext({ viewport: { width: 375, height: 812 } });
+    const page = await context.newPage();
+    const errors = trackConsoleIssues(page);
+    await seedNavigation(page, { generalToolId: tool.id });
+    await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
+    await expectModuleRendered(page, { label: tool.label, expectText: tool.expectText });
+    await expectNoHorizontalOverflow(page, 375);
+    await page.screenshot({ path: `test-results/screenshots/mobile_general_${tool.id}.png`, fullPage: true });
+    expect(errors).toEqual([]);
+    await context.close();
+  });
 }
 
 test('dashboard shell spans the full viewport at desktop and phone widths', async ({ browser }) => {

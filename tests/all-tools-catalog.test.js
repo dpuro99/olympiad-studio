@@ -18,6 +18,17 @@ const module = (id, label, stage, extra = {}) => ({
   ...extra
 });
 
+const GENERAL_REGISTRY = {
+  timer: {
+    id: 'timer',
+    label: 'Generic Event Timer',
+    stage: 'practice',
+    cat: 'Practice',
+    gain: 'Practice timer',
+    desc: 'Run timed windows.'
+  }
+};
+
 const REGISTRY = {
   anatomy: {
     name: 'Anatomy and Physiology',
@@ -81,6 +92,24 @@ test('a tool query keeps only that tool; an event query keeps the whole event', 
 
   const byEvent = filterCatalog(REGISTRY, { query: 'ANAT' });
   assert.deepEqual(byEvent[0].steps.map((step) => step.id), ['sheet', 'drill', 'notes']);
+});
+
+test('general tools count as tools but not events and stay out of division scopes', () => {
+  const sections = filterCatalog(REGISTRY, {}, GENERAL_REGISTRY);
+  assert.deepEqual(sections.map((section) => section.kind), ['event', 'event', 'general']);
+  assert.deepEqual(catalogCounts(sections), { events: 2, tools: 5 });
+  assert.deepEqual(filterCatalog(REGISTRY, { scope: 'B' }, GENERAL_REGISTRY).map((s) => s.kind), ['event']);
+  assert.deepEqual(filterCatalog(REGISTRY, { scope: 'mine', starred: ['anatomy'] }, GENERAL_REGISTRY).map((s) => s.kind), ['event']);
+});
+
+test('general tools obey search and tool-type filters', () => {
+  const byQuery = filterCatalog(REGISTRY, { query: 'timer' }, GENERAL_REGISTRY);
+  assert.deepEqual(byQuery.map((section) => section.kind), ['general']);
+  assert.deepEqual(byQuery[0].tools.map((tool) => tool.id), ['timer']);
+
+  const byType = filterCatalog(REGISTRY, { toolType: 'practice' }, GENERAL_REGISTRY);
+  assert.deepEqual(byType.at(-1).tools.map((tool) => tool.id), ['timer']);
+  assert.deepEqual(filterCatalog(REGISTRY, { toolType: 'record' }, GENERAL_REGISTRY).map((s) => s.kind), ['event']);
 });
 
 test('combined controls compose and a no-match query returns an empty catalog', () => {

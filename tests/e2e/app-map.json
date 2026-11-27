@@ -87,5 +87,8 @@
         { "id": "timed-relay", "label": "Timed Relay", "expectText": "Synthetic target" }
       ]
     }
+  ],
+  "generalTools": [
+    { "id": "generic-timer", "label": "Generic Event Timer", "expectText": "Choose a timed window" }
   ]
 }

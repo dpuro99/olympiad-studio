@@ -282,7 +282,7 @@ test.describe('persistent top navigation', () => {
     await search.fill('   ');
     await expect(page.getByRole('button', { name: 'Clear all filters' })).toBeDisabled();
     await expect(page.getByRole('button', { name: 'Reset', exact: true })).toBeDisabled();
-    await expect(page.locator('.catalog-result-count')).toContainText('9 events · 33 tools');
+    await expect(page.locator('.catalog-result-count')).toContainText(`9 events · ${allToolCount} tools`);
 
     await search.fill('Diagram');
     await expect(page.locator('.event-section-catalog')).toHaveCount(1);

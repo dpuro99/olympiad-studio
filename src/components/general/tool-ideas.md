@@ -2,20 +2,20 @@
 
 Source: no single event; these are cross-event or team-level tools. They are **not** event-specific, so keep the set to 1–3 and build them only after the event-specialized tools. They must not drift into the saturated question-bank niche (scio.ly, olyprep, "Grind") or generic flashcard apps (Quizlet, Anki); the differentiator is that the content is the student's own or is derived from the rules, not a scraped bank.
 
-This set is intentionally parked; see `generalToolIdeas.js` for the code placeholder TODO.
+The Generic Event Timer has been promoted; the remaining two ideas stay parked. The live tool is registered in `generalToolRegistry.js`, not in the event registry.
 
 ## Tool: Generic Event Timer
-- **Status:** Planned (backburner)
+- **Status:** Live — `src/components/general/GenericEventTimer.jsx`
 - **Category:** Practice
 - **Goal:** Run the manual's timed phases for any event (WIDI writer 25 min / builder 20 min; Boomilever 6-minute testing window; EV 8-minute window; written-test pacing).
-- **Core interaction loop:** 1) Pick a preset (event, phase, duration) or a custom duration. 2) Start/pause/reset; hear or see phase transitions. 3) Record the elapsed time (e.g., WIDI build-phase time as the tiebreaker).
-- **Content & data:** Preset durations derived from each event's manual; no content.
-- **UI components:** Preset list, countdown display, start/pause/reset, optional sound.
-- **Interactivity:** Live: an always-updating countdown; start/pause/reset are explicit actions.
-- **Scoring & feedback:** none (timer).
+- **Core interaction loop:** 1) Pick a preset (event, phase, duration) or a custom duration. 2) Start/pause/reset and watch the countdown and phase label change. 3) Read the elapsed phase time while practising.
+- **Content & data:** Preset lengths come from the owning event's season data (WIDI §3.b/§3.d p. B62, Boomilever §4.c.i printed p. C8, EV §2.c); custom values are student-set and labelled practice-only.
+- **UI components:** Preset and mm:ss controls, countdown display, phase strip with citation, start/pause/reset.
+- **Interactivity:** Live: the countdown, phase, and phase remaining time derive from timer state on every tick; start/pause/reset are explicit side-effect actions.
+- **Scoring & feedback:** none (timer). The timer is a practice aid, not an official ruling or score.
 - **Level gating:** none.
-- **Persistence:** none (or localStorage for a custom preset set).
-- **Open questions:** none.
+- **Persistence:** none — sessions are deliberately scratchpad-only.
+- **Open questions:** optional sound was left out of v1; the visual phase strip covers the transition cue without adding audio state.
 
 ## Tool: Self-Quiz Flashcards
 - **Status:** Planned (backburner)

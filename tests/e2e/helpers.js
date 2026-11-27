@@ -45,17 +45,20 @@ export const COMPILER_FILE_STEMS = Object.fromEntries(
 export function seedNavigation(page, {
   eventId = null,
   moduleId,
+  generalToolId,
   theme = 'light',
   page: workspacePage,
   activeTool,
   profile,
   rawProfile
 } = {}) {
-  const tool = activeTool || (eventId && moduleId
-    ? (moduleId.endsWith('-reference-compiler')
-      ? { kind: 'compiler', eventId }
-      : { kind: 'module', eventId, moduleId })
-    : null);
+  const tool = activeTool
+    || (generalToolId ? { kind: 'general', toolId: generalToolId }
+      : eventId && moduleId
+        ? (moduleId.endsWith('-reference-compiler')
+          ? { kind: 'compiler', eventId }
+          : { kind: 'module', eventId, moduleId })
+        : null);
   const resolvedPage = workspacePage || (tool ? 'dashboard' : (eventId ? 'all-tools' : 'dashboard'));
   const autoStars = [tool?.eventId, eventId].filter(Boolean);
   const seededProfile = profile
@@ -155,6 +158,15 @@ export async function captureSnapshot(page, testInfo, name) {
 export async function openModule(page, testInfo, { eventId, moduleId, theme = 'light' }) {
   const errors = trackConsoleIssues(page);
   await seedNavigation(page, { eventId, moduleId, theme });
+  await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
+  await page.evaluate(() => window.scrollTo(0, 0));
+  return errors;
+}
+
+export async function openGeneralTool(page, { toolId, theme = 'light' }) {
+  const errors = trackConsoleIssues(page);
+  await seedNavigation(page, { generalToolId: toolId, theme });
   await page.goto(BASE_PATH, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('header', { timeout: SHELL_READY_TIMEOUT });
   await page.evaluate(() => window.scrollTo(0, 0));

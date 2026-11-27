@@ -12,6 +12,11 @@ export const boomilever2027 = Object.freeze({
   ]),
   tiers: Object.freeze(['Tier 1', 'Tier 2', 'Tier 3 (participation only)']),
   scoringNote: 'Score = Load Scored / Structure Mass. Bonus applies only when the 10 cm wall-contact boundary is met and 15 kg is held.',
+  timings: Object.freeze({
+    testingSeconds: 6 * 60,
+    citation: '§4.c.i (printed p. C8)',
+    detail: 'Teams have 6 minutes to set up and test the Structure on the Testing Wall with the Loading Assembly.'
+  }),
 
   // Construction self-check. Numeric limits and every consequence below are
   // transcribed from the printed manual; the engine receives them as data.

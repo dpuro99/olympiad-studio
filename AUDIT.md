@@ -1,8 +1,8 @@
 # Olympiad Studio — Browser Audit Report
 
-**Date:** 2026-11-25 (Dashboard `Choose events` refactor + All Tools filter-sidebar sweep)
-**Scope:** Full sweep (all 14 spec files, 150 tests), `CI=1 npm run test:e2e -- --reporter=line`.
-**Audited state:** `HEAD` = `8fb8441` (all roadmap tools through Phase 3 item 3 committed locally, nothing pushed), plus the uncommitted two-page dashboard restructure, two-column Dashboard refinement, All Tools catalog redesign with left filter sidebar / mobile drawer, and the new `Choose events` dropdown (whole-row buttons, filled star icons, in-app confirmation modal for both add and remove, no helper text). This run used the plain full-suite runner, so the baseline file remains `8fb8441`; it was not restamped.
+**Date:** 2026-11-26 (nav/dashboard polish + Phase 3 item 5 Generic Event Timer sweep)
+**Scope:** Full sweep (all 15 spec files, 158 tests), `CI=1 npx playwright test --reporter=list`.
+**Audited state:** `HEAD` = `6a7a9f0` (`Polish navigation and dashboard controls`, committed locally, nothing pushed), plus the uncommitted Generic Event Timer work: dedicated general-tool registry with `activeTool.kind === 'general'` wiring, a shared General tools section on Dashboard and All Tools, catalog count/filter handling for general tools, cited WIDI/Boomilever/EV presets, and a new interactive `general.spec.js`. This run used the plain full-suite runner, so the baseline file remains `8fb8441`; it was not restamped.
 **Tooling:** Playwright + headless Chromium, driven by the repo's `tests/e2e/` harness; guest mode only (no OAuth). `.env` present and loaded by the dev server.
 
 ## Current-run scope note
@@ -13,9 +13,9 @@ This sweep includes the Dashboard `Choose events` dropdown refactor: the helper 
 
 | Gate | Result |
 | --- | --- |
-| Playwright E2E — full sweep | **150 / 150 passed** (13.1 min, 1 worker) |
-| Playwright E2E — focused re-run after adding remove confirmation | **92 / 92 passed** (nav + core + multi-event, 12.9 min, 1 worker) |
-| Unit tests (`npm test`) | 290 / 290 passed |
+| Playwright E2E — full sweep | **158 / 158 passed** (38.5 min, 1 worker) |
+| Playwright E2E — focused re-runs | core 73/73, general timer 4/4, nav 13/13 passed |
+| Unit tests (`npm test`) | 301 / 301 passed |
 | Lint (`npm run lint`) | clean |
 | Build (`npm run build`) | success (pre-existing >600 kB main-chunk advisory) |
 | Console / page errors / failed requests during E2E | none beyond filtered analytics noise |
@@ -25,11 +25,12 @@ Every registered event workspace and module was opened, visually captured (200+ 
 
 ### Coverage
 
-- **Core / navigation:** landing → guest entry, full-screen workspace, Dashboard / All Tools page buttons, in-page `Choose events` dropdown (whole-row buttons, filled star, in-app confirmation for both add and remove), breadcrumb/back from an open tool, theme toggle + persistence, persistent top nav, skip link. The nav contains **no event picker** — starring happens in the Dashboard dropdown or in an All Tools section.
+- **Core / navigation:** landing → guest entry, full-screen workspace, Dashboard / All Tools page buttons, in-page `Choose events` dropdown (whole-row buttons, filled star, in-app confirmation for both add and remove), breadcrumb/back from an open tool, theme toggle + persistence, persistent top nav, skip link. The nav contains **no event picker** — starring happens in the Dashboard dropdown or in an All Tools section. The nav bar is identical on landing, both workspace pages and tool overlays, with one solid `Sign in` button for guests and no hover/underline treatment on the brand.
 - **Dashboard / All Tools:** starred events' tools sit in the left column and the Objective Tracker in a right rail at desktop width (asserted by bounding boxes); below 1040 px they stack with tools first. All Tools has a sticky left filter rail beside the event feed: its desktop geometry, live count, Reset / Clear all filters, search / scope / tool-type filtering, pastel stage badges, responsive card grid and phone-width drawer flow are all asserted. The drawer declares dialog semantics, moves focus to `Close filters`, traps Tab, covers the nav, and returns focus to `Filters` on Escape; a whitespace-only query leaves Reset/Clear disabled. All Tools still lists every registered event and tool. Starring and unstarring were exercised in both directions (including the add-confirmation cancel path); the full-screen compiler returns to the launching page and has no dedicated dashboard card or `Open compiler` shortcut.
 - **Objective Tracker:** a read-only right-rail panel over the six Reference & Study Compilers, using the same visual language as other tool panels; verified not-started totals, live Status/search filters, a saved sheet's status/notes rollup, corrupt and other-manual sheet notices, denied-`localStorage` announcement, opening the owning compiler from its rows, and 375 px fit.
 - **Choose events dropdown:** the hero no longer clips the absolutely positioned dialog; an `elementFromPoint` probe below the hero boundary confirms the panel is hit-testable; whole-row hover, filled star for starred events, in-app confirmation on both add and remove (including cancel on remove), and keyboard flows all pass.
 - **All 9 events, all registered modules** rendered and matched expected content, including the event sections' manual-verified rule summaries and tools in journey order.
+- **General tools:** the top-level `generalTools` inventory covers the Generic Event Timer's render and 375 px fit. Interactive flows drive the WIDI 25:00 writing → 20:00 building phase strip with its citation, the EV 8:00 and Boomilever 6:00 presets, invalid custom-duration validation, and countdown → pause → reset → completion. General tools appear as a star-free section on both workspace pages, count as tools (not events) in the catalog, and stay out of division scopes.
 - **Responsive:** every module at **375 px** with a horizontal-overflow assertion, plus the **720 px** breakpoint test (`row` at 721 px, `column` at 720 px) and a full-viewport dashboard-shell check at desktop and phone widths.
 - **Theme actually applies:** computed `body` background differs between light and dark (not just the `data-theme` attribute).
 - **A11y:** every visible heading has a unique accessible name (duplicate-name guard on every module render).
@@ -39,7 +40,7 @@ Every registered event workspace and module was opened, visually captured (200+ 
 
 ## Findings
 
-No new functional defects found in this sweep. All 150 tests passed, including the regression guards for previously fixed issues and the new picker/modal/catalog/drawer coverage:
+No new functional defects found in this sweep. All 158 tests passed, including the regression guards for previously fixed issues and the new nav/catalog, general-tool and timer coverage:
 
 - **HIGH (fixed earlier, still guarded)** — blank printed page from `#root { display: none }` in print CSS; `expectPrintSheetRenders()` + real `page.pdf()` text assertion prevent recurrence.
 - **MEDIUM (fixed earlier, still guarded)** — ~11 px mobile sidebar overflow at 375 px; `expectNoHorizontalOverflow(page, 375)` runs on every module.
@@ -50,7 +51,8 @@ No new functional defects found in this sweep. All 150 tests passed, including t
 - **MEDIUM (fixed in this build, still guarded)** — `.dashboard-hero { overflow: hidden }` clipped the `Choose events` dialog at the card border. The hero is now overflow-visible (with its accent stripe rounded instead of clipped), the hero sits above the right rail in the stacking order, and `elementFromPoint` must hit the dialog below the hero boundary.
 - **LOW (fixed during catalog verification, still guarded)** — the desktop geometry guard assumed the feed header touched `.catalog-main`'s outer edge; the container has a 28 px content inset, so the assertion now checks a 16–32 px inset against that box. The mobile drawer's `Close filters` button was not focused while CSS `visibility` was still transitioning; visibility now flips instantly on open (delayed only on close) and focus is deferred to the next animation frame. Both paths are asserted in `nav.spec.js`.
 - **LOW (fixed during catalog review, still guarded)** — Reset / `Clear all filters` treated a whitespace-only query as dirty although the pure filter trims it; `hasFilters` now uses `query.trim()`. The drawer had a dimming backdrop and Tab trap but exposed no dialog semantics, and the sticky nav painted above it and stayed clickable; the open drawer now declares `role="dialog"`/`aria-modal`, raises above the nav and pointer-disables it, with e2e assertions for the semantics and an `elementFromPoint` hit over the old nav strip.
-- **INFO — audit hygiene:** an earlier dashboard sweep failed with navigation/teardown timeouts because Playwright's `reuseExistingServer: true` kept using a stale project Vite server (PIDs 5776/23772, started 2026-11-23, ~3188 CPU seconds). Only those project-owned processes were stopped; no Chrome processes were touched. The reported 147/147 and 150/150 results are fresh-server sweeps.
+- **LOW (fixed in this sweep, still guarded)** — `nav.spec.js` hard-coded the catalog total as `9 events · 33 tools`; adding the timer made it 34 and failed the full sweep. The assertion now derives the tool count from the rendered cards (`allToolCount`), so registering a general tool no longer stales the guard.
+- **INFO — audit hygiene:** an earlier dashboard sweep failed with navigation/teardown timeouts because Playwright's `reuseExistingServer: true` kept using a stale project Vite server (PIDs 5776/23772, started 2026-11-23, ~3188 CPU seconds). Only those project-owned processes were stopped; no Chrome processes were touched. The reported 147/147, 150/150 and 158/158 results are fresh-server sweeps.
 
 ### INFO — No error boundary around lazy tool modules
 

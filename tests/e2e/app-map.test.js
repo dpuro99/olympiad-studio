@@ -6,6 +6,7 @@ import path from 'node:path';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const registrySource = readFileSync(path.join(here, '../../src/components/events/registry.js'), 'utf8');
+const generalRegistrySource = readFileSync(path.join(here, '../../src/components/general/generalToolRegistry.js'), 'utf8');
 const appMap = JSON.parse(readFileSync(path.join(here, 'app-map.json'), 'utf8'));
 
 function parseRegistry(source) {
@@ -40,5 +41,15 @@ test('app-map.json module ids match the registry exactly', () => {
       assert.ok(module.label.length > 0, `module ${entry.code}/${module.id} needs a label`);
       assert.ok(module.expectText.length > 0, `module ${entry.code}/${module.id} needs expectText`);
     }
+  }
+});
+
+test('app-map.json general tools match the general registry exactly', () => {
+  const registered = [...generalRegistrySource.matchAll(/id: '([^']+)'/g)].map((match) => match[1]).sort();
+  const mapped = appMap.generalTools.map((tool) => tool.id).sort();
+  assert.deepEqual(mapped, registered, 'general tool ids in app-map.json differ from generalToolRegistry.js');
+  for (const tool of appMap.generalTools) {
+    assert.ok(tool.label.length > 0, `general tool ${tool.id} needs a label`);
+    assert.ok(tool.expectText.length > 0, `general tool ${tool.id} needs expectText`);
   }
 });

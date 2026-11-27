@@ -1,4 +1,5 @@
 import { EVENT_REGISTRY } from '../../events/registry.js';
+import { GENERAL_TOOL_REGISTRY } from '../generalToolRegistry.js';
 import { ACTIVE_SEASON } from '../../../seasons/manifest.js';
 import { scopedEventIds } from './profileUtils.js';
 import { scopeSources } from './objectiveTrackerUtils.js';
@@ -6,6 +7,7 @@ import { StatusMessage } from '../ui/primitives.jsx';
 import DashboardTracker from './DashboardTracker.jsx';
 import EventPicker from './EventPicker.jsx';
 import EventToolSection from './EventToolSection.jsx';
+import GeneralToolSection from './GeneralToolSection.jsx';
 
 /**
  * The main workbench. Starred events' tools sit in the left column and the
@@ -18,12 +20,14 @@ export default function Dashboard({
   sources,
   onStar,
   onOpenModule,
+  onOpenGeneral,
   onOpenCompiler,
   onAllTools
 }) {
   const allIds = Object.keys(EVENT_REGISTRY);
   const starred = scopedEventIds(profile, allIds);
   const scopedSources = scopeSources(sources, starred);
+  const generalTools = Object.values(GENERAL_TOOL_REGISTRY);
 
   return (
     <div className="dashboard-page">
@@ -78,6 +82,8 @@ export default function Dashboard({
             ))}
           </div>
         )}
+
+        <GeneralToolSection tools={generalTools} onOpenGeneral={onOpenGeneral} />
       </div>
 
       <aside className="dashboard-rail">

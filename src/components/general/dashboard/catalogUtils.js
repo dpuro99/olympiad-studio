@@ -1,6 +1,7 @@
 // Pure filtering for the All Tools catalog. The registry stays the single
 // source of truth; these helpers only decide which registered tools to show.
 import { buildJourney } from '../journeyUtils.js';
+import { normalizeStage } from '../stages.js';
 
 export const CATALOG_SCOPES = [
   { id: 'all', label: 'All Divisions' },
@@ -26,13 +27,18 @@ function matches(haystack, needle) {
  * A query that matches an event keeps all of that event's tools (still subject
  * to the tool-type filter), while a query that only matches a tool keeps just
  * that tool. An event with no surviving tools is omitted rather than shown as
- * an empty card.
+ * an empty card. General tools have no division, so they appear only in the
+ * All Divisions scope; they still obey search and tool-type filters.
  */
-export function filterCatalog(registry, { query = '', scope = 'all', toolType = 'all', starred = [] } = {}) {
+export function filterCatalog(
+  registry,
+  { query = '', scope = 'all', toolType = 'all', starred = [] } = {},
+  generalRegistry = {}
+) {
   const needle = query.trim().toLowerCase();
   const stars = new Set(starred);
 
-  return Object.entries(registry).flatMap(([eventId, event]) => {
+  const events = Object.entries(registry).flatMap(([eventId, event]) => {
     if (scope === 'mine' && !stars.has(eventId)) return [];
     if (scope === 'B' && event.division !== 'B') return [];
     if (scope === 'C' && event.division !== 'C') return [];
@@ -56,14 +62,30 @@ export function filterCatalog(registry, { query = '', scope = 'all', toolType = 
       ].some((value) => matches(value, needle));
     });
 
-    return steps.length ? [{ eventId, event, steps }] : [];
+    return steps.length ? [{ kind: 'event', eventId, event, steps }] : [];
   });
+
+  const generalTools = Object.values(generalRegistry).filter((tool) => {
+    if (scope !== 'all') return false;
+    if (toolType !== 'all' && normalizeStage(tool.stage) !== toolType) return false;
+    if (!needle) return true;
+    return [tool.id, tool.label, tool.gain, tool.desc, tool.cat]
+      .some((value) => matches(value, needle));
+  });
+
+  return [
+    ...events,
+    ...(generalTools.length > 0 ? [{ kind: 'general', tools: generalTools }] : [])
+  ];
 }
 
 /** Counts for the live result line in the filter rail. */
 export function catalogCounts(sections) {
   return {
-    events: sections.length,
-    tools: sections.reduce((total, section) => total + section.steps.length, 0)
+    events: sections.filter((section) => section.kind !== 'general').length,
+    tools: sections.reduce(
+      (total, section) => total + (Array.isArray(section.tools) ? section.tools.length : section.steps.length),
+      0
+    )
   };
 }

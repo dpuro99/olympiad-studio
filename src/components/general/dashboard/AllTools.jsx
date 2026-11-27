@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { EVENT_REGISTRY } from '../../events/registry.js';
+import { GENERAL_TOOL_REGISTRY } from '../generalToolRegistry.js';
 import EventToolSection from './EventToolSection.jsx';
+import GeneralToolSection from './GeneralToolSection.jsx';
 import {
   CATALOG_SCOPES,
   CATALOG_TOOL_TYPES,
@@ -13,7 +15,7 @@ import {
  * Filtering still runs over the same registry data; the sidebar only changes
  * which journeys are passed to the shared event section.
  */
-export default function AllTools({ profile, onStar, onOpenModule, onOpenCompiler, onDashboard }) {
+export default function AllTools({ profile, onStar, onOpenModule, onOpenGeneral, onOpenCompiler, onDashboard }) {
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState('all');
   const [toolType, setToolType] = useState('all');
@@ -28,7 +30,7 @@ export default function AllTools({ profile, onStar, onOpenModule, onOpenCompiler
     scope,
     toolType,
     starred: profile.starredEventIds
-  });
+  }, GENERAL_TOOL_REGISTRY);
   const counts = catalogCounts(sections);
   const hasFilters = query.trim() !== '' || scope !== 'all' || toolType !== 'all';
 
@@ -235,14 +237,21 @@ export default function AllTools({ profile, onStar, onOpenModule, onOpenCompiler
 
         {sections.length > 0 ? (
           <div className="dashboard-event-sections catalog-sections">
-            {sections.map(({ eventId, event, steps }) => (
-              <EventToolSection
-                key={eventId}
-                eventId={eventId}
-                event={event}
-                steps={steps}
+            {sections.map((section) => section.kind === 'general' ? (
+              <GeneralToolSection
+                key="general"
+                tools={section.tools}
                 catalog
-                starred={profile.starredEventIds.includes(eventId)}
+                onOpenGeneral={onOpenGeneral}
+              />
+            ) : (
+              <EventToolSection
+                key={section.eventId}
+                eventId={section.eventId}
+                event={section.event}
+                steps={section.steps}
+                catalog
+                starred={profile.starredEventIds.includes(section.eventId)}
                 onStar={onStar}
                 onOpenModule={onOpenModule}
                 onOpenCompiler={onOpenCompiler}
